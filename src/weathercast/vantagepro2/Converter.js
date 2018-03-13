@@ -1,6 +1,8 @@
 const BU = require('base-util-jh').baseUtil;
 const ProtocolConverter = require('../../default/ProtocolConverter');
 const protocol = require('./protocol');
+// const baseFormat = require('../baseFormat');
+
 require('../../format/define');
 class Converter extends ProtocolConverter {
   constructor() {
@@ -113,21 +115,15 @@ class Converter extends ProtocolConverter {
         res = 0;
       return res;
     case 'ExtraTemperatures':
-      return returnvalue;
     case 'SoilTemperatures':
-      return returnvalue;
     case 'LeafTemperatures':
-      return returnvalue;
     case 'OutsideHumidity':
-      return returnvalue;
     case 'ExtraHumidties':
       return returnvalue;
     case 'RainRate':
       return (returnvalue * 0.2).toFixed(1);
     case 'UV':
-      return returnvalue;
     case 'SolarRadiation':
-      return returnvalue;
     case 'StormRain':
       return returnvalue;
     default:

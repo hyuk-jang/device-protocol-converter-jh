@@ -10,11 +10,6 @@ class Converter extends AbstConverter {
     this.resultMakeMsg2Buffer = [];
   }
 
-  /**
-   * abstract method
-   */
-  getBaseValue() {}
-
   /** 
    * Start of Text
    * @return {Buffer}

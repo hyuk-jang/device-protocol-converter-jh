@@ -13,7 +13,7 @@ class AbstConverter {
     this.config = config;
     // console.dir(this.config);
     /** @type {AbstConverter} */
-    // this.protocolConverter = this.setProtocolConverter();
+    this.protocolConverter = null;
 
   }
 
@@ -34,7 +34,6 @@ class AbstConverter {
       throw error;
     }
   }
-
 
   /**
    * 장치를 조회 및 제어하기 위한 명령 생성. 

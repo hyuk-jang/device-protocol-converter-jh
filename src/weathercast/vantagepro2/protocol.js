@@ -115,11 +115,11 @@ module.exports = [{
   substr: [72, 2]
 },
 {
-  key: 'ExtraTemp/HumAlarms',
+  key: 'ExtraTempHumAlarms',
   substr: [74, 8]
 },
 {
-  key: 'Soil&LeafAlarms',
+  key: 'SoilLeafAlarms',
   substr: [82, 4]
 },
 {

@@ -1,8 +1,15 @@
-
-
 const AbstConverter = require('./src/default/AbstConverter');
+require('./src/format/define');
 
-module.exports = AbstConverter;
+/** Intelligence를 위함 */
+const weathercastProtocolFormat =  require('./src/weathercast/baseFormat');
+
+
+
+module.exports = {
+  AbstConverter,
+  weathercastProtocolFormat
+};
 
 // if __main process
 if (require !== undefined && require.main === module) {
