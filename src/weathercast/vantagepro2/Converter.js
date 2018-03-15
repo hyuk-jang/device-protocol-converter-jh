@@ -96,23 +96,22 @@ class Converter extends ProtocolConverter {
 
     switch (DataName) {
     case 'Barometer':
-      return (returnvalue / 1000 * 33.863882).toFixed(1);
+      return Math.round10(returnvalue * 0.001 * 33.863882, -1);
     case 'InsideTemperature':
-      return ((returnvalue / 10 - 32) / 1.8).toFixed(1);
+      return Math.round10((returnvalue * 0.1 - 32) / 1.8, -1);
     case 'InsideHumidity':
       return returnvalue;
     case 'OutsideTemperature':
-      return ((returnvalue / 10 - 32) / 1.8).toFixed(1);
+      return Math.round10((returnvalue * 0.1 - 32) / 1.8, -1);
     case 'WindSpeed':
       //console.log('base WindSpeed',returnvalue)
-      return Math.floor((returnvalue * 0.45) * 10) / 10;
+      return Math.round10(returnvalue * 0.44704, -1);
     case 'Min10AvgWindSpeed':
-      return Math.floor((returnvalue * 0.45) * 10) / 10;
+      return Math.round10(returnvalue * 0.44704, -1);
     case 'WindDirection':
       //console.log('WindDirection', DataValue)
-      var res = (DataValue / 45).toFixed(0);
-      if (res >= 8 || res < 0)
-        res = 0;
+      var res = Math.round(DataValue / 45);
+      res = res >= 8 || res < 0 ? 0 : res;
       return res;
     case 'ExtraTemperatures':
     case 'SoilTemperatures':
@@ -121,11 +120,12 @@ class Converter extends ProtocolConverter {
     case 'ExtraHumidties':
       return returnvalue;
     case 'RainRate':
-      return (returnvalue * 0.2).toFixed(1);
+      return Math.round10(returnvalue * 0.2, -1);
     case 'UV':
     case 'SolarRadiation':
-    case 'StormRain':
       return returnvalue;
+    case 'StormRain':
+      return Math.round10(returnvalue * 0.2, -1);
     default:
       return returnvalue;
     }
