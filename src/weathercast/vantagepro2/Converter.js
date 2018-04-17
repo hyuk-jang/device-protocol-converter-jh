@@ -47,10 +47,14 @@ class Converter extends ProtocolConverter {
         let endPoint = protocol.substr[1];
         let realStartPoint = startPoint + endPoint - 1 + addValue;
         let hexCode = '';
+        let hasError = false;
         for (let i = realStartPoint; i >= startPoint + addValue; i--) {
           let TargetValue = bufferData[i].toString(16);
           if (TargetValue == 'ff') {
             TargetValue = '00';
+            if(protocol.key === 'OutsideTemperature'){
+              hasError = true;
+            }
           }
   
           if (TargetValue.length === 1) {
@@ -58,7 +62,12 @@ class Converter extends ProtocolConverter {
           }
           hexCode += TargetValue;
         }
-        protocol.value = this._ChangeData(protocol.key, this.converter().hex2dec(hexCode));
+
+        if(hasError){
+          protocol.value = null;
+        } else {
+          protocol.value = this._ChangeData(protocol.key, this.converter().hex2dec(hexCode));
+        }
       });
   
       let vantagePro2Data = {};
