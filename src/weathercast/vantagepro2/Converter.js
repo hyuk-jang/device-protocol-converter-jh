@@ -31,6 +31,12 @@ class Converter extends ProtocolConverter {
     if('LOOP\n' === requestData){
       let bufferData = responseData instanceof Buffer ? responseData : Buffer.from(responseData);
 
+      let STX = bufferData.slice(0, 4);
+      if(STX.toString() !== Buffer.from([0x4c, 0x4f, 0x4f, 0x00]).toString()){
+        returnvalue.eventCode = 'wait';
+        returnvalue.data = {};
+        return returnvalue;
+      }
       let addValue = 0;
       if (bufferData.length == 100) {
         addValue = 1;
@@ -144,3 +150,33 @@ class Converter extends ProtocolConverter {
   
 } 
 module.exports = Converter;
+
+
+// if __main process
+if (require !== undefined && require.main === module) {
+  console.log('__main__');
+  //** OutsideTemperature
+  let arr = [
+    '4c4f4f00001101b2752e023dff010b0b6301ffffffffffffffffffffffffffffff46ffffffffffffff0000001a000000ffff0000ce001b027900bc006902ffffffffffffff000000000000000000000000000000000000b900062c9302d8070a0d7802',
+    '4c4f4f00001001b3752f023dff010f0b0500ffffffffffffffffffffffffffffff46ffffffffffffff0000001a000000ffff0000ce001b027900bc006902ffffffffffffff000000000000000000000000000000000000bb00062c9302d8070a0d71f2',
+    '4c4f4f14007801ce751f0242f50101018b00ffffffffffffffffffffffffffffff4effffffffffffff00000000000000ffff0000ce001b027c00bc006902ffffffffffffff000000000000000000000000000000000000f20008019302d8070a0ddc7a',
+    '4c4f4f00000901b17530023d00020a0b5f01ffffffffffffffffffffffffffffff47ffffffffffffff00000023000000ffff0000ce001b027900bc006902ffffffffffffff000000000000000000000000000000000000d000062c9302d8070a0d161b',
+    '4c4f4f00001d04cb75fc0149ff0101007900ffffffffffffffffffffffffffffff4affffffffffffff0000067d000000ffff0000ce001b020400c9007602ffffffffffffff000000000000000000000000000000000000ad00062c9302d9070a0d220e',
+    '4c4f4f000054099875c8014b970103039800ffffffffffffffffffffffffffffff58ffffffffffffff00000000000000ffff0000ce001b020200d9008602ffffffffffffff000000000000000000000000000000000000b900062c9202da070a0d395d',
+    '4c4f4f000054099875c8014b970103039800ffffffffffffffffffffffffffffff58ffffffffffffff00000000000000ffff0000ce001b020200d9008602ffffffffffffff000000000000000000000000000000000000b900062c9202da070a0d395d',
+    '064c4f4f000054099875c8014b970103039800ffffffffffffffffffffffffffffff58ffffffffffffff00000000000000ffff0000ce001b020200d9008602ffffffffffffff000000000000000000000000000000000000b900062c9202da070a0d39',
+    '4c4f4f000054099875c8014b970103039800ffffffffffffffffffffffffffffff58ffffffffffffff00000000000000ffff0000ce001b020200d9008602ffffffffffffff000000000000000000000000000000000000b900062c9202da070a0d395d'
+  ];
+    
+  let con = new Converter();
+  arr.forEach(currentItem => {
+    let buf = Buffer.from(currentItem, 'hex');
+    let res = con.parsingUpdateData('LOOP\n', buf);
+    console.dir(res.data.OutsideTemperature);
+      
+  });
+    
+
+}
+
+
