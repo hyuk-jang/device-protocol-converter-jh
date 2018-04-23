@@ -31,6 +31,12 @@ class Converter extends ProtocolConverter {
     if('LOOP\n' === requestData){
       let bufferData = responseData instanceof Buffer ? responseData : Buffer.from(responseData);
 
+      let STX = bufferData.slice(0, 4);
+      if(STX.toString() !== Buffer.from([0x4c, 0x4f, 0x4f, 0x00]).toString()){
+        returnvalue.eventCode = 'wait';
+        returnvalue.data = {};
+        return returnvalue;
+      }
       let addValue = 0;
       if (bufferData.length == 100) {
         addValue = 1;
@@ -47,10 +53,14 @@ class Converter extends ProtocolConverter {
         let endPoint = protocol.substr[1];
         let realStartPoint = startPoint + endPoint - 1 + addValue;
         let hexCode = '';
+        let hasError = false;
         for (let i = realStartPoint; i >= startPoint + addValue; i--) {
           let TargetValue = bufferData[i].toString(16);
           if (TargetValue == 'ff') {
             TargetValue = '00';
+            if(protocol.key === 'OutsideTemperature'){
+              hasError = true;
+            }
           }
   
           if (TargetValue.length === 1) {
@@ -58,7 +68,12 @@ class Converter extends ProtocolConverter {
           }
           hexCode += TargetValue;
         }
-        protocol.value = this._ChangeData(protocol.key, this.converter().hex2dec(hexCode));
+
+        if(hasError){
+          protocol.value = null;
+        } else {
+          protocol.value = this._ChangeData(protocol.key, this.converter().hex2dec(hexCode));
+        }
       });
   
       let vantagePro2Data = {};
@@ -96,23 +111,22 @@ class Converter extends ProtocolConverter {
 
     switch (DataName) {
     case 'Barometer':
-      return (returnvalue / 1000 * 33.863882).toFixed(1);
+      return Math.round10(returnvalue * 0.001 * 33.863882, -1);
     case 'InsideTemperature':
-      return ((returnvalue / 10 - 32) / 1.8).toFixed(1);
+      return Math.round10((returnvalue * 0.1 - 32) / 1.8, -1);
     case 'InsideHumidity':
       return returnvalue;
     case 'OutsideTemperature':
-      return ((returnvalue / 10 - 32) / 1.8).toFixed(1);
+      return Math.round10((returnvalue * 0.1 - 32) / 1.8, -1);
     case 'WindSpeed':
       //console.log('base WindSpeed',returnvalue)
-      return Math.floor((returnvalue * 0.45) * 10) / 10;
+      return Math.round10(returnvalue * 0.44704, -1);
     case 'Min10AvgWindSpeed':
-      return Math.floor((returnvalue * 0.45) * 10) / 10;
+      return Math.round10(returnvalue * 0.44704, -1);
     case 'WindDirection':
       //console.log('WindDirection', DataValue)
-      var res = (DataValue / 45).toFixed(0);
-      if (res >= 8 || res < 0)
-        res = 0;
+      var res = Math.round(DataValue / 45);
+      res = res >= 8 || res < 0 ? 0 : res;
       return res;
     case 'ExtraTemperatures':
     case 'SoilTemperatures':
@@ -121,11 +135,12 @@ class Converter extends ProtocolConverter {
     case 'ExtraHumidties':
       return returnvalue;
     case 'RainRate':
-      return (returnvalue * 0.2).toFixed(1);
+      return Math.round10(returnvalue * 0.2, -1);
     case 'UV':
     case 'SolarRadiation':
-    case 'StormRain':
       return returnvalue;
+    case 'StormRain':
+      return Math.round10(returnvalue * 0.2, -1);
     default:
       return returnvalue;
     }
@@ -135,3 +150,33 @@ class Converter extends ProtocolConverter {
   
 } 
 module.exports = Converter;
+
+
+// if __main process
+if (require !== undefined && require.main === module) {
+  console.log('__main__');
+  //** OutsideTemperature
+  let arr = [
+    '4c4f4f00001101b2752e023dff010b0b6301ffffffffffffffffffffffffffffff46ffffffffffffff0000001a000000ffff0000ce001b027900bc006902ffffffffffffff000000000000000000000000000000000000b900062c9302d8070a0d7802',
+    '4c4f4f00001001b3752f023dff010f0b0500ffffffffffffffffffffffffffffff46ffffffffffffff0000001a000000ffff0000ce001b027900bc006902ffffffffffffff000000000000000000000000000000000000bb00062c9302d8070a0d71f2',
+    '4c4f4f14007801ce751f0242f50101018b00ffffffffffffffffffffffffffffff4effffffffffffff00000000000000ffff0000ce001b027c00bc006902ffffffffffffff000000000000000000000000000000000000f20008019302d8070a0ddc7a',
+    '4c4f4f00000901b17530023d00020a0b5f01ffffffffffffffffffffffffffffff47ffffffffffffff00000023000000ffff0000ce001b027900bc006902ffffffffffffff000000000000000000000000000000000000d000062c9302d8070a0d161b',
+    '4c4f4f00001d04cb75fc0149ff0101007900ffffffffffffffffffffffffffffff4affffffffffffff0000067d000000ffff0000ce001b020400c9007602ffffffffffffff000000000000000000000000000000000000ad00062c9302d9070a0d220e',
+    '4c4f4f000054099875c8014b970103039800ffffffffffffffffffffffffffffff58ffffffffffffff00000000000000ffff0000ce001b020200d9008602ffffffffffffff000000000000000000000000000000000000b900062c9202da070a0d395d',
+    '4c4f4f000054099875c8014b970103039800ffffffffffffffffffffffffffffff58ffffffffffffff00000000000000ffff0000ce001b020200d9008602ffffffffffffff000000000000000000000000000000000000b900062c9202da070a0d395d',
+    '064c4f4f000054099875c8014b970103039800ffffffffffffffffffffffffffffff58ffffffffffffff00000000000000ffff0000ce001b020200d9008602ffffffffffffff000000000000000000000000000000000000b900062c9202da070a0d39',
+    '4c4f4f000054099875c8014b970103039800ffffffffffffffffffffffffffffff58ffffffffffffff00000000000000ffff0000ce001b020200d9008602ffffffffffffff000000000000000000000000000000000000b900062c9202da070a0d395d'
+  ];
+    
+  let con = new Converter();
+  arr.forEach(currentItem => {
+    let buf = Buffer.from(currentItem, 'hex');
+    let res = con.parsingUpdateData('LOOP\n', buf);
+    console.dir(res.data.OutsideTemperature);
+      
+  });
+    
+
+}
+
+
