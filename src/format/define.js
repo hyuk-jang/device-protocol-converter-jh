@@ -1,17 +1,15 @@
 
 /**
  * @typedef {Object} deviceClientFormat Device Client 생성 자료 구조
- * @property {Object=} user Device Client 주체. (최종적으로 데이터를 수신할 대상)
- * @property {boolean} hasOneAndOne 계속하여 연결을 수립할지 여부
  * @property {string} target_id device ID
- * @property {string} target_category inverter, connector 등등 장치 타입
- * @property {string} target_protocol s_hex, dm_v2, ... 장치의 프로토콜
- * @property {string} connect_type 'socket', 'serial', ...
- * @property {number|string} port socket --> number, serial --> string, ...
- * @property {string} host 접속 경로(socket 일 경우 사용)
- * @property {number} baud_rate serial 일 경우 
- * @property {{type: string, option: *}=} parser serial 일 경우 pipe 처리할 parser option
- * @property {{dialing: Buffer}} protocol 프로토콜 컨버터에서 사용되는 옵션
+ * @property {string} target_category inverter, connector, weather
+ * @property {string} target_protocol s_hex, dm_v2, ...
+ * @property {protocolConstructorConfig} protocolConstructorConfig
+ */
+
+/** 
+ * @typedef {Object} protocolConstructorConfig 프로토콜 생성자에 넘겨줄 설정 데이터
+ * @property {string|Buffer} deviceId
  */
 
 /**
@@ -26,4 +24,9 @@
  * 'fail' : Parsing 실패
  */
 
+/**
+ * @typedef {Object} generationCmdConfig 생성시킬 명령을 호출하는 형식
+ * @property {string} cmdKey 생성 시킬 명령 고유 키(각 프로토콜 컨버터마다 존재. 해당 API 참조)
+ * @property {string=} target 작동 시킬 대상(각 프로토콜 컨버터마다 존재. 해당 API 참조)
+ */
 

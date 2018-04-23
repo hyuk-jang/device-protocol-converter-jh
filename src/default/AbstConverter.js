@@ -26,9 +26,7 @@ class AbstConverter {
     try {
       const DeviceProtocolConverter = require(path);
       // BU.CLIN(DeviceProtocolConverter, 4);
-      const protocolConverter = new DeviceProtocolConverter();
-      // BU.CLIN(protocolConverter, 4);
-      this.protocolConverter = protocolConverter;
+      this.protocolConverter = new DeviceProtocolConverter(this.config.protocolConstructorConfig);
       return true;
     } catch (error) {
       throw error;
@@ -38,15 +36,15 @@ class AbstConverter {
   /**
    * 장치를 조회 및 제어하기 위한 명령 생성. 
    * cmd가 있다면 cmd에 맞는 특정 명령을 생성하고 아니라면 기본 명령을 생성
-   * @param {*=} cmdKey 각 Protocol Converter에 맞는 데이터
+   * @param {generationCmdConfig} generationCmdConfig 각 Protocol Converter에 맞는 데이터
    * @return {Array} 장치를 조회하기 위한 명령 리스트 반환
    */
-  generationCommand(cmdKey){
+  generationCommand(generationCmdConfig){
     if(!this.protocolConverter){
       throw new Error('protocolConverter가 설정되지 않았습니다.');
     }
     try {
-      return this.protocolConverter.generationCommand(cmdKey);
+      return this.protocolConverter.generationCommand(generationCmdConfig);
     } catch (error) {
       throw error;      
     }

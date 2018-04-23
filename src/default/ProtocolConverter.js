@@ -1,5 +1,6 @@
 // const EventEmitter = require('events');
-const BU = require('base-util-jh').baseUtil;
+const {BU} = require('base-util-jh');
+const _ = require('lodash');
 
 const AbstConverter = require('./AbstConverter');
 
@@ -221,7 +222,7 @@ class Converter extends AbstConverter {
    * @param {Number} scale 배율. 계산한 후 소수점 절삭 1자리
    */
   applyObjCalculateScale(obj, scale, toFixed) {
-    _.each(obj, (value, key) => {
+    _.forEach(obj, (value, key) => {
       obj[key] = this.applyValueCalculateScale(value, scale, toFixed);
     });
     return obj;
