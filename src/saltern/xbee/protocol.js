@@ -1,10 +1,12 @@
 exports.encodingProtocolTable = {
   waterDoor: [{
     requestCmd: 'open',
-    responseCmd: '@cgo'
+    responseCmd: '@cgo',
+    hasAction: true
   },{
     requestCmd: 'close',
-    responseCmd: '@cgc'
+    responseCmd: '@cgc',
+    hasAction: true
   },{
     requestCmd: 'status',
     responseCmd: '@sts'
@@ -22,20 +24,24 @@ exports.encodingProtocolTable = {
   }],
   valve: [{
     requestCmd: 'open',
-    responseCmd: '@cvo'
+    responseCmd: '@cvo',
+    hasAction: true
   },{
     requestCmd: 'close',
-    responseCmd: '@cvc'
+    responseCmd: '@cvc',
+    hasAction: true
   },{
     requestCmd: 'status',
     responseCmd: '@sts'
   }],
   pump: [{
     requestCmd: 'open',
-    responseCmd: '@cpo'
+    responseCmd: '@cpo',
+    hasAction: true
   },{
     requestCmd: 'close',
-    responseCmd: '@cpc'
+    responseCmd: '@cpc',
+    hasAction: true
   },{
     requestCmd: 'status',
     responseCmd: '@sts'
