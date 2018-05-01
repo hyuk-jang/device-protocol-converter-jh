@@ -24,41 +24,25 @@ class Converter extends ProtocolConverter {
   /**
    * 장치를 조회 및 제어하기 위한 명령 생성. 
    * cmd가 있다면 cmd에 맞는 특정 명령을 생성하고 아니라면 기본 명령을 생성
-   * @param {generationCmdConfig} generationCmdConfig 각 Protocol Converter에 맞는 데이터
+   * @param {{cmd: string, cmdList: Array.<{cmd: string, timeout: number=}>}} generationInfo 각 Protocol Converter에 맞는 데이터
    * @return {Array.<xbeeApi_0x10>} 장치를 조회하기 위한 명령 리스트 반환
    */
-  generationCommand(generationCmdConfig){
-    let cmd = generationCmdConfig.cmdKey;
-    let target = generationCmdConfig.target;
-    const frameId = this.xbeeAPI.nextFrameId();
-
-
+  generationCommand(generationInfo){
     const returnValue = [];
+    const frameId = this.xbeeAPI.nextFrameId();
+    generationInfo.cmdList.forEach(cmdInfo => {
+      /** @type {xbeeApi_0x10} */
+      let frameObj = {
+        type: 0x10,
+        id: frameId,
+        destination64: this.config.deviceId,
+        data: cmdInfo.cmd,
+        delayTimeout: _.isNumber(cmdInfo.timeout) && cmdInfo.timeout
+      };
+      returnValue.push(frameObj);
+    });
 
-
-    const cmdList = [];
-
-    let foundIt = _.find(this.encodingTable[target], {requestCmd: cmd});
-    cmdList.push(_.get(foundIt, 'responseCmd')); 
-    // 장치 제어를 하는 경우라면 
-    if(foundIt.hasAction){
-      cmdList.push(_.chain(this.encodingTable[target]).find({requestCmd: 'status'}).get('responseCmd').value());
-    }
-
-
-
-
-    /** @type {xbeeApi_0x10} */
-    let frameObj = {
-      type: 0x10,
-      id: frameId,
-      destination64: this.config.deviceId,
-      data: _.chain(this.encodingTable[target]).find({requestCmd: cmd}).get('responseCmd').value()
-    };
-    // frameId가 생성되었다면 관리
-    _.isNumber(frameId) && this.frameIdList.push(frameId);
-
-    return [returnValue];
+    return returnValue;
   }
 
   /**

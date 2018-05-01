@@ -2,13 +2,30 @@ const AbstConverter = require('./src/default/AbstConverter');
 require('./src/format/define');
 
 /** Intelligence를 위함 */
+require('./src/saltern/xbee/control');
+
+let controlCommand = {
+  saltern: {
+    xbee: require('./src/saltern/xbee/controlCommand')
+  },
+  weathercast: {
+    vantagepro2: require('./src/weathercast/vantagepro2/controlCommand')
+  }
+};
+
+let protocolFormat = {
+  weathercast: require('./src/weathercast/baseFormat')
+};
+
 const weathercastProtocolFormat =  require('./src/weathercast/baseFormat');
 
 
 
 module.exports = {
   AbstConverter,
-  weathercastProtocolFormat
+  weathercastProtocolFormat,
+  protocolFormat,
+  controlCommand
 };
 
 // if __main process
