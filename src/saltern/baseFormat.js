@@ -8,8 +8,10 @@ module.exports = {
    * @type {number=}
    * @example
    * GATE_STOPPED,   // 0
-	 * GATE_CLOSED,    // 1
 	 * GATE_OPENED     // 2
+	 * GATE_OPENING,    // 3
+	 * GATE_CLOSED,    // 4
+	 * GATE_OPENING,    // 5
    */
   waterDoor: null,
   /**
@@ -17,7 +19,7 @@ module.exports = {
    * @description WL
    * @type {number=}
    * @example
-   * 1 ~ 4 Level,   // 1 ~ 4
+   * 0: 0Level, 1: 1 Level, 3: 2 Level, 7: 3 Level
    */
   waterLevel: null,
   /**

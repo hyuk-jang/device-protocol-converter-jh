@@ -1,26 +1,26 @@
 
 
-exports.deviceModel = {
+const deviceModel = {
   /**
    * @type {string} 수문
    */
-  WATER_DOOR: 'WATER_DOOR',
+  WATER_DOOR: 'waterDoor',
   /**
    * @type {string} 밸브
    */
-  VALVE: 'VALVE',
+  VALVE: 'valve',
   /**
    * @type {string} 펌프
    */
-  PUMP: 'PUMP',
+  PUMP: 'pump',
   /**
    * @type {string} 수위
    */
-  WATER_LEVEL: 'WATER_LEVEL',
+  WATER_LEVEL: 'waterLevel',
   /**
    * @type {string} 염도
    */
-  SALINITY: 'SALINITY',
+  SALINITY: 'salinity',
   /**
    * @type {string} 수중 온도
    */
@@ -33,30 +33,36 @@ exports.deviceModel = {
    * @type {string} 모듈 뒷면 온도
    */
   MODULE_REAR_TEMPERATURE: 'MODULE_REAR_TEMPERATURE',
+
 };
+exports.deviceModel = deviceModel;
 
 
 
-exports.deviceStatus = {
+const deviceStatus = {
   /** @type {Object} 수문 상태*/
   WATER_DOOR: {
     /** @type {number} 정지 */
     STOPPED: 0,
-    /** @type {number} 닫힘 */
-    CLOSED: 1,
     /** @type {number} 열림 */
     OPENED: 2,
+    /** @type {number} 여는 중 */
+    OPENING: 3,
+    /** @type {number} 닫힘 */
+    CLOSED: 4,
+    /** @type {number} 닫는 중 */
+    CLOSING: 5,
   },
   /** @type {Object} 수위 */
   WATER_LEVEL: {
+    /** @type {number} 0 단계 (수위없음) */
+    ZERO: 0,
     /** @type {number} 1 단계 (최저) */
     ONE: 1,
     /** @type {number} 2 단계 */
-    TWO: 2,
-    /** @type {number} 3 단계 */
-    THREE: 3,
-    /** @type {number} 4 단계 (최대) */
-    FOUR: 4,
+    TWO: 3,
+    /** @type {number} 3 단계 (최대) */
+    THREE: 7,
   },
   /** @type {Object} 밸브 */
   VALVE: {
@@ -66,7 +72,7 @@ exports.deviceStatus = {
     CLOSED: 1,
     /** @type {number} 열림 */
     OPENED: 2,
-    /** @type {number} ?? */
+    /** @type {number} 작업 상태 */
     BUSY: 3,
     /** @type {number} 닫는 중 */
     CLOSING: 4,
@@ -82,3 +88,4 @@ exports.deviceStatus = {
   }
 
 };
+exports.deviceStatus = deviceStatus;

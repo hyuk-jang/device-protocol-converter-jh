@@ -56,5 +56,5 @@
  * @property {number} remote64: "0013a20040522baa",
  * @property {number} remote16: "7d84",
  * @property {number} receiveOptions: 0x01,
- * @property {number} data: [ 0x52, 0x78, 0x44, 0x61, 0x74, 0x61 ]
+ * @property {Buffer} data: [ 0x52, 0x78, 0x44, 0x61, 0x74, 0x61 ]
  */ 

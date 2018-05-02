@@ -1,3 +1,5 @@
+const {deviceModel, deviceStatus} = require('./model');
+
 exports.encodingProtocolTable = {
   waterDoor: [{
     requestCmd: 'open',
@@ -58,7 +60,7 @@ exports.decodingProtocolTable = (dialing) => {
     waterDoor: {
       dialing,
       address: '0001',
-      length: '12'    // 수신할 데이터 Byte
+      length: 12,    // 수신할 데이터 Byte,
     },
     valve: {
       dialing,

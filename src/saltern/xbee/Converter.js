@@ -119,10 +119,30 @@ class Converter extends ProtocolConverter {
     BU.CLI(xbeeApi_0x90);
     const data = xbeeApi_0x90.data;
 
-    let STX = _.head(data);
-
+    let STX = _.pullAt(data, 0);
     // STX 체크 (# 문자 동일 체크)
     if(_.isEqual(STX, 0x23)){
+      let boardId = _.pullAt(_.range(4));
+      let productType = _.pullAt(_.range(4));
+
+      if(_.isBuffer(productType)){
+        productType = this.convertBuffer2Char2Dec(productType);
+
+        switch (productType) {
+        case 1:
+          return this.decodingGateLevelSalinity(data);
+        case 2:
+          return this.decodingValve(data);
+        case 3:
+          return this.decodingPump(data);
+        default:
+          throw new Error(`productType: ${productType}은 Parsing 대상이 아닙니다.`);
+        }
+
+      } else {
+        throw new Error(`productType: ${productType}이 이상합니다.`);
+      }
+
 
     } else {
       throw new Error('STX가 일치하지 않습니다.');
@@ -135,7 +155,16 @@ class Converter extends ProtocolConverter {
   }
 
 
-  decodingWaterDoor(){
+  /**
+   * 
+   * @param {Buffer} data 
+   */
+  decodingGateLevelSalinity(data){
+    let returnValue = this.getDefaultValue();
+
+    _.pullAt(data, _.range(2));
+
+
 
   }
 
