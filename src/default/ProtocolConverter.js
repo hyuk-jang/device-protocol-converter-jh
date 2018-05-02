@@ -2,6 +2,8 @@
 const {BU} = require('base-util-jh');
 const _ = require('lodash');
 
+const {definedCommanderResponse} = require('../format/moduleDefine');
+
 const AbstConverter = require('./AbstConverter');
 
 class Converter extends AbstConverter {
@@ -9,6 +11,8 @@ class Converter extends AbstConverter {
     super();
 
     this.resultMakeMsg2Buffer = [];
+
+    this.definedCommanderResponse = definedCommanderResponse;
   }
 
   /** 
@@ -273,6 +277,13 @@ class Converter extends AbstConverter {
   }
 
 
+  /**
+   * 
+   * @param {dcData} dcData 
+   */
+  getCurrTransferCmd(dcData){
+    return _.get(_.nth(dcData.commandSet.cmdList, dcData.commandSet.currCmdIndex), 'data'); 
+  }
 
 }
 module.exports = Converter;

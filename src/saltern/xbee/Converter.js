@@ -82,18 +82,21 @@ class Converter extends ProtocolConverter {
 
   /**
    * 데이터 분석 요청
-   * @param {xbeeApi_0x8B|xbeeApi_0x90} data 수신 데이터
+   * @param {dcData} dcData 장치로 요청한 명령
    * @return {parsingResultFormat}
    */
-  parsingUpdateData(data) {
+  parsingUpdateData(dcData){
+    let requestData = this.getCurrTransferCmd(dcData);
+    /** @type {xbeeApi_0x8B|xbeeApi_0x90} */
+    let responseData = dcData.data;
     /** @type {parsingResultFormat} */
     const returnValue = {};
     // 해당 프로토콜에서 생성된 명령인지 체크
-    switch (data.type) {
+    switch (responseData.type) {
     case 0x88:
       return this.processDataResponseAT();
     case 0x90:
-      return this.processDataReceivePacketZigBee(data);
+      return this.processDataReceivePacketZigBee(dcData.data);
     default:
       return returnValue;
     }

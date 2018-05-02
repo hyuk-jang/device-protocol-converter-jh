@@ -52,18 +52,17 @@ class AbstConverter {
 
   /**
    * 데이터 분석 요청
-   * @param {*} requestData 장치로 요청한 명령
-   * @param {*} responseData 장치에서 수신한 데이터
-   * @return {parsingResultFormat} Parsing Event : code, Parsing 
+   * @param {dcData} dcData 장치로 요청한 명령
+   * @return {parsingResultFormat}
    */
-  parsingUpdateData(requestData, responseData){
+  parsingUpdateData(dcData){
     // BU.CLIS(requestData, responseData);
     if(!this.protocolConverter){
       throw new Error('protocolConverter가 설정되지 않았습니다.');
     }
 
     try {
-      return this.protocolConverter.parsingUpdateData(requestData, responseData);
+      return this.protocolConverter.parsingUpdateData(dcData);
     } catch (error) {
       throw error;      
     }

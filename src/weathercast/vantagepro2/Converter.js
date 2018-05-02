@@ -34,7 +34,7 @@ class Converter extends ProtocolConverter {
    * @return {parsingResultFormat}
    */
   parsingUpdateData(dcData){
-    let requestData = dcData.commandSet.cmdList[dcData.commandSet.currCmdIndex];
+    let requestData = this.getCurrTransferCmd(dcData);
     let responseData = dcData.data;
     /** @type {parsingResultFormat} */
     const returnvalue = {};
@@ -42,9 +42,9 @@ class Converter extends ProtocolConverter {
     if('LOOP\n' === requestData){
       let bufferData = responseData instanceof Buffer ? responseData : Buffer.from(responseData);
 
-      let STX = bufferData.slice(0, 4);
-      if(STX.toString() !== Buffer.from([0x4c, 0x4f, 0x4f, 0x00]).toString()){
-        returnvalue.eventCode = 'wait';
+      let STX = bufferData.slice(0, 3);
+      if(STX.toString() !== Buffer.from([0x4c, 0x4f, 0x4f]).toString()){
+        returnvalue.eventCode = this.definedCommanderResponse.WAIT;
         returnvalue.data = {};
         return returnvalue;
       }
@@ -54,7 +54,7 @@ class Converter extends ProtocolConverter {
       } else if (bufferData.length == 99) {
         addValue = 0;
       } else {
-        returnvalue.eventCode = 'wait';
+        returnvalue.eventCode = this.definedCommanderResponse.WAIT;
         returnvalue.data = {};
         return returnvalue;
       }
@@ -93,7 +93,7 @@ class Converter extends ProtocolConverter {
         vantagePro2Data[result.key] = result.value;
       });
 
-      returnvalue.eventCode = 'done';
+      returnvalue.eventCode = this.definedCommanderResponse.DONE;
       returnvalue.data = vantagePro2Data;
 
       return returnvalue;
