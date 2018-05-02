@@ -1,4 +1,4 @@
-const BU = require('base-util-jh').baseUtil;
+const {BU} = require('base-util-jh');
 const ProtocolConverter = require('../../default/ProtocolConverter');
 const protocol = require('./protocol');
 // const baseFormat = require('../baseFormat');
@@ -13,18 +13,29 @@ class Converter extends ProtocolConverter {
    * 장치를 조회 및 제어하기 위한 명령 생성. 
    * cmd가 있다면 cmd에 맞는 특정 명령을 생성하고 아니라면 기본 명령을 생성
    * @return {Array} 장치를 조회하기 위한 명령 리스트 반환
+   * @return {Array.<commandInfo>} 장치를 조회하기 위한 명령 리스트 반환
    */
   generationCommand(){
-    return ['LOOP\n'];
+    /** @type {Array.<commandInfo>} */
+    // const returnValue = [];
+        
+    /** @type {commandInfo} */
+    const commandObj = {};
+    commandObj.data = 'LOOP\n';
+    commandObj.commandExecutionTimeoutMs = 1000;
+
+    return [commandObj];
+    // return ['LOOP\n'];
   }
 
   /**
    * 데이터 분석 요청
-   * @param {*} requestData 장치로 요청한 명령
-   * @param {*} responseData 장치에서 수신한 데이터
+   * @param {dcData} dcData 장치로 요청한 명령
    * @return {parsingResultFormat}
    */
-  parsingUpdateData(requestData, responseData){
+  parsingUpdateData(dcData){
+    let requestData = dcData.commandSet.cmdList[dcData.commandSet.currCmdIndex];
+    let responseData = dcData.data;
     /** @type {parsingResultFormat} */
     const returnvalue = {};
 

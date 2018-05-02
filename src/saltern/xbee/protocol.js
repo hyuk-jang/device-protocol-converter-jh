@@ -57,7 +57,7 @@ exports.decodingProtocolTable = (dialing) => {
   return {
     waterDoor: {
       dialing,
-      address: '0000',
+      address: '0001',
       length: '12'    // 수신할 데이터 Byte
     },
     valve: {

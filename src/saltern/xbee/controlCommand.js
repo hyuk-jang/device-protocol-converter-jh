@@ -24,7 +24,13 @@ module.exports = {
   },
   salinity: {
     MEASURE: {
-      cmd: '@cgc'
+      cmd: '@cgm',
+      cmdList: [{
+        cmd: '@cgm'
+      }, {
+        timeout: 1000 * 10,
+        cmd: '@sts'
+      }]
     },
     STATUS: {
       cmd: '@sts'
@@ -46,9 +52,9 @@ module.exports = {
       }]
     },
     CLOSE: {
-      cmd: '@cgc',
+      cmd: '@cvc',
       cmdList: [{
-        cmd: '@cgc'
+        cmd: '@cvc'
       }, {
         timeout: 1000 * 10,
         cmd: '@sts'

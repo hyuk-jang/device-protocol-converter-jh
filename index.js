@@ -2,7 +2,7 @@ const AbstConverter = require('./src/default/AbstConverter');
 require('./src/format/define');
 
 /** Intelligence를 위함 */
-require('./src/saltern/xbee/control');
+// require('./src/saltern/xbee/control');
 
 let controlCommand = {
   saltern: {
