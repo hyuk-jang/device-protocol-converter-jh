@@ -1,3 +1,5 @@
+
+
 /**
  * @module baseFormat 스마트 염전 장치 데이터 가이드라인
  */
@@ -5,13 +7,9 @@ module.exports = {
   /**
    * 수문(Water Door)
    * @description WD
-   * @type {number=}
+   * @type {string=}
    * @example
-   * GATE_STOPPED,   // 0
-	 * GATE_OPENED     // 2
-	 * GATE_OPENING,    // 3
-	 * GATE_CLOSED,    // 4
-	 * GATE_OPENING,    // 5
+   * STOP, OPEN, OPENING, CLOSE, CLOSING
    */
   waterDoor: null,
   /**
@@ -19,7 +17,7 @@ module.exports = {
    * @description WL
    * @type {number=}
    * @example
-   * 0: 0Level, 1: 1 Level, 3: 2 Level, 7: 3 Level
+   * ZERO, ONE, TWO, THREE
    */
   waterLevel: null,
   /**
@@ -31,23 +29,17 @@ module.exports = {
   /**
    * 밸브(Valve)
    * @description V
-   * @type {number=}
+   * @type {string=}
    * @example
-   * VALVE_UNDEF,     //0
-   * VALVE_CLOSE,     //1
-   * VALVE_OPEN,      //2
-   * VALVE_BUSY,      //3
-   * VALVE_CLOSING,   //4
-   * VALVE_OPENING,   //5
+   * UNDEF, CLOSE, OPEN, CLOSING, OPENING
    */
   valve: null,
   /**
    * 펌프(Pump)
    * @description P
-   * @type {number=}
+   * @type {string=}
    * @example
-   * PUMP_OFF,     // 0
-   * PUMP_ON,      // 1
+   * ON, OFF
    */
   pump: null,  
   /**
@@ -55,6 +47,21 @@ module.exports = {
    * @type {number=}
    */
   battery: null,  
+  /**
+   * 수온, 단위[℃]
+   * @type {number=}
+   */
+  waterTemperature: null,  
+  /**
+   * 모듈 전면 온도, 단위[℃]
+   * @type {number=}
+   */
+  moduleFrontTemperature: null,  
+  /**
+   * 모듈 뒷면 온도, 단위[℃]
+   * @type {number=}
+   */
+  moduleRearTemperature: null,  
 
 
 };

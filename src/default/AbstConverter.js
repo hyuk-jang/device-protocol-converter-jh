@@ -2,7 +2,7 @@
 
 const BU = require('base-util-jh').baseUtil;
 
-require('../format/define');
+require('../format/defaultDefine');
 
 class AbstConverter {
   /**

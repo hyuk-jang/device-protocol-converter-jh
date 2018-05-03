@@ -3,7 +3,7 @@ const ProtocolConverter = require('../../default/ProtocolConverter');
 const protocol = require('./protocol');
 // const baseFormat = require('../baseFormat');
 
-require('../../format/define');
+require('../../format/defaultDefine');
 class Converter extends ProtocolConverter {
   constructor() {
     super();
@@ -182,7 +182,8 @@ if (require !== undefined && require.main === module) {
   let con = new Converter();
   arr.forEach(currentItem => {
     let buf = Buffer.from(currentItem, 'hex');
-    let res = con.parsingUpdateData('LOOP\n', buf);
+    
+    let res = con.parsingUpdateData({commandSet: {currCmdIndex:0, cmdList:[{data:'LOOP\n'}]}, data: buf});
     console.dir(res.data.OutsideTemperature);
       
   });

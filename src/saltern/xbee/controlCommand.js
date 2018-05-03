@@ -28,7 +28,7 @@ module.exports = {
       cmdList: [{
         cmd: '@cgm'
       }, {
-        timeout: 1000 * 10,
+        timeout: 1000,
         cmd: '@sts'
       }]
     },

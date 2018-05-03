@@ -69,10 +69,13 @@ class Converter extends AbstConverter {
 
   /**
    * 
-   * @param {Number} dec 10진수 number, Buffer로 바꿀 값
-   * @param {Number} byteLength Hex to Ascii Buffer 후 Byte Length. Buffer의 길이가 적을 경우 앞에서부터 0 채움
+   * @param {number} dec 10진수 number, Buffer로 바꿀 값
+   * @param {number} byteLength Hex to Ascii Buffer 후 Byte Length. Buffer의 길이가 적을 경우 앞에서부터 0 채움
+   * @return {Buffer}
+   * @example
+   * (Dec) 65 -> (Hex)'41' -> <Buffer 30 30 34 31>
    */
-  convertNum2Hx2Buffer(dec, byteLength) {
+  convertNumToHexToBuf(dec, byteLength) {
     let hex = dec.toString(16);
     hex = this.pad(hex, byteLength || 4);
     return Buffer.from(hex, 'ascii');
@@ -80,20 +83,49 @@ class Converter extends AbstConverter {
 
   /**
    * Buffer를 Ascii Char로 변환 후 해당 값을 Hex Number로 인식하고 Dec Number로 변환
-   * <Buffer 30 30 34 31> -> (Hex)'0041' -> (Dec) 65
    * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34> 
-   * @returns {Number} Dec
+   * @returns {number} Dec
+   * @example
+   * <Buffer 30 30 34 31> -> (Hex)'0041' -> (Dec) 65
    */
-  convertBuffer2Char2Dec(buffer) {
+  convertBufToHexToDec(buffer) {
     let str = buffer.toString();
     return Number(this.converter().hex2dec(str));
   }
 
   /**
+   * Buffer를 Ascii Char로 변환 후 반환
+   * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34> 
+   * @returns {string} 
+   * @example
+   * <Buffer 30 30 34 31> -> (Hex)'0041'
+   */
+  convertBufToHex(buffer) {
+    return buffer.toString();
+  }
+  
+  /**
+   * Buffer를 Ascii Char로 변환 후 해당 값을 Hex Number로 인식하고 Dec Number로 변환
+   * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34> 
+   * @param {string} encoding 
+   * @returns {number} Dec
+   * @example
+   * <Buffer 30 30 34 31> -> (Hex)'0041' -> (Dec) 41
+   */
+  convertBufToHexToNum(buffer, encoding) {
+    let strValue = encoding ? buffer.toString(encoding) : buffer.toString();
+    return isNaN(strValue) ? strValue : Number(strValue);
+  }
+
+
+  /**
    * Buffer Hx를 binaryLength * Count(Buffer Length) = Binary String 으로 치환하여 반환
    * @param {Buffer} buffer Buffer
+   * @return {string}
+   * @example
+   * <Buffer 30 30 34 31> -> (Hex)'0041' -> (string) '0000000001000001'
    */
-  convertBuffer2Binary(buffer, binaryLength) {
+  convertBufToHexToBin(buffer, binaryLength) {
     let returnValue = '';
     buffer.forEach(element => {
       let bin = this.converter().hex2bin(element);
@@ -106,13 +138,15 @@ class Converter extends AbstConverter {
 
   /**
    * Ascii Char String 을 binaryLength * Count(String) = Binary String 으로 치환하여 반환
-   * @param {String} asciiChar ascii char를 2진 바이너리로 변환하여 반환
+   * @param {String} asciiString ascii char를 2진 바이너리로 변환하여 반환
+   * @example
+   * (Hex)'0041' -> (string) '0000000001000001'
    */
-  convertChar2Binary(asciiChar, binaryLength) {
+  convertHexToBin(asciiString, binaryLength) {
     let returnValue = '';
 
-    for (let index = 0; index < asciiChar.length; index++) {
-      let bin = this.converter().hex2bin(asciiChar.charAt(index));
+    for (let index = 0; index < asciiString.length; index++) {
+      let bin = this.converter().hex2bin(asciiString.charAt(index));
       returnValue = returnValue.concat(this.pad(bin, binaryLength || 4));
     }
     return returnValue;
@@ -283,6 +317,19 @@ class Converter extends AbstConverter {
    */
   getCurrTransferCmd(dcData){
     return _.get(_.nth(dcData.commandSet.cmdList, dcData.commandSet.currCmdIndex), 'data'); 
+  }
+
+
+  /**
+   * 
+   * @param {Buffer} buffer 
+   * @param {number|number[]} index 
+   */
+  pullAtBuffer(buffer, ...index){
+    let returnBuffer = [];
+
+
+
   }
 
 }

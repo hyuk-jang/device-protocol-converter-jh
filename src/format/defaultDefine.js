@@ -58,3 +58,14 @@
  * @property {Timer=} commandExecutionTimer [Running Time Made] 명령 발송 후 응답까지 기다리는 SetTimeout
  * @property {Timer=} commandQueueReturnTimer [Running Time Made] 진행할 명령의 지연시간이 존재할 경우 standbyCommandSetList 대기열로 돌아오기까지의 SetTimeout
  */
+
+
+
+/**
+ * @typedef {Object} decondigInfo 수신받은 Buffer 데이터를 Parsing 하는데 필요한 정보
+ * @property {string} key baseFormat Key
+ * @property {number} byte Byte Length
+ * @property {number=} startIndex 시작 
+ * @property {string} callMethod Protocol Converter에 저장되어 있는 메소드 명
+ * 
+ */  
