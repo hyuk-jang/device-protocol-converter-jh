@@ -3,8 +3,28 @@ require('./src/format/defaultDefine');
 
 /** Intelligence를 위함 */
 // require('./src/saltern/xbee/control');
+const operationController = {
+  saltern: {
+    xbee: require('./src/saltern/xbee/controlCommand')
+  },
+  weathercast: {
+    vantagepro2: require('./src/weathercast/vantagepro2/controlCommand')
+  }
+};
 
-const {baseFormat, deviceStatus, operationController} = require('./src/SetAPI');
+
+const baseFormat = {
+  saltern: require('./src/saltern/baseFormat'),
+  weathercast: {
+    vantagepro2: require('./src/weathercast/vantagepro2/controlCommand')
+  }
+};
+
+const deviceStatus = {
+  saltern: require('./src/saltern/baseModel').deviceModel,
+};
+
+
 
 module.exports = {
   AbstConverter,
@@ -27,8 +47,8 @@ if (require !== undefined && require.main === module) {
     console.log(err.message);
     console.log('Node NOT Exiting...');
   });
-  
-  
+
+
   process.on('unhandledRejection', function (err) {
     // BU.debugConsole();
     console.error(err.stack);

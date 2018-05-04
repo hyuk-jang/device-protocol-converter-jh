@@ -65,7 +65,7 @@ module.exports = {
     }
   },
   pump: {
-    OPEN: {
+    ON: {
       cmd: '@cpo',
       cmdList: [{
         cmd: '@cpo'
@@ -74,7 +74,7 @@ module.exports = {
         cmd: '@sts'
       }]
     },
-    CLOSE: {
+    OFF: {
       cmd: '@cpc',
       cmdList: [{
         cmd: '@cpc'
