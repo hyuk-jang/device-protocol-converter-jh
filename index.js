@@ -16,12 +16,12 @@ const operationController = {
 const baseFormat = {
   saltern: require('./src/saltern/baseFormat'),
   weathercast: {
-    vantagepro2: require('./src/weathercast/vantagepro2/controlCommand')
+    vantagepro2: require('./src/weathercast/baseFormat')
   }
 };
 
 const deviceStatus = {
-  saltern: require('./src/saltern/baseModel').deviceModel,
+  saltern: require('./src/saltern/baseModel').deviceModelStatus,
 };
 
 
