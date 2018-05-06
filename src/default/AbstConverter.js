@@ -26,7 +26,7 @@ class AbstConverter {
     try {
       const DeviceProtocolConverter = require(path);
       // BU.CLIN(DeviceProtocolConverter, 4);
-      this.protocolConverter = new DeviceProtocolConverter(this.config.protocolConstructorConfig);
+      this.protocolConverter = new DeviceProtocolConverter(this.config.protocol_info);
       return true;
     } catch (error) {
       throw error;

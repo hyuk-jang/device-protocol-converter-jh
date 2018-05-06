@@ -15,11 +15,11 @@ const onDeviceOperationStatus = {
     /** @type {string} 열림 */
     2: deviceModelStatus.WATER_DOOR.OPEN,
     /** @type {string} 여는 중 */
-    3: deviceModelStatus.WATER_DOOR.OPENING,
+    3: deviceModelStatus.WATER_DOOR.CLOSING,
     /** @type {string} 닫힘 */
     4: deviceModelStatus.WATER_DOOR.CLOSE,
     /** @type {string} 닫는 중 */
-    5: deviceModelStatus.WATER_DOOR.CLOSING,
+    5: deviceModelStatus.WATER_DOOR.OPENING,
   },
   /** @type {Object} 수위 */
   [deviceModel.WATER_LEVEL]: {
