@@ -53,10 +53,10 @@ const onDeviceOperationStatus = {
   },
   /** @type {Object} 펌프 */
   [model.PUMP.KEY]: {
-    /** @type {number} 켜짐 */
-    0: model.PUMP.STATUS.ON,
     /** @type {number} 꺼짐 */
-    1: model.PUMP.STATUS.OFF,
+    0: model.PUMP.STATUS.OFF,
+    /** @type {number} 켜짐 */
+    1: model.PUMP.STATUS.ON,
   }
 
 };

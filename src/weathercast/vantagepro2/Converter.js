@@ -1,12 +1,16 @@
 const {BU} = require('base-util-jh');
 const ProtocolConverter = require('../../default/ProtocolConverter');
 const protocol = require('./protocol');
-// const baseFormat = require('../baseFormat');
+
+const Model = require('./Model');
+
 
 require('../../format/defaultDefine');
 class Converter extends ProtocolConverter {
   constructor() {
     super();
+
+    this.baseModel = new Model();
   }
 
   /**
@@ -21,7 +25,7 @@ class Converter extends ProtocolConverter {
         
     /** @type {commandInfo} */
     const commandObj = {};
-    commandObj.data = 'LOOP\n';
+    commandObj.data = this.baseModel.DEFAULT.COMMAND.MEASURE;
     commandObj.commandExecutionTimeoutMs = 1000;
 
     return [commandObj];

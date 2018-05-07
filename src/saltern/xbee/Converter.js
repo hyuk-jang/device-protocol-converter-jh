@@ -156,7 +156,8 @@ class Converter extends ProtocolConverter {
           throw new Error(`productType: ${productType}은 Parsing 대상이 아닙니다.`);
         }
 
-        BU.CLI(decodingDataList.decodingDataList);
+        
+        // BU.CLI(decodingDataList.decodingDataList);
         const hasValid = _.chain(decodingDataList.decodingDataList).map('byte').sum().isEqual(dataBody.length).value();
         if (!hasValid) {
           throw new Error(`데이터의 길이(${dataBody.length})가 맞지 않습니다.`);
