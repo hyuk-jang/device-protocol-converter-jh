@@ -7,12 +7,12 @@ require('../format/defaultDefine');
 class AbstConverter {
   /**
    * 프로토콜 컨버터를 사용하기 위한 옵션
-   * @param {deviceClientFormat} config 
+   * @param {protocol_info} config 
    */
   constructor(config) {
     this.config = config;
-    // console.dir(this.config);
     /** @type {AbstConverter} */
+    // BU.CLI(this.config);
     this.protocolConverter = null;
 
   }
@@ -20,13 +20,13 @@ class AbstConverter {
   /** protocolConverter 설정함 */
   setProtocolConverter(){
     // BU.CLIS(this.config.target_category, this.config.target_protocol);
-    const path = `../${this.config.target_category}/${this.config.target_protocol}/Converter`;
+    const path = `../${this.config.mainCategory}/${this.config.subCategory}/Converter`;
     // let path = '../weathercast/vantagepro2/Converter';
     // BU.CLI(path);
     try {
       const DeviceProtocolConverter = require(path);
       // BU.CLIN(DeviceProtocolConverter, 4);
-      this.protocolConverter = new DeviceProtocolConverter(this.config.protocol_info);
+      this.protocolConverter = new DeviceProtocolConverter(this.config);
       return true;
     } catch (error) {
       throw error;

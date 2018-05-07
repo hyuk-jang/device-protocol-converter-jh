@@ -12,8 +12,11 @@ require('../../format/defaultDefine');
 require('./define');
 const baseFormat = require('../baseFormat');
 
+// const Model = require('./Model');
+// const model = new Model();
+
 class Converter extends ProtocolConverter {
-  /** @param {protocolConstructorConfig} config */
+  /** @param {protocol_info} config */
   constructor(config) {
     super();
     this.config = config;
@@ -153,6 +156,7 @@ class Converter extends ProtocolConverter {
           throw new Error(`productType: ${productType}은 Parsing 대상이 아닙니다.`);
         }
 
+        BU.CLI(decodingDataList.decodingDataList);
         const hasValid = _.chain(decodingDataList.decodingDataList).map('byte').sum().isEqual(dataBody.length).value();
         if (!hasValid) {
           throw new Error(`데이터의 길이(${dataBody.length})가 맞지 않습니다.`);

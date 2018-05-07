@@ -4,11 +4,8 @@ const _ = require('lodash');
 
 const {definedCommanderResponse} = require('../format/moduleDefine');
 
-const AbstConverter = require('./AbstConverter');
-
-class Converter extends AbstConverter {
+class Converter {
   constructor() {
-    super();
 
     this.resultMakeMsg2Buffer = [];
 

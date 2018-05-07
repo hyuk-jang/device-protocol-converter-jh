@@ -4,24 +4,27 @@ const _ = require('lodash');
 
 const Converter = require('../../src/saltern/xbee/Converter');
 
-const controlCommand = require('../../src/saltern/xbee/controlCommand');
+const Model = require('../../src/saltern/xbee/Model');
+const model = new Model();
 
-describe.skip('encoding Test 1', () => {
+BU.CLIN(model);
+
+describe('encoding Test 1', () => {
   const converter = new Converter({deviceId:'0013A20010215369'} );
   it('encoding Xbee', done => {
 
-    let cmdInfo = converter.generationCommand(controlCommand.waterDoor.OPEN);
+    let cmdInfo = converter.generationCommand(model.WATER_DOOR.COMMAND.OPEN);
     let genCmdInfo =_.head(cmdInfo);
     expect(genCmdInfo.data.destination64).to.eq('0013A20010215369');
-    expect(genCmdInfo.data.data).to.eq(controlCommand.waterDoor.OPEN.cmd);
-    expect(_.nth(cmdInfo, 1).data.data).to.be.equal(controlCommand.waterDoor.STATUS.cmd);
+    expect(genCmdInfo.data.data).to.eq(model.WATER_DOOR.COMMAND.OPEN.cmd);
+    expect(_.nth(cmdInfo, 1).data.data).to.be.equal(model.WATER_DOOR.COMMAND.STATUS.cmd);
 
     BU.CLI(cmdInfo);
-    cmdInfo = converter.generationCommand(controlCommand.valve.CLOSE);
+    cmdInfo = converter.generationCommand(model.VALVE.COMMAND.CLOSE);
     genCmdInfo =_.head(cmdInfo);
     expect(genCmdInfo.data.destination64).to.be.eq('0013A20010215369');
-    expect(genCmdInfo.data.data).to.be.equal(controlCommand.valve.CLOSE.cmd);
-    expect(_.nth(cmdInfo, 1).data.data).to.be.equal(controlCommand.valve.STATUS.cmd);
+    expect(genCmdInfo.data.data).to.be.equal(model.VALVE.COMMAND.CLOSE.cmd);
+    expect(_.nth(cmdInfo, 1).data.data).to.be.equal(model.VALVE.COMMAND.STATUS.cmd);
 
     BU.CLI(converter.frameIdList); 
 

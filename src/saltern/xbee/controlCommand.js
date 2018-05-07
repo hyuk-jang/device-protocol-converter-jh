@@ -1,5 +1,5 @@
 module.exports = {
-  waterDoor: {
+  WATER_DOOR: {
     OPEN: {
       cmd: '@cgo',
       cmdList: [{
@@ -22,7 +22,7 @@ module.exports = {
       cmd: '@sts'
     }
   },
-  salinity: {
+  SALINITY: {
     MEASURE: {
       cmd: '@cgm',
       cmdList: [{
@@ -36,12 +36,12 @@ module.exports = {
       cmd: '@sts'
     }
   },
-  waterLevel: {
+  WATER_LEVEL: {
     STATUS: {
       cmd: '@sts'
     }
   },
-  valve: {
+  VALVE: {
     OPEN: {
       cmd: '@cvo',
       cmdList: [{
@@ -64,7 +64,7 @@ module.exports = {
       cmd: '@sts'
     }
   },
-  pump: {
+  PUMP: {
     ON: {
       cmd: '@cpo',
       cmdList: [{
