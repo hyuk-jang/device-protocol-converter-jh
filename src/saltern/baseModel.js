@@ -28,6 +28,7 @@ class BaseModel {
       },
       /** @type {string} 수문 */
       KEY: 'waterDoor',
+      NAME: '수문'
     };
 
     this.VALVE = {
@@ -45,6 +46,7 @@ class BaseModel {
       },
       /** @type {string} 밸브 */
       KEY: 'valve',
+      NAME: '밸브'
     };
 
     this.PUMP = {
@@ -59,6 +61,7 @@ class BaseModel {
       },
       /** @type {string} 펌프 */
       KEY: 'pump',
+      NAME: '펌프'
     };
 
     this.WATER_LEVEL = {
@@ -71,8 +74,9 @@ class BaseModel {
       COMMAND: {
         STATUS: {}
       },
-      /** @type {string} 수문 */
+      /** @type {string} 수위 */
       KEY: 'waterLevel',
+      NAME: '수위'
     };
 
     this.SALINITY = {
@@ -83,6 +87,7 @@ class BaseModel {
       },
       /** @type {string} 염도 */
       KEY: 'salinity',
+      NAME: '염도'
     };
 
     this.WATER_TEMPERATURE = {
@@ -92,6 +97,7 @@ class BaseModel {
       },
       /** @type {string} 수중 온도 */
       KEY: 'waterTemperature',
+      NAME: '수온'
     };
 
     this.MODULE_FRONT_TEMPERATURE = {
@@ -101,6 +107,7 @@ class BaseModel {
       },
       /** @type {string} 모듈 앞면 온도 */
       KEY: 'moduleFrontTemperature',
+      NAME: '모듈 온도'
     };
 
     this.MODULE_REAR_TEMPERATURE = {
@@ -110,6 +117,7 @@ class BaseModel {
       },
       /** @type {string} 모듈 뒷면 온도 */
       KEY: 'moduleRearTemperature',
+      NAME: '모듈 온도'
     };
 
     this.BATTERY = {
@@ -119,6 +127,7 @@ class BaseModel {
       },
       /** @type {string} 배터리 전압 */
       KEY: 'battery',
+      NAME: '배터리 전압'
     };
     
     if(type){

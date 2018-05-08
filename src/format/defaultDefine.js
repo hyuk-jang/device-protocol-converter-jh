@@ -52,10 +52,13 @@
  * @typedef {Object} commandSet 명령 수행 자료 구조
  * @property {number} rank 우선순위 (0: 긴급 명령으로 현재 진행되고 있는 명령 무시하고 즉시 해당 명령 수행, 1: 1순위 명령, 2: 2순위 명령 ...) 기본 값 2
  * @property {string} commandId 해당 명령 통합 ID
+ * @property {string} commandType 명령 통합의 요청, 삭제 (ADD, CANCEL)
+ * @property {string} commandName 해당 명령 집합 단위 이름
  * @property {Array.<commandInfo>} cmdList 명령을 보낼 배열
  * @property {number} currCmdIndex cmdList Index
  * @property {number} operationStatus 명령 수행 상태
  * @property {AbstCommander} commander [Auto Made] 명령을 요청한 Commander
+ * @property {boolean} hasErrorHandling [Auto Made] 에러가 발생하였을 경우 다음 명령 진행을 멈출지 여부
  * @property {boolean} hasOneAndOne [Auto Made] 계속하여 연결을 수립할지 여부
  * @property {Timer=} commandExecutionTimer [Running Time Made] 명령 발송 후 응답까지 기다리는 SetTimeout
  * @property {Timer=} commandQueueReturnTimer [Running Time Made] 진행할 명령의 지연시간이 존재할 경우 standbyCommandSetList 대기열로 돌아오기까지의 SetTimeout
