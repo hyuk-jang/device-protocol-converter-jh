@@ -3,6 +3,7 @@ require('./src/format/defaultDefine');
 
 /** Intelligence를 위함 */
 const BaseModel = {
+  default: require('./src/default/DefaultModel'),
   Saltern: require('./src/saltern/baseModel'),
   Weathercast: require('./src/weathercast/baseModel')
 };
