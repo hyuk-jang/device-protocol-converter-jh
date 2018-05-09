@@ -5,9 +5,7 @@ class Model extends BaseModel {
   constructor() {
     super();
 
-    this.DEFAULT.COMMAND.MEASURE = {
-      cmd: 'LOOP'
-    };
+    this.DEFAULT.COMMAND.MEASURE = 'LOOP\n';
   }
 }
 

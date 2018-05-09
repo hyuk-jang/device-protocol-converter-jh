@@ -1,3 +1,5 @@
+'use strict';
+const _ = require('lodash');
 const {BU} = require('base-util-jh');
 const ProtocolConverter = require('../../default/ProtocolConverter');
 const protocol = require('./protocol');
@@ -43,7 +45,7 @@ class Converter extends ProtocolConverter {
     /** @type {parsingResultFormat} */
     const returnvalue = {};
 
-    if('LOOP\n' === requestData){
+    if(_.includes(requestData, this.baseModel.DEFAULT.COMMAND.MEASURE)){
       let bufferData = responseData instanceof Buffer ? responseData : Buffer.from(responseData);
 
       let STX = bufferData.slice(0, 3);
