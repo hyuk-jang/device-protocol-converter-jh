@@ -52,7 +52,15 @@ describe('Decoding Test', function() {
       remote64: '0013a20040f7ab6c',
       remote16: 'e77b',
       receiveOptions: 1,
-      data:{'type':'Buffer','data':[35,48,48,48,49,48,48,48,49,48,52,48,48,48,48,48,48,49,48,46,50,]}};
+      data:{'type':'Buffer','data':[35,
+        48,48,48,49,
+        48,48,48,50
+        ,48,49
+        ,48,55,
+        49,48,48,48,46,48
+        ,48,48,50,50,46,55,
+        48,57,46,55]}};
+      // data:{'type':'Buffer','data':[35,48,48,48,49,48,48,48,49,48,52,48,48,48,48,48,48,49,48,46,50,]}};
     responseData.data = Buffer.from(responseData.data);
 
     let decodingObj = converter.parsingUpdateData({data: responseData});

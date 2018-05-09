@@ -42,7 +42,7 @@ class Model extends BaseModel {
       cmdList: [{
         cmd: '@cvo'
       }, {
-        timeout: 1000 * 10,
+        timeout: 1000 * 15,
         cmd: '@sts'
       }]
     };
@@ -52,7 +52,7 @@ class Model extends BaseModel {
       cmdList: [{
         cmd: '@cvc'
       }, {
-        timeout: 1000 * 10,
+        timeout: 1000 * 15,
         cmd: '@sts'
       }]
     };
@@ -67,10 +67,12 @@ class Model extends BaseModel {
     /** 펌프 */
     this.PUMP.COMMAND.ON = {
       cmd: '@cpo',
+      // 펌프 킬때는 명령을 내리고 10초 후에 킴
       cmdList: [{
+        timeout: 1000 * 10,
         cmd: '@cpo'
       }, {
-        timeout: 1000 * 10,
+        timeout: 1000 * 5,
         cmd: '@sts'
       }]
     };
@@ -80,7 +82,7 @@ class Model extends BaseModel {
       cmdList: [{
         cmd: '@cpc'
       }, {
-        timeout: 1000 * 10,
+        timeout: 1000 * 5,
         cmd: '@sts'
       }]
     };

@@ -36,8 +36,9 @@ class BaseModel {
         UNDEF: 'UNDEF',
         CLOSE: 'CLOSE',
         OPEN: 'OPEN',
-        CLOSING: 'CLOSING',
-        OPENING: 'OPENING',
+        BUSY: 'BUSY',
+        // CLOSING: 'CLOSING',
+        // OPENING: 'OPENING',
       },
       COMMAND: {
         OPEN: {},
