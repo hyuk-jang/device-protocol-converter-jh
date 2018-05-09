@@ -19,9 +19,7 @@ class AbstConverter {
 
   /** protocolConverter 설정함 */
   setProtocolConverter(){
-    // BU.CLIS(this.config.target_category, this.config.target_protocol);
     const path = `../${this.config.mainCategory}/${this.config.subCategory}/Converter`;
-    // let path = '../weathercast/vantagepro2/Converter';
     // BU.CLI(path);
     try {
       const DeviceProtocolConverter = require(path);

@@ -1,12 +1,4 @@
 
-/**
- * @typedef {Object} deviceClientFormat Device Client 생성 자료 구조
- * @property {string} target_id device ID
- * @property {string} target_category inverter, connector, weather
- * @property {string} target_protocol s_hex, dm_v2, ...
- * @property {protocol_info} protocol_info
- */
-
 /** 
  * @typedef {Object} protocol_info 프로토콜 생성자에 넘겨줄 설정 데이터
  * @property {string} mainCategory
