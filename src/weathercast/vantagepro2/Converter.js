@@ -13,6 +13,7 @@ class Converter extends ProtocolConverter {
     super();
 
     this.baseModel = new Model();
+    // BU.CLIN(this.baseModel);
   }
 
   /**
@@ -28,7 +29,7 @@ class Converter extends ProtocolConverter {
     /** @type {commandInfo} */
     const commandObj = {};
     commandObj.data = this.baseModel.DEFAULT.COMMAND.MEASURE;
-    commandObj.commandExecutionTimeoutMs = 1000;
+    commandObj.commandExecutionTimeoutMs = 1000 * 10;
 
     return [commandObj];
     // return ['LOOP\n'];
@@ -40,13 +41,15 @@ class Converter extends ProtocolConverter {
    * @return {parsingResultFormat}
    */
   parsingUpdateData(dcData){
+    // BU.CLIN(dcData);
     let requestData = this.getCurrTransferCmd(dcData);
     let responseData = dcData.data;
+    // BU.CLI(responseData);
     /** @type {parsingResultFormat} */
     const returnvalue = {};
-
+    
     if(_.includes(requestData, this.baseModel.DEFAULT.COMMAND.MEASURE)){
-      let bufferData = responseData instanceof Buffer ? responseData : Buffer.from(responseData);
+      let bufferData = responseData instanceof Buffer ? responseData : this.makeMsg2Buffer(responseData);
 
       let STX = bufferData.slice(0, 3);
       if(STX.toString() !== Buffer.from([0x4c, 0x4f, 0x4f]).toString()){
@@ -64,7 +67,6 @@ class Converter extends ProtocolConverter {
         returnvalue.data = {};
         return returnvalue;
       }
-      
       protocol.forEach(protocol => {
         let startPoint = protocol.substr[0];
         let endPoint = protocol.substr[1];

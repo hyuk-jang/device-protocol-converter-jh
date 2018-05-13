@@ -11,7 +11,7 @@ class BaseModel {
         UNDEF: 'UNDEF'
       },
       COMMAND: {
-        MEASURE: {}
+        MEASURE: ''
       }
     };
 

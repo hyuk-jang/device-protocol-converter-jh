@@ -199,7 +199,7 @@ class Converter {
         if (Buffer.isBuffer(arg)) {
           this.resultMakeMsg2Buffer.push(arg);
         } else if (arg.type === 'Buffer') {
-          this.resultMakeMsg2Buffer.push(Buffer.from(arg));
+          this.resultMakeMsg2Buffer.push(Buffer.from(arg.data));
         } else {
           let strMsg = JSON.stringify(arg);
           this.resultMakeMsg2Buffer.push(Buffer.from(strMsg));
