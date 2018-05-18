@@ -64,5 +64,6 @@
  * @property {number} byte Byte Length
  * @property {number=} startIndex 시작 
  * @property {string} callMethod Protocol Converter에 저장되어 있는 메소드 명
- * 
+ * @prop {number=} scale 결과값에 곱할 배율
+ * @prop {number=} fixed 소수점 처리 할 자리수
  */  
