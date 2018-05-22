@@ -1,13 +1,12 @@
-
 'use strict';
 
 const _ = require('lodash');
-require('../format/defaultDefine');
 
 const baseFormat = require('./baseFormat');
 
 const ProtocolConverter =  require('../default/ProtocolConverter');
 
+require('../format/defaultDefine');
 class BaseModel extends ProtocolConverter {
   /** @param {protocol_info} protocol_info */
   constructor(protocol_info) {
@@ -80,14 +79,5 @@ class BaseModel extends ProtocolConverter {
    * @return {Buffer} Data Buffer만 리턴
    */
   checkValidate(responseBuf, decodingInfo){}
-
-  /**
-   * @param {string} cmd 명령 CODE
-   */
-  makeMsg(cmd){}
-
-
-  
-
 }
 module.exports = BaseModel;

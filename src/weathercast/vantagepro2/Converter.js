@@ -23,16 +23,13 @@ class Converter extends ProtocolConverter {
    * @return {Array.<commandInfo>} 장치를 조회하기 위한 명령 리스트 반환
    */
   generationCommand(){
-    /** @type {Array.<commandInfo>} */
-    // const returnValue = [];
-        
     /** @type {commandInfo} */
-    const commandObj = {};
-    commandObj.data = this.baseModel.DEFAULT.COMMAND.MEASURE;
-    commandObj.commandExecutionTimeoutMs = 1000 * 10;
+    const commandObj = {
+      data: this.baseModel.BASE.DEFAULT.COMMAND.MEASURE,
+      commandExecutionTimeoutMs: 1000 * 10
+    };
 
     return [commandObj];
-    // return ['LOOP\n'];
   }
 
   /**
@@ -41,74 +38,79 @@ class Converter extends ProtocolConverter {
    * @return {parsingResultFormat}
    */
   parsingUpdateData(dcData){
-    // BU.CLIN(dcData);
-    let requestData = this.getCurrTransferCmd(dcData);
-    let responseData = dcData.data;
-    // BU.CLI(responseData);
     /** @type {parsingResultFormat} */
-    const returnvalue = {};
+    const returnValue = {};
+
+    try {
+      let requestData = this.getCurrTransferCmd(dcData);
+      let responseData = dcData.data;
+      // BU.CLI(responseData);
     
-    if(_.includes(requestData, this.baseModel.DEFAULT.COMMAND.MEASURE)){
-      let bufferData = responseData instanceof Buffer ? responseData : this.makeMsg2Buffer(responseData);
+      if(_.includes(requestData, this.baseModel.BASE.DEFAULT.COMMAND.MEASURE)){
+        let bufferData = responseData instanceof Buffer ? responseData : this.makeMsg2Buffer(responseData);
 
-      let STX = bufferData.slice(0, 3);
-      if(STX.toString() !== Buffer.from([0x4c, 0x4f, 0x4f]).toString()){
-        returnvalue.eventCode = this.definedCommanderResponse.WAIT;
-        returnvalue.data = {};
-        return returnvalue;
-      }
-      let addValue = 0;
-      if (bufferData.length == 100) {
-        addValue = 1;
-      } else if (bufferData.length == 99) {
-        addValue = 0;
-      } else {
-        returnvalue.eventCode = this.definedCommanderResponse.WAIT;
-        returnvalue.data = {};
-        return returnvalue;
-      }
-      protocol.forEach(protocol => {
-        let startPoint = protocol.substr[0];
-        let endPoint = protocol.substr[1];
-        let realStartPoint = startPoint + endPoint - 1 + addValue;
-        let hexCode = '';
-        let hasError = false;
-        for (let i = realStartPoint; i >= startPoint + addValue; i--) {
-          let TargetValue = bufferData[i].toString(16);
-          if (TargetValue == 'ff') {
-            TargetValue = '00';
-            if(protocol.key === 'OutsideTemperature'){
-              hasError = true;
-            }
-          }
-  
-          if (TargetValue.length === 1) {
-            hexCode += '0';
-          }
-          hexCode += TargetValue;
+        let STX = bufferData.slice(0, 3);
+        if(STX.toString() !== Buffer.from([0x4c, 0x4f, 0x4f]).toString()){
+          returnValue.eventCode = this.definedCommanderResponse.WAIT;
+          returnValue.data = {};
+          return returnValue;
         }
-
-        if(hasError){
-          protocol.value = null;
+        let addValue = 0;
+        if (bufferData.length == 100) {
+          addValue = 1;
+        } else if (bufferData.length == 99) {
+          addValue = 0;
         } else {
-          protocol.value = this._ChangeData(protocol.key, this.converter().hex2dec(hexCode));
+          returnValue.eventCode = this.definedCommanderResponse.WAIT;
+          returnValue.data = {};
+          return returnValue;
         }
-      });
+        protocol.forEach(protocol => {
+          let startPoint = protocol.substr[0];
+          let endPoint = protocol.substr[1];
+          let realStartPoint = startPoint + endPoint - 1 + addValue;
+          let hexCode = '';
+          let hasError = false;
+          for (let i = realStartPoint; i >= startPoint + addValue; i--) {
+            let TargetValue = bufferData[i].toString(16);
+            if (TargetValue == 'ff') {
+              TargetValue = '00';
+              if(protocol.key === 'OutsideTemperature'){
+                hasError = true;
+              }
+            }
   
-      let vantagePro2Data = {};
-      protocol.forEach((protocol) => {
-        let result = this.getProtocolValue(protocol.key);
-        vantagePro2Data[result.key] = result.value;
-      });
+            if (TargetValue.length === 1) {
+              hexCode += '0';
+            }
+            hexCode += TargetValue;
+          }
 
-      returnvalue.eventCode = this.definedCommanderResponse.DONE;
-      returnvalue.data = vantagePro2Data;
+          if(hasError){
+            protocol.value = null;
+          } else {
+            protocol.value = this._ChangeData(protocol.key, this.converter().hex2dec(hexCode));
+          }
+        });
+  
+        let vantagePro2Data = {};
+        protocol.forEach((protocol) => {
+          let result = this.getProtocolValue(protocol.key);
+          vantagePro2Data[result.key] = result.value;
+        });
 
-      return returnvalue;
-    } else {
-      throw new Error('요청한 데이터에 문제가 있습니다.');
+        returnValue.eventCode = this.definedCommanderResponse.DONE;
+        returnValue.data = vantagePro2Data;
+
+        return returnValue;
+      } else {
+        throw new Error('요청한 데이터에 문제가 있습니다.');
+      }
+    } catch (error) {
+      returnValue.eventCode = this.definedCommanderResponse.ERROR;
+      returnValue.data = error;
+      return returnValue;
     }
-
   }
 
   getProtocolValue(findKey) {
