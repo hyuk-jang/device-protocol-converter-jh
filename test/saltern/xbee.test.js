@@ -7,8 +7,6 @@ const Converter = require('../../src/saltern/xbee/Converter');
 const Model = require('../../src/saltern/xbee/Model');
 const model = new Model();
 
-BU.CLIN(model);
-
 describe('encoding Test 1', () => {
   const converter = new Converter({deviceId:'0013A20010215369'} );
   it('encoding Xbee', done => {

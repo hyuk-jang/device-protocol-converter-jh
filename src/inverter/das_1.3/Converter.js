@@ -8,24 +8,22 @@ const protocol = require('./protocol');
 
 
 require('../../format/defaultDefine');
-require('./define');
-const baseFormat = require('../baseFormat');
-
-const Model = require('./Model');
+// require('./define');
+const BaseModel = require('../baseModel');
 
 class Converter extends ProtocolConverter {
-  /** @param {protocol_info} config */
-  constructor(config) {
+  /** @param {protocol_info} protocol_info */
+  constructor(protocol_info) {
     super();
-    this.config = config;
+    this.config = protocol_info;
     this.decodingTable = protocol.decodingProtocolTable(_.get(this.config, 'deviceId'));
     this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
 
     /** baseFormat Guide Line */
-    this.baseFormat = baseFormat;
+    this.model = new BaseModel(protocol_info);
+    this.baseFormat = this.model.baseFormat;
     // BU.CLI(this.baseFormat);
 
-    this.model = new Model();
   }
 
   /**
@@ -88,10 +86,10 @@ class Converter extends ProtocolConverter {
         decodingTable = this.decodingTable.PV;
         break;
       case 2:
-        decodingTable = this.decodingTable.GRID_1;
+        decodingTable = this.decodingTable.GRID_VOL;
         break;
       case 3:
-        decodingTable = this.decodingTable.GRID_2;
+        decodingTable = this.decodingTable.GRID_AMP;
         break;
       case 4:
         decodingTable = this.decodingTable.POWER;
@@ -106,7 +104,9 @@ class Converter extends ProtocolConverter {
       let dataBody = this.model.checkValidate(responseData, decodingTable);
 
       try {
-        return this.automaticDecoding(decodingTable.decodingDataList, dataBody);
+        returnValue.eventCode = this.definedCommanderResponse.DONE;
+        returnValue.data = this.automaticDecoding(decodingTable.decodingDataList, dataBody);
+        return returnValue;
       } catch (error) {
         throw error;
       }
@@ -134,10 +134,15 @@ class Converter extends ProtocolConverter {
         let thisBuf = data.slice(startIndex, startIndex + decodingInfo.byte);
         // 사용하는 메소드를 호출
         let convertValue = this[decodingInfo.callMethod](thisBuf);
+        convertValue = _.isNumber(decodingInfo.scale) && _.isNumber(decodingInfo.fixed) ? _.round(convertValue * decodingInfo.scale, decodingInfo.fixed) : convertValue;
         // 2차 가공 여부에 따라 변환
         if (_.includes(operationKeys, decodingInfo.key)) {
           const operationStauts = this.onDeviceOperationStatus[decodingInfo.key];
-          returnValue[decodingInfo.key] = operationStauts[convertValue];
+          let parsingData = _.get(operationStauts, convertValue);
+          if(decodingInfo.key === BaseModel.BASE_KEY.operTroubleList){
+            parsingData = _.isEmpty(parsingData) ? [] : [parsingData];
+          }
+          returnValue[decodingInfo.key] = parsingData;
         } else {
           returnValue[decodingInfo.key] = convertValue;
         }

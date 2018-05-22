@@ -103,7 +103,7 @@ module.exports = {
    * @description System 
    * @type {number=}
    */
-  sysCapa: null,
+  sysCapaKw: null,
   /**
    * 인버터 계통 전압, 단위[V] Line Volatage
    * @description System 

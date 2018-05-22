@@ -64,6 +64,8 @@ class Converter {
     return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
   }
 
+  // convertChrToHx
+
   /**
    * 
    * @param {number} dec 10진수 number, Buffer로 바꿀 값
@@ -178,6 +180,38 @@ class Converter {
       let hexCheckSum = this.converter().dec2hex(decCheckSum);
       return hexCheckSum;
     }
+  }
+
+
+  /**
+   * Buffer에서  옵션의 구분자를 제외하고 반환
+   * @param {Buffer|string} buffer 
+   * @param {Buffer|string} delimiter 
+   */
+  returnBufferExceptDelimiter(buffer, ...delimiter){
+    let strBuf = Buffer.isBuffer(buffer) ? buffer.toString() : this.makeMsg2Buffer(buffer).toString();
+
+    delimiter.forEach(del => {
+      let strDel = Buffer.isBuffer(del) ? del.toString() : this.makeMsg2Buffer(del).toString();
+      let rep = new RegExp(strDel, 'g');
+      strBuf = strBuf.replace(rep, '');
+    });
+    return this.makeMsg2Buffer(strBuf);
+  }
+
+  /**
+   * Buffer를 String으로 변환 후 옵션의 구분자를 제외하고 합산 계산 후 반환
+   * @param {Buffer|string} buffer 
+   * @param {string} delimiter 
+   */
+  getSumAllNumberOfDigit(buffer, ...delimiter){
+    let realBuf = this.returnBufferExceptDelimiter(buffer, delimiter);
+    
+    let strBuf = realBuf.toString();
+    let returnValue = 0;
+    _.forEach(strBuf, strNum => { returnValue += _.toNumber(this.converter().hex2dec(strNum));});
+
+    return returnValue;
   }
 
   /**

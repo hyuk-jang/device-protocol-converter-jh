@@ -5,24 +5,24 @@ const {
 require('../../format/defaultDefine');
 
 const Model = require('./Model');
-const model = new Model();
 
 const onDeviceOperationStatus = {
   /** @type {Object} 인버터 종류 */
-  [model.BASE_KEY.sysIsSingle]: {
+  [Model.BASE_KEY.sysIsSingle]: {
     /** @type {number} 단상 */
     1: 1,
     /** @type {number} 삼상 */
     3: 0,
   },
-  [model.BASE_KEY.operIsRun]: {
+  [Model.BASE_KEY.operIsRun]: {
     /** @type {number} 동작중 */
     0: 1,
     /** @type {number} 정지 */
     1: 0,
   },
-  /** @type {Object} 수위 */
-  [model.BASE_KEY.operTroubleList]: {
+  /** @type {Object} 프로텍션 리스트 */
+  [Model.BASE_KEY.operTroubleList]: {
+    0: {},
     1: {
       code: 'EARTH FAULT',
       msg: '누설 전류 검출 (일종의 누전상태)',
@@ -213,20 +213,20 @@ exports.decodingProtocolTable = (dialing) => {
       address: 0,
       length: 17, // 수신할 데이터 Byte,
       decodingDataList: [{
-        key: model.BASE_KEY.sysIsSingle,
+        key: Model.BASE_KEY.sysIsSingle,
         startIndex: 2,
         byte: 1,
-        callMethod: parsingMethod.convertBufToHexToDec,
+        callMethod: parsingMethod.convertBufToHexToNum,
       }, {
-        key: model.BASE_KEY.sysCapa,
+        key: Model.BASE_KEY.sysCapaKw,
         byte: 4,
-        callMethod: parsingMethod.convertBufToHexToDec,
+        callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
-        fixed: 1
+        fixed: 0
       }, {
-        key: model.BASE_KEY.sysLineVoltage,
+        key: Model.BASE_KEY.sysLineVoltage,
         byte: 3,
-        callMethod: parsingMethod.convertBufToHexToDec,
+        callMethod: parsingMethod.convertBufToHexToNum,
       }]
     },
     PV: {
@@ -235,70 +235,70 @@ exports.decodingProtocolTable = (dialing) => {
       address: 1,
       length: 20, // 수신할 데이터 Byte,
       decodingDataList: [{
-        key: model.BASE_KEY.pvVol,
+        key: Model.BASE_KEY.pvVol,
         byte: 3,
-        callMethod: parsingMethod.convertBufToHexToDec,
+        callMethod: parsingMethod.convertBufToHexToNum,
 
       }, {
-        key: model.BASE_KEY.pvAmp,
-        byte: 3,
-        callMethod: parsingMethod.convertBufToHexToDec,
+        key: Model.BASE_KEY.pvAmp,
+        byte: 4,
+        callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
         fixed: 1
       }, {
-        key: model.BASE_KEY.pvKw,
-        byte: 3,
-        callMethod: parsingMethod.convertBufToHexToDec,
+        key: Model.BASE_KEY.pvKw,
+        byte: 4,
+        callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
         fixed: 1
       }]
     },
-    GRID_1: {
+    GRID_VOL: {
       dialing,
       code: 'D',
       address: 2,
       length: 22, // 수신할 데이터 Byte,
       decodingDataList: [{
-        key: model.BASE_KEY.gridRsVol,
+        key: Model.BASE_KEY.gridRsVol,
         byte: 3,
-        callMethod: parsingMethod.convertBufToHexToDec,
+        callMethod: parsingMethod.convertBufToHexToNum,
       }, {
-        key: model.BASE_KEY.gridStVol,
+        key: Model.BASE_KEY.gridStVol,
         byte: 3,
-        callMethod: parsingMethod.convertBufToHexToDec,
+        callMethod: parsingMethod.convertBufToHexToNum,
       }, {
-        key: model.BASE_KEY.gridTrVol,
+        key: Model.BASE_KEY.gridTrVol,
         byte: 3,
-        callMethod: parsingMethod.convertBufToHexToDec,
+        callMethod: parsingMethod.convertBufToHexToNum,
       }, {
-        key: model.BASE_KEY.gridLf,
+        key: Model.BASE_KEY.gridLf,
         byte: 3,
-        callMethod: parsingMethod.convertBufToHexToDec,
+        callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
         fixed: 1
       }]
     },
-    GRID_2: {
+    GRID_AMP: {
       dialing,
       code: 'D',
       address: 3,
       length: 21, // 수신할 데이터 Byte,
       decodingDataList: [{
-        key: model.BASE_KEY.gridRsVol,
+        key: Model.BASE_KEY.gridRAmp,
         byte: 4,
-        callMethod: parsingMethod.convertBufToHexToDec,
+        callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
         fixed: 1
       }, {
-        key: model.BASE_KEY.gridSAmp,
+        key: Model.BASE_KEY.gridSAmp,
         byte: 4,
-        callMethod: parsingMethod.convertBufToHexToDec,
+        callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
         fixed: 1
       }, {
-        key: model.BASE_KEY.gridTAmp,
+        key: Model.BASE_KEY.gridTAmp,
         byte: 4,
-        callMethod: parsingMethod.convertBufToHexToDec,
+        callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
         fixed: 1
       }]
@@ -307,17 +307,17 @@ exports.decodingProtocolTable = (dialing) => {
       dialing,
       code: 'D',
       address: 4,
-      length: 21, // 수신할 데이터 Byte,
+      length: 19, // 수신할 데이터 Byte,
       decodingDataList: [{
-        key: model.BASE_KEY.powerGridKw,
+        key: Model.BASE_KEY.powerGridKw,
         byte: 4,
-        callMethod: parsingMethod.convertBufToHexToDec,
+        callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
         fixed: 1
       }, {
-        key: model.BASE_KEY.powerCpKwh,
+        key: Model.BASE_KEY.powerCpKwh,
         byte: 7,
-        callMethod: parsingMethod.convertBufToHexToDec,
+        callMethod: parsingMethod.convertBufToHexToNum,
       }]
     },
     OPERATION: {
@@ -326,15 +326,15 @@ exports.decodingProtocolTable = (dialing) => {
       address: 6,
       length: 12, // 수신할 데이터 Byte,
       decodingDataList: [{
-        key: model.BASE_KEY.operIsError,
+        key: Model.BASE_KEY.operIsError,
         byte: 1,
-        callMethod: parsingMethod.convertBufToHexToDec,
+        callMethod: parsingMethod.convertBufToHexToNum,
       }, {
-        key: model.BASE_KEY.operIsRun,
+        key: Model.BASE_KEY.operIsRun,
         byte: 1,
-        callMethod: parsingMethod.convertBufToHexToDec,
+        callMethod: parsingMethod.convertBufToHexToNum,
       }, {
-        key: model.BASE_KEY.operTroubleList,
+        key: Model.BASE_KEY.operTroubleList,
         byte: 1,
         callMethod: parsingMethod.convertBufToHex,
       }]
