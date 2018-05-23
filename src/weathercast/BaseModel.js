@@ -10,14 +10,12 @@ class BaseModel {
     this.baseFormat = baseFormat;
 
 
-    this.BASE = {
-      DEFAULT: {
-        STATUS: {
-          UNDEF: 'UNDEF'
-        },
-        COMMAND: {
-          MEASURE: ''
-        }
+    this.DEFAULT = {
+      STATUS: {
+        UNDEF: 'UNDEF'
+      },
+      COMMAND: {
+        MEASURE: ''
       }
     };
 

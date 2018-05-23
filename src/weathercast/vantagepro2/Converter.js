@@ -25,7 +25,7 @@ class Converter extends ProtocolConverter {
   generationCommand(){
     /** @type {commandInfo} */
     const commandObj = {
-      data: this.baseModel.BASE.DEFAULT.COMMAND.MEASURE,
+      data: this.baseModel.DEFAULT.COMMAND.MEASURE,
       commandExecutionTimeoutMs: 1000 * 10
     };
 
@@ -46,7 +46,7 @@ class Converter extends ProtocolConverter {
       let responseData = dcData.data;
       // BU.CLI(responseData);
     
-      if(_.includes(requestData, this.baseModel.BASE.DEFAULT.COMMAND.MEASURE)){
+      if(_.includes(requestData, this.baseModel.DEFAULT.COMMAND.MEASURE)){
         let bufferData = responseData instanceof Buffer ? responseData : this.makeMsg2Buffer(responseData);
 
         let STX = bufferData.slice(0, 3);
