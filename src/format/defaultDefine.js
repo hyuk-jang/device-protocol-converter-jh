@@ -4,6 +4,7 @@
  * @property {string} mainCategory
  * @property {string} subCategory
  * @property {string|Buffer} deviceId
+ * @property {*} option
  */
 
 /**

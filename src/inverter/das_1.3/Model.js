@@ -184,7 +184,7 @@ class Model extends BaseModel {
    * @param {string} cmd 명령 CODE
    */
   makeMsg(cmd){
-    let bufId = this.makeMsg2Buffer(this.dialing);
+    let bufId = this.makeMsg2Buffer(cmd);
 
     return Buffer.from(`^P${bufId.toString()}${cmd}`);
   }

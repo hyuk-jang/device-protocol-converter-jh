@@ -1,3 +1,6 @@
+'use strict';
+
+const _ = require('lodash');
 const {
   parsingMethod
 } = require('../../format/moduleDefine');
@@ -205,10 +208,14 @@ const onDeviceOperationStatus = {
 exports.onDeviceOperationStatus = onDeviceOperationStatus;
 
 
-exports.decodingProtocolTable = (dialing) => {
+/**
+ * 
+ * @param {protocol_info} protocol_info 
+ */
+exports.decodingProtocolTable = (protocol_info) => {
   return {
     SYSTEM: {
-      dialing,
+      dialing: _.get(protocol_info, 'deviceId'),
       code: 'D',
       address: 0,
       length: 17, // 수신할 데이터 Byte,
@@ -230,7 +237,7 @@ exports.decodingProtocolTable = (dialing) => {
       }]
     },
     PV: {
-      dialing,
+      dialing: _.get(protocol_info, 'deviceId'),
       code: 'D',
       address: 1,
       length: 20, // 수신할 데이터 Byte,
@@ -249,12 +256,12 @@ exports.decodingProtocolTable = (dialing) => {
         key: Model.BASE_KEY.pvKw,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
-        scale: 0.1,
-        fixed: 1
+        scale: _.get(protocol_info, 'option') === true ? 0.1 : 0.001,
+        fixed: _.get(protocol_info, 'option') === true ? 1 : 0,
       }]
     },
     GRID_VOL: {
-      dialing,
+      dialing: _.get(protocol_info, 'deviceId'),
       code: 'D',
       address: 2,
       length: 22, // 수신할 데이터 Byte,
@@ -279,7 +286,7 @@ exports.decodingProtocolTable = (dialing) => {
       }]
     },
     GRID_AMP: {
-      dialing,
+      dialing: _.get(protocol_info, 'deviceId'),
       code: 'D',
       address: 3,
       length: 21, // 수신할 데이터 Byte,
@@ -304,7 +311,7 @@ exports.decodingProtocolTable = (dialing) => {
       }]
     },
     POWER: {
-      dialing,
+      dialing: _.get(protocol_info, 'deviceId'),
       code: 'D',
       address: 4,
       length: 19, // 수신할 데이터 Byte,
@@ -312,8 +319,8 @@ exports.decodingProtocolTable = (dialing) => {
         key: Model.BASE_KEY.powerGridKw,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
-        scale: 0.1,
-        fixed: 1
+        scale: _.get(protocol_info, 'option') === true ? 0.1 : 0.001,
+        fixed: _.get(protocol_info, 'option') === true ? 1 : 0,
       }, {
         key: Model.BASE_KEY.powerCpKwh,
         byte: 7,
@@ -321,7 +328,7 @@ exports.decodingProtocolTable = (dialing) => {
       }]
     },
     OPERATION: {
-      dialing,
+      dialing: _.get(protocol_info, 'deviceId'),
       code: 'D',
       address: 6,
       length: 12, // 수신할 데이터 Byte,

@@ -12,11 +12,14 @@ require('../../format/defaultDefine');
 const BaseModel = require('../baseModel');
 
 class Converter extends ProtocolConverter {
-  /** @param {protocol_info} protocol_info */
+  /**
+   * protocol_info.option --> true: 3.3kW, any: 600W
+   * @param {protocol_info} protocol_info
+   */
   constructor(protocol_info) {
     super();
     this.config = protocol_info;
-    this.decodingTable = protocol.decodingProtocolTable(_.get(this.config, 'deviceId'));
+    this.decodingTable = protocol.decodingProtocolTable(protocol_info);
     this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
 
     /** baseFormat Guide Line */

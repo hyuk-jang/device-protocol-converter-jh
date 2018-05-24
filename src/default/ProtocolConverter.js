@@ -55,13 +55,21 @@ class Converter {
 
   /**
    * 기준이 되는 값(n)을 원하는 길이(width)에 맞춰 0을 앞부터 채워 반환
+   * 만약 결과 값의 길이가 width를 초과한다면 앞에서부터 데이터 삭제
    * @param {string} n 
    * @param {number} width 
    * @return {string}
    */
   pad(n, width) {
     n = n + '';
-    return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
+    let returnValue = n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
+
+    if(width < returnValue.length){
+      let sliceLength = returnValue.length - width;
+      returnValue = returnValue.slice(sliceLength);
+    }
+
+    return returnValue;
   }
 
   // convertChrToHx
@@ -78,6 +86,19 @@ class Converter {
     let hex = dec.toString(16);
     hex = this.pad(hex, byteLength || 4);
     return Buffer.from(hex, 'ascii');
+  }
+
+  /**
+   * 
+   * @param {number} dec 10진수 number, Buffer로 바꿀 값
+   * @param {number} byteLength Hex to Ascii Buffer 후 Byte Length. Buffer의 길이가 적을 경우 앞에서부터 0 채움
+   * @return {Buffer}
+   * @example
+   * (Dec) 41 ->  <Buffer 30 30 34 31>
+   */
+  convertNumToBuf(dec, byteLength) {
+    dec = this.pad(dec.toString(), byteLength || 4);
+    return Buffer.from(dec, 'ascii');
   }
 
   /**
@@ -218,7 +239,7 @@ class Converter {
    * Ascii Char To Ascii Hex
    */
   makeMsg2Buffer() {
-    // BU.CLI(arguments)
+    // BU.CLI(arguments);
     this.resultMakeMsg2Buffer = [];
     for (let index in arguments) {
       let arg = arguments[index];
