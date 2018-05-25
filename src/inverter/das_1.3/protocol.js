@@ -257,7 +257,7 @@ exports.decodingProtocolTable = (protocol_info) => {
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: _.get(protocol_info, 'option') === true ? 0.1 : 0.001,
-        fixed: _.get(protocol_info, 'option') === true ? 1 : 0,
+        fixed: _.get(protocol_info, 'option') === true ? 1 : 3,
       }]
     },
     GRID_VOL: {
@@ -320,7 +320,7 @@ exports.decodingProtocolTable = (protocol_info) => {
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: _.get(protocol_info, 'option') === true ? 0.1 : 0.001,
-        fixed: _.get(protocol_info, 'option') === true ? 1 : 0,
+        fixed: _.get(protocol_info, 'option') === true ? 1 : 3,
       }, {
         key: Model.BASE_KEY.powerCpKwh,
         byte: 7,

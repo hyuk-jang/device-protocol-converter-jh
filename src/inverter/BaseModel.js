@@ -25,36 +25,36 @@ class BaseModel extends ProtocolConverter {
           UNDEF: 'UNDEF'
         },
         COMMAND: {
-          STATUS: ''
+          STATUS: [Buffer.from('')]
         }
       },
       SYSTEM: {
         COMMAND: {
-          STATUS: ''
+          STATUS: [Buffer.from('')]
         },
         NAME: 'System'
       },
       PV: {
         COMMAND: {
-          STATUS: ''
+          STATUS: [Buffer.from('')]
         },
         NAME: 'PV'
       },
       GRID: {
         COMMAND: {
-          STATUS: ''
+          STATUS: [Buffer.from('')]
         },
         NAME: '계통'
       },
       POWER: {
         COMMAND: {
-          STATUS: ''
+          STATUS: [Buffer.from('')]
         },
         NAME: '발전량'
       },
       OPERATION_INFO: {
         COMMAND: {
-          STATUS: ''
+          STATUS: [Buffer.from('')]
         },
         NAME: '동작 정보'
       }

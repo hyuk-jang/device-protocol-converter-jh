@@ -237,12 +237,16 @@ class Converter {
 
   /**
    * Ascii Char To Ascii Hex
+   * @param {Buffer|string|string[]|number|number[]}
    */
-  makeMsg2Buffer() {
+  makeMsg2Buffer(...args) {
     // BU.CLI(arguments);
+    if(Buffer.isBuffer(args)){
+      return args;
+    }
     this.resultMakeMsg2Buffer = [];
-    for (let index in arguments) {
-      let arg = arguments[index];
+    _.forEach(args, arg => {
+      // let arg = args[index];
       // BU.CLIS(typeof arg)
       if (Array.isArray(arg)) {
         this._convertArray2Buffer(arg);
@@ -262,7 +266,7 @@ class Converter {
       } else {
         this.resultMakeMsg2Buffer.push(arg);
       }
-    }
+    });
     // BU.CLI(this.resultMakeMsg2Buffer)
     return Buffer.concat(this.resultMakeMsg2Buffer);
   }

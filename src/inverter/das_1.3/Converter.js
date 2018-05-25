@@ -77,7 +77,7 @@ class Converter extends ProtocolConverter {
 
     try {
       if(reqAddr !== resAddr){
-        throw new Error('Not Matching ReqAddr, ResAddr');
+        throw new Error(`Not Matching ReqAddr: ${reqAddr}, ResAddr: ${resAddr}`);
       } 
 
       let decodingTable;
@@ -109,6 +109,7 @@ class Converter extends ProtocolConverter {
       try {
         returnValue.eventCode = this.definedCommanderResponse.DONE;
         returnValue.data = this.automaticDecoding(decodingTable.decodingDataList, dataBody);
+        // BU.CLI(returnValue);
         return returnValue;
       } catch (error) {
         throw error;
@@ -129,6 +130,7 @@ class Converter extends ProtocolConverter {
     try {
       // 데이터를 집어넣을 기본 자료형을 가져옴
       let returnValue = this.getDefaultValue();
+      // BU.CLI(returnValue);
       // 도출된 자료가 2차 가공(ex: 0 -> Run, 1 -> Stop )이 필요한 경우
       const operationKeys = _.keys(this.onDeviceOperationStatus);
       let startIndex = 0;

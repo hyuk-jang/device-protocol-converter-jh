@@ -10,7 +10,8 @@ class Model extends BaseModel {
    */
   constructor(baseModel) {
     super();
-    this.dialing = _.get(baseModel, 'protocol_info.deviceId'); 
+    this.dialing = this.makeMsg2Buffer(_.get(baseModel, 'protocol_info.deviceId'));
+    // BU.CLI(this.dialing);
 
     this.SOP = Buffer.from('^');
     this.DELIMETER = Buffer.from(',');
@@ -176,17 +177,17 @@ class Model extends BaseModel {
   }
 
 
-
-
-
-
   /**
    * @param {string} cmd 명령 CODE
+   * @return {Buffer}
    */
   makeMsg(cmd){
-    let bufId = this.makeMsg2Buffer(cmd);
-
-    return Buffer.from(`^P${bufId.toString()}${cmd}`);
+    return Buffer.concat([
+      this.SOP,
+      this.REQ_CODE,
+      this.dialing,
+      Buffer.from(cmd)
+    ]);
   }
 }
 
