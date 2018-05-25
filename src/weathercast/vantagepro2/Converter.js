@@ -73,9 +73,9 @@ class Converter extends ProtocolConverter {
           let hasError = false;
           for (let i = realStartPoint; i >= startPoint + addValue; i--) {
             let TargetValue = bufferData[i].toString(16);
-            if (TargetValue == 'ff') {
+            if (TargetValue === 'ff') {
               TargetValue = '00';
-              if(protocol.key === 'OutsideTemperature'){
+              if(protocol.key === 'OutsideTemperature' || protocol.key === 'SolarRadiation'){
                 hasError = true;
               }
             }
