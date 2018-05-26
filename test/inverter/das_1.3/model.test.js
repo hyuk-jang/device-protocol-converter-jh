@@ -80,7 +80,7 @@ describe('Decoding Test', function() {
   });
 
   it('automaticDecoding', function(done) {
-    const converter = new Converter({deviceId:'001', subCategory: 'das_1.3'} );
+    const converter = new Converter({deviceId:'001', subCategory: 'das_1.3', option: true} );
 
     // 명령 생성
     let commandStorage = converter.generationCommand(model.BASE.DEFAULT.COMMAND.STATUS);
@@ -111,6 +111,7 @@ describe('Decoding Test', function() {
     dcData.commandSet.currCmdIndex = 1;
     dcData.data = Buffer.from('^D120001,400,0200,0080,18');
     res = converter.parsingUpdateData(dcData).data;
+    BU.CLI(res);
     expect(_.get(res, BaseModel.BASE_KEY.pvVol)).to.eq(400);
     expect(_.get(res, BaseModel.BASE_KEY.pvAmp)).to.eq(20);
     expect(_.get(res, BaseModel.BASE_KEY.pvKw)).to.eq(8);

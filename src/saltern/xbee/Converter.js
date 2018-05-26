@@ -5,15 +5,13 @@ const {
   BU
 } = require('base-util-jh');
 const ProtocolConverter = require('../../default/ProtocolConverter');
+const BaseModel = require('../BaseModel');
 const protocol = require('./protocol');
 
 
 require('../../format/defaultDefine');
-require('./define');
-const baseFormat = require('../baseFormat');
 
-// const Model = require('./Model');
-// const model = new Model();
+require('./define');
 
 class Converter extends ProtocolConverter {
   /** @param {protocol_info} config */
@@ -24,19 +22,7 @@ class Converter extends ProtocolConverter {
     this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
     this.xbeeAPI = new xbee_api.XBeeAPI();
     this.frameIdList = [];
-
-    /** baseFormat Guide Line */
-    this.baseFormat = baseFormat;
-    // BU.CLI(this.baseFormat);
   }
-
-  /**
-   * 스마트 염전 데이터 기본 가이드
-   */
-  getDefaultValue() {
-    return _.cloneDeep(this.baseFormat);
-  }
-
 
   /**
    * 장치를 조회 및 제어하기 위한 명령 생성. 
@@ -183,7 +169,7 @@ class Converter extends ProtocolConverter {
   automaticDecoding(decodingTable, data) {
     try {
       // 데이터를 집어넣을 기본 자료형을 가져옴
-      let returnValue = this.getDefaultValue();
+      let returnValue = BaseModel.BASE_MODEL;
       // 도출된 자료가 2차 가공(ex: 0 -> Open, 1 -> Close )이 필요한 경우
       const operationKeys = _.keys(this.onDeviceOperationStatus);
       let startIndex = 0;

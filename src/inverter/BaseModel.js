@@ -11,9 +11,7 @@ class BaseModel extends ProtocolConverter {
   /** @param {protocol_info} protocol_info */
   constructor(protocol_info) {
     super();
-    this.baseFormat = baseFormat;
-
-    
+    this.baseFormat = _.clone(baseFormat);
 
     if(protocol_info){
       this.protocol_info = protocol_info;
@@ -67,6 +65,12 @@ class BaseModel extends ProtocolConverter {
 
   }
 
+  /** 현재 카테고리에 있는 장치 데이터를 저장하기 위한 모델 */
+  static get BASE_MODEL() {
+    return Object.assign({}, baseFormat);
+  }
+
+  /** BASE_MODEL Key와 같은 값을 가진 Value를 매칭 후 반환 */
   static get BASE_KEY() {
     let baseKey = Object.assign({}, baseFormat);
     _.forEach(baseKey, (v, k) => baseKey[k] = k);

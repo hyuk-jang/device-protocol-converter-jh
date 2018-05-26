@@ -171,7 +171,7 @@ class Model extends BaseModel {
 
     // 구분자 제거
     dataBodyBuf =  this.returnBufferExceptDelimiter(dataBodyBuf, ',');
-    BU.CLI(dataBodyBuf);
+    // BU.CLI(dataBodyBuf);
 
     return dataBodyBuf;
   }
