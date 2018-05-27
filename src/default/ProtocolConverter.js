@@ -83,6 +83,7 @@ class Converter {
    * (Dec) 65 -> (Hex)'41' -> <Buffer 30 30 34 31>
    */
   convertNumToHexToBuf(dec, byteLength) {
+    if(!_.isNumber(dec)) return Buffer.from('');
     let hex = dec.toString(16);
     hex = this.pad(hex, byteLength || 4);
     return Buffer.from(hex, 'ascii');
@@ -97,6 +98,7 @@ class Converter {
    * (Dec) 41 ->  <Buffer 30 30 34 31>
    */
   convertNumToBuf(dec, byteLength) {
+    if(!_.isNumber(dec)) return Buffer.from('');
     dec = this.pad(dec.toString(), byteLength || 4);
     return Buffer.from(dec, 'ascii');
   }
@@ -109,6 +111,7 @@ class Converter {
    * <Buffer 30 30 34 31> -> (Hex)'0041' -> (Dec) 65
    */
   convertBufToHexToDec(buffer) {
+    if(!Buffer.isBuffer(buffer)) return null;
     let str = buffer.toString();
     return Number(this.converter().hex2dec(str));
   }
@@ -121,6 +124,7 @@ class Converter {
    * <Buffer 30 30 34 31> -> (Hex)'0041'
    */
   convertBufToHex(buffer) {
+    if(!Buffer.isBuffer(buffer)) return '';
     return buffer.toString();
   }
   
@@ -133,6 +137,7 @@ class Converter {
    * <Buffer 30 30 34 31> -> (Hex)'0041' -> (Dec) 41
    */
   convertBufToHexToNum(buffer, encoding) {
+    if(!Buffer.isBuffer(buffer)) return null;
     let strValue = encoding ? buffer.toString(encoding) : buffer.toString();
     return isNaN(strValue) ? strValue : Number(strValue);
   }
@@ -146,6 +151,7 @@ class Converter {
    * <Buffer 30 30 34 31> -> (Hex)'0041' -> (string) '0000000001000001'
    */
   convertBufToHexToBin(buffer, binaryLength) {
+    if(!Buffer.isBuffer(buffer)) return '';
     let returnValue = '';
     buffer.forEach(element => {
       let bin = this.converter().hex2bin(element);
@@ -163,6 +169,7 @@ class Converter {
    * (Hex)'0041' -> (string) '0000000001000001'
    */
   convertHexToBin(asciiString, binaryLength) {
+    if(!Buffer.isBuffer(asciiString)) return '';
     let returnValue = '';
 
     for (let index = 0; index < asciiString.length; index++) {
