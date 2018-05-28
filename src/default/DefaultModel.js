@@ -1,4 +1,6 @@
+const _ = require('lodash');
 const crc = require('crc');
+const {BU} = require('base-util-jh');
 const ProtocolConverter = require('./ProtocolConverter');
 
 module.exports = {
@@ -21,11 +23,12 @@ module.exports = {
         converter.ETX
       ]);
 
+      // BU.CLI(bufferStorage.toString());
       let crcValue = crc.crc16xmodem(bufferStorage.toString());
 
       let returnValue = [
         bufferStorage,
-        converter.convertNumToHexToBuf(crcValue, 2),
+        converter.convertNumToBuf(crcValue, 4),
         converter.EOT
       ];
 
@@ -40,16 +43,16 @@ module.exports = {
    * @return {Buffer}
    */
   decodingDefaultRequestMsgForTransfer: (buf) => {
-    // BU.CLI(buf)
+    const protocolConverter = new ProtocolConverter();
+    
     let indexSTX = buf.indexOf(0x02);
     let indexETX = buf.indexOf(0x03);
     let indexEOT = buf.indexOf(0x04);
     let crcValue = buf.slice(indexETX + 1, indexEOT);
     let bufBody = buf.slice(0, indexETX + 1);
-    // BU.CLI(bufBody)
     
     let baseCrcValue = crc.crc16xmodem(bufBody.toString());
-    // BU.CLI(baseCrcValue)
+    baseCrcValue = protocolConverter.pad(baseCrcValue, 4);
 
     if (crcValue.toString() === baseCrcValue.toString(16)) {
       return buf.slice(indexSTX + 1, indexETX);
