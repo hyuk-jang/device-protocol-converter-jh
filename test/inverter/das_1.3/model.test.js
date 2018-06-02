@@ -80,7 +80,7 @@ describe('Decoding Test', function() {
   });
 
   it('automaticDecoding', function(done) {
-    const converter = new Converter({deviceId:'001', subCategory: 'das_1.3', option: true} );
+    const converter = new Converter({deviceId:'001', subCategory: 'das_1.3', option: true, protocolOptionInfo:{hasTrackingData: true}} );
 
     // 명령 생성
     let commandStorage = converter.generationCommand(model.BASE.DEFAULT.COMMAND.STATUS);
@@ -96,10 +96,58 @@ describe('Decoding Test', function() {
 
 
     // 수신 받은 데이터 생성
+    let res;
+    // 0. 시스템 데이터 파싱, 에러 날 경우 강제 삭제 테스트
+    dcData.data = Buffer.from('^001,3,0100,380,24');
+    res = converter.parsingUpdateData(dcData).data;
+    BU.CLI(res);
+    expect(_.get(res, 'name')).to.eq('Error');
+    dcData.data = Buffer.from('^,,380,24');
+    res = converter.parsingUpdateData(dcData).data;
+    expect(_.get(res, 'name')).to.eq('Error');
+    dcData.data = Buffer.from('^D,24');
+    res = converter.parsingUpdateData(dcData).data;
+    expect(_.get(res, 'name')).to.eq('Error');
+    
+    // 정상 데이터가 들어와도 에러
+    dcData.data = Buffer.from('^D017001,3,0100,380,24');
+    res = converter.parsingUpdateData(dcData).data;
+    expect(_.get(res, 'name')).to.eq('Error');
+    
+    // 리셋 처리 후 정상 데이터가 들어오면 진행
+    converter.resetTrackingDataBuffer();
+    dcData.data = Buffer.from('^D017001,3,0100,380,24');
+    res = converter.parsingUpdateData(dcData).data;
+    BU.CLI(res);
+    expect(_.get(res, 'name')).to.not.eq('Error');
+
+
+
     
     // 1. 시스템 데이터 파싱
-    dcData.data = Buffer.from('^D017001,3,0100,380,24');
-    let res = converter.parsingUpdateData(dcData).data;
+    dcData.data = Buffer.from('^D017001,');
+    res = converter.parsingUpdateData(dcData);
+    BU.CLI(res.data.message);
+    dcData.data = Buffer.from('3,0100,380,24');
+    res = converter.parsingUpdateData(dcData).data;
+    BU.CLI(res.data);
+
+    BU.CLI(res);
+    // 10kW급 테스트 (scale, fixed Test)
+    expect(_.get(res, BaseModel.BASE_KEY.sysLineVoltage)).to.eq(380);
+    expect(_.get(res, BaseModel.BASE_KEY.sysCapaKw)).to.eq(10);
+    expect(_.get(res, BaseModel.BASE_KEY.sysIsSingle)).to.eq(0);
+
+
+    
+    // 1. 시스템 데이터 파싱
+    dcData.data = Buffer.from('^D017001,');
+    res = converter.parsingUpdateData(dcData);
+    BU.CLI(res.data.message);
+    dcData.data = Buffer.from('3,0100,380,24');
+    res = converter.parsingUpdateData(dcData).data;
+    BU.CLI(res.data);
+
     BU.CLI(res);
     // 10kW급 테스트 (scale, fixed Test)
     expect(_.get(res, BaseModel.BASE_KEY.sysLineVoltage)).to.eq(380);

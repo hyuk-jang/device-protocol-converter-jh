@@ -4,8 +4,14 @@
  * @property {string} mainCategory
  * @property {string} subCategory
  * @property {string|Buffer} deviceId
- * @property {*} option
+ * @property {protocolOptionInfo=} protocolOptionInfo
+ * @property {Object=} option
  */
+
+/**
+ * @typedef {Object} protocolOptionInfo 
+ * @property {boolean} hasTrackingData  전송 데이터가 같으나 파싱이 실패할 경우 데이터 누적을 할지 여부 (Default: false)
+ */ 
 
 /**
  * @typedef {Object} parsingResultFormat

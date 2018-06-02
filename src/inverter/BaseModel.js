@@ -83,5 +83,18 @@ class BaseModel extends ProtocolConverter {
    * @return {Buffer} Data Buffer만 리턴
    */
   checkValidate(responseBuf, decodingInfo){}
+
+  /**
+   * @param {Buffer} requestBuf 인버터에 요청한 데이터
+   * @return {number}
+   */
+  getRequestAddr(requestBuf){}
+
+  /**
+   * @param {Buffer} responseBuf 인버터에서 수신받은 데이터
+   * @return {number}
+   */
+  getResponseAddr(responseBuf){}
+
 }
 module.exports = BaseModel;

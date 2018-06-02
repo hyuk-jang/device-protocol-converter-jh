@@ -1,19 +1,21 @@
 'use strict';
 const _ = require('lodash');
 const {BU} = require('base-util-jh');
-const ProtocolConverter = require('../../default/ProtocolConverter');
+const DefaultConverter = require('../../default/DefaultConverter');
 const protocol = require('./protocol');
 
-const Model = require('./Model');
 const BaseModel = require('../BaseModel');
 
 require('../../format/defaultDefine');
-class Converter extends ProtocolConverter {
-  constructor() {
-    super();
+class Converter extends DefaultConverter {
+  /**
+   * @param {protocol_info} protocol_info
+   */
+  constructor(protocol_info) {
+    super(protocol_info);
 
-    this.baseModel = new Model();
-    // BU.CLIN(this.baseModel);
+    this.BaseModel = BaseModel;
+    this.baseModel = new BaseModel(protocol_info);
   }
 
   /**
@@ -23,13 +25,7 @@ class Converter extends ProtocolConverter {
    * @return {Array.<commandInfo>} 장치를 조회하기 위한 명령 리스트 반환
    */
   generationCommand(){
-    /** @type {commandInfo} */
-    const commandObj = {
-      data: this.baseModel.DEFAULT.COMMAND.MEASURE,
-      commandExecutionTimeoutMs: 1000 * 10
-    };
-
-    return [commandObj];
+    return this.makeDefaultCommandInfo(this.baseModel.DEFAULT.COMMAND.MEASURE);
   }
 
   /**
@@ -37,23 +33,18 @@ class Converter extends ProtocolConverter {
    * @param {dcData} dcData 장치로 요청한 명령
    * @return {parsingResultFormat}
    */
-  parsingUpdateData(dcData){
-    /** @type {parsingResultFormat} */
-    const returnValue = {};
-
+  concreteParsingData(dcData){
     try {
       let requestData = this.getCurrTransferCmd(dcData);
       let responseData = dcData.data;
       // BU.CLI(responseData);
     
       if(_.includes(requestData, this.baseModel.DEFAULT.COMMAND.MEASURE)){
-        let bufferData = responseData instanceof Buffer ? responseData : this.makeMsg2Buffer(responseData);
+        let bufferData = responseData instanceof Buffer ? responseData : this.protocolConverter.makeMsg2Buffer(responseData);
 
         let STX = bufferData.slice(0, 3);
         if(STX.toString() !== Buffer.from([0x4c, 0x4f, 0x4f]).toString()){
-          returnValue.eventCode = this.definedCommanderResponse.WAIT;
-          returnValue.data = {};
-          return returnValue;
+          throw new Error(`Not Matching ReqAddr: ${Buffer.from([0x4c, 0x4f, 0x4f]).toString()}, ResAddr: ${STX.toString()}`);
         }
         let addValue = 0;
         if (bufferData.length == 100) {
@@ -61,9 +52,7 @@ class Converter extends ProtocolConverter {
         } else if (bufferData.length == 99) {
           addValue = 0;
         } else {
-          returnValue.eventCode = this.definedCommanderResponse.WAIT;
-          returnValue.data = {};
-          return returnValue;
+          throw new Error(`Not Matching Length Expect: ${100}, Length: ${bufferData.length}`);
         }
         protocol.forEach(protocol => {
           let startPoint = protocol.substr[0];
@@ -79,17 +68,15 @@ class Converter extends ProtocolConverter {
                 hasError = true;
               }
             }
-  
             if (TargetValue.length === 1) {
               hexCode += '0';
             }
             hexCode += TargetValue;
           }
-
           if(hasError){
             protocol.value = null;
           } else {
-            protocol.value = this._ChangeData(protocol.key, this.converter().hex2dec(hexCode));
+            protocol.value = this._ChangeData(protocol.key, this.protocolConverter.converter().hex2dec(hexCode));
           }
         });
   
@@ -98,18 +85,12 @@ class Converter extends ProtocolConverter {
           let result = this.getProtocolValue(protocol.key);
           vantagePro2Data[result.key] = result.value;
         });
-
-        returnValue.eventCode = this.definedCommanderResponse.DONE;
-        returnValue.data = vantagePro2Data;
-
-        return returnValue;
+        return vantagePro2Data;
       } else {
         throw new Error('요청한 데이터에 문제가 있습니다.');
       }
     } catch (error) {
-      returnValue.eventCode = this.definedCommanderResponse.ERROR;
-      returnValue.data = error;
-      return returnValue;
+      throw error;
     }
   }
 
