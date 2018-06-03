@@ -65,7 +65,14 @@ class AbstConverter {
     } catch (error) {
       throw error;      
     }
-    
+  }
+
+  /**
+   * TrackingDataBuffer를 강제로 초기화 시키고자 할 경우
+   * @return {void}
+   */
+  resetTrackingDataBuffer() {
+    this.protocolConverter.resetTrackingDataBuffer();
   }
 
 }

@@ -1,4 +1,15 @@
 
+/**
+ * @typedef {Object} deviceInfo deviceInfo 생성 자료 구조
+ * @property {string} target_id device ID (dialing, id, ...)
+ * @property {string} target_category inverter, connector, weather
+ * @property {string=} target_name IVT_001, IVT_002, 인버터 1, alias
+ * @property {logOption=} logOption 일어나는 이벤트에 대해 FileSystem 처리할 항목
+ * @property {controlInfo} controlInfo DCC를 제어하는데 있어 운영상 필요한 boolean 값 모음
+ * @property {connect_info} connect_info 장치와의 접속 정보
+ * @property {protocol_info} protocol_info 프로토콜 생성자에 넘겨줄 설정 데이터
+ */
+
 /** 
  * @typedef {Object} protocol_info 프로토콜 생성자에 넘겨줄 설정 데이터
  * @property {string} mainCategory
@@ -7,6 +18,11 @@
  * @property {protocolOptionInfo=} protocolOptionInfo
  * @property {Object=} option
  */
+
+/**
+ * @typedef {Object} protocolOptionInfo 
+ * @property {boolean} hasTrackingData  전송 데이터가 같으나 파싱이 실패할 경우 데이터 누적을 할지 여부 (Default: false)
+ */ 
 
 /**
  * @typedef {Object} protocolOptionInfo 

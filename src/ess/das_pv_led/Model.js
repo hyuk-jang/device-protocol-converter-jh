@@ -51,12 +51,27 @@ class Model extends BaseModel {
       this.makeMsg('ST6'),
     ];
 
+    this.BASE.BATTERY.COMMAND.STATUS = [
+      this.makeMsg('ST7'),
+    ];
+
+    this.BASE.LED.COMMAND.STATUS = [
+      this.makeMsg('ST8'),
+    ];
+
+    this.BASE.TEMP.COMMAND.STATUS = [
+      this.makeMsg('ST9'),
+    ];
+
     this.BASE.DEFAULT.COMMAND.STATUS = _.flatten( _.concat([
       this.BASE.SYSTEM.COMMAND.STATUS,
       this.BASE.PV.COMMAND.STATUS,
       this.BASE.GRID.COMMAND.STATUS,
       this.BASE.POWER.COMMAND.STATUS,
-      this.BASE.OPERATION_INFO.COMMAND.STATUS
+      this.BASE.OPERATION_INFO.COMMAND.STATUS,
+      this.BASE.BATTERY.COMMAND.STATUS,
+      this.BASE.LED.COMMAND.STATUS,
+      this.BASE.TEMP.COMMAND.STATUS,
     ]));
   }
 
@@ -85,6 +100,15 @@ class Model extends BaseModel {
       break;
     case 'ST6':
       addr = 6;
+      break;
+    case 'ST7':
+      addr = 7;
+      break;
+    case 'ST8':
+      addr = 8;
+      break;
+    case 'ST9':
+      addr = 9;
       break;
     default:
       break;
@@ -115,7 +139,7 @@ class Model extends BaseModel {
    * @return {Buffer} Data Buffer만 리턴
    */
   checkValidate(responseBuf, decodingInfo){
-    // BU.CLI(responseBuf.toString());
+    BU.CLI(responseBuf.toString());
     try {
       let SOP = Buffer.from([_.nth(responseBuf, 0)]) ;
 
@@ -178,7 +202,6 @@ class Model extends BaseModel {
   
       return dataBodyBuf;
     } catch (error) {
-      BU.CLI('hi');
       throw error;
     }
   }

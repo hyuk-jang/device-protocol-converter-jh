@@ -4,6 +4,7 @@ require('./src/format/defaultDefine');
 /** Intelligence를 위함 */
 const BaseModel = {
   default: require('./src/default/DefaultModel'),
+  ESS: require('./src/ess/BaseModel'),
   Inverter: require('./src/inverter/BaseModel'),
   Saltern: require('./src/saltern/BaseModel'),
   Weathercast: require('./src/weathercast/BaseModel')
