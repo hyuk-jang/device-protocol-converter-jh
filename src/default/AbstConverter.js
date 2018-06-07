@@ -38,7 +38,7 @@ class AbstConverter {
    * @return {Array} 장치를 조회하기 위한 명령 리스트 반환
    */
   generationCommand(generationInfo){
-    BU.CLI(generationInfo);
+    // BU.CLI(generationInfo);
     if(!this.protocolConverter){
       throw new Error('protocolConverter가 설정되지 않았습니다.');
     }

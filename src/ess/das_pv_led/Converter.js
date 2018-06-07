@@ -9,7 +9,7 @@ const protocol = require('./protocol');
 
 require('../../format/defaultDefine');
 // require('./define');
-const BaseModel = require('../baseModel');
+const BaseModel = require('../BaseModel');
 
 class Converter extends DefaultConverter {
   /**
