@@ -17,7 +17,7 @@ const onDeviceOperationStatus = {
     /** @type {number} 삼상 */
     3: 0,
   },
-  /** @type {Object} 프로텍션 리스트 */
+  // /** @type {Object} 프로텍션 리스트 */
   // [Model.BASE_KEY.operStatus]: {
   //   0: 'Ready',
   //   1: 'PV over current',
