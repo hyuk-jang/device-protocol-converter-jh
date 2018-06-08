@@ -87,6 +87,7 @@ exports.decodingProtocolTable = (protocol_info) => {
       code: 'D',
       address: 1,
       length: 20, // 수신할 데이터 Byte,
+      // length: 28, // 수신할 데이터 Byte,
       decodingDataList: [{
         key: Model.BASE_KEY.pvVol,
         byte: 3,
@@ -104,7 +105,13 @@ exports.decodingProtocolTable = (protocol_info) => {
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: _.get(protocol_info, 'option.isUseKw') === true ? 0.1 : 0.001,
         fixed: _.get(protocol_info, 'option.isUseKw') === true ? 1 : 3,
-      }]
+      },
+      // {
+      //   key: Model.BASE_KEY.pvKwh,
+      //   byte: 7,
+      //   callMethod: parsingMethod.convertBufToHexToNum,
+      // }
+      ]
     },
     GRID_VOL: {
       dialing: _.get(protocol_info, 'deviceId'),

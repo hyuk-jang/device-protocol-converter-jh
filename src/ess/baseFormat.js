@@ -25,6 +25,12 @@ module.exports = {
    * @description Power 
    * @type {number=}
    */
+  pvKwh: null,
+  /**
+   * 태양 전지 총 발전량, 단위[kWh]
+   * @description Power 
+   * @type {number=}
+   */
   powerPvKw: null,
   /**
    * 인버터 현재 전력, 단위[kW]
