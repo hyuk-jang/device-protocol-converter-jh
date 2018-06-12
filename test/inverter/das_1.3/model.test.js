@@ -2,9 +2,9 @@ const {expect} = require('chai');
 const {BU} = require('base-util-jh');
 const _ = require('lodash');
 
-const Converter = require('../../../src/inverter/das_1.3/Converter');
+const Converter = require('../../../src/Inverter/das_1.3/Converter');
 
-const BaseModel = require('../../../src/inverter/BaseModel');
+const BaseModel = require('../../../src/Inverter/BaseModel');
 const model = new BaseModel({deviceId:Buffer.from([0x30, 0x30, 0x30]), subCategory: 'das_1.3'});
 
 require('../../../src/format/defaultDefine');
@@ -44,7 +44,7 @@ describe('Decoding Test', function() {
   // const converter = new Converter({deviceId:'0013A20010215369'} );
   it('receive Buffer To Data Body', function(done) {
 
-    let decodingProtocolTable = require('../../../src/inverter/das_1.3/protocol').decodingProtocolTable;
+    let decodingProtocolTable = require('../../../src/Inverter/das_1.3/protocol').decodingProtocolTable;
 
     let protocol = decodingProtocolTable(Buffer.from('001'));
   

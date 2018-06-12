@@ -1,4 +1,4 @@
-const AbstConverter = require('./src/default/AbstConverter');
+const AbstConverter = require('./src/Default/AbstConverter');
 require('./src/format/defaultDefine');
 
 /** Intelligence를 위함 */

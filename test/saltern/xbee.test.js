@@ -2,9 +2,9 @@ const {expect} = require('chai');
 const {BU} = require('base-util-jh');
 const _ = require('lodash');
 
-const Converter = require('../../src/saltern/xbee/Converter');
+const Converter = require('../../src/Saltern/xbee/Converter');
 
-const Model = require('../../src/saltern/xbee/Model');
+const Model = require('../../src/Saltern/xbee/Model');
 const model = new Model();
 
 describe('encoding Test 1', () => {
@@ -31,8 +31,8 @@ describe('encoding Test 1', () => {
 });
 
 describe('Decoding Test', function() {
-  // const baseFormat = require('../../src/saltern/baseFormat');
-  // const {deviceModel} = require('../../src/saltern/baseModel');
+  // const baseFormat = require('../../src/Saltern/baseFormat');
+  // const {deviceModel} = require('../../src/Saltern/baseModel');
   const converter = new Converter({deviceId:'0013A20010215369'} );
   it('automaticDecoding', function(done) {
     // BU.CLI(baseFormat);
