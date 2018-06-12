@@ -3,11 +3,11 @@ require('./src/format/defaultDefine');
 
 /** Intelligence를 위함 */
 const BaseModel = {
-  default: require('./src/default/DefaultModel'),
-  ESS: require('./src/ess/BaseModel'),
-  Inverter: require('./src/inverter/BaseModel'),
-  Saltern: require('./src/saltern/BaseModel'),
-  Weathercast: require('./src/weathercast/BaseModel')
+  default: require('./src/Default/DefaultModel'),
+  ESS: require('./src/ESS/BaseModel'),
+  Inverter: require('./src/Inverter/BaseModel'),
+  Saltern: require('./src/Saltern/BaseModel'),
+  Weathercast: require('./src/Weathercast/BaseModel')
 };
 
 
