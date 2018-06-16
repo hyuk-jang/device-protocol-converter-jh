@@ -12,9 +12,12 @@ class BaseModel {
         UNDEF: 'UNDEF'
       },
       COMMAND: {
-        MEASURE: ''
+        WAKEUP: '',
+        LOOP: '',
+        LOOP_INDEX: ''
       }
     };
+
 
     
     if(_.get(protocol_info, 'subCategory')){

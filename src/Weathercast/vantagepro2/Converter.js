@@ -21,11 +21,15 @@ class Converter extends DefaultConverter {
   /**
    * 장치를 조회 및 제어하기 위한 명령 생성. 
    * cmd가 있다면 cmd에 맞는 특정 명령을 생성하고 아니라면 기본 명령을 생성
-   * @return {Array} 장치를 조회하기 위한 명령 리스트 반환
+   * @param {string} cmd
    * @return {Array.<commandInfo>} 장치를 조회하기 위한 명령 리스트 반환
    */
-  generationCommand(){
-    return this.makeDefaultCommandInfo(this.baseModel.DEFAULT.COMMAND.MEASURE);
+  generationCommand(cmd){
+    if(cmd){
+      return this.makeDefaultCommandInfo(cmd);
+    } else {
+      return this.makeDefaultCommandInfo(this.baseModel.DEFAULT.COMMAND.LOOP);
+    }
   }
 
   /**
@@ -37,30 +41,32 @@ class Converter extends DefaultConverter {
     try {
       let requestData = this.getCurrTransferCmd(dcData);
       let responseData = dcData.data;
-      // BU.CLI(responseData);
     
-      if(_.includes(requestData, this.baseModel.DEFAULT.COMMAND.MEASURE)){
+      if(_.includes(requestData, this.baseModel.DEFAULT.COMMAND.LOOP)){
         let bufferData = responseData instanceof Buffer ? responseData : this.protocolConverter.makeMsg2Buffer(responseData);
 
-        let STX = bufferData.slice(0, 3);
-        if(STX.toString() !== Buffer.from([0x4c, 0x4f, 0x4f]).toString()){
-          throw new Error(`Not Matching ReqAddr: ${Buffer.from([0x4c, 0x4f, 0x4f]).toString()}, ResAddr: ${STX.toString()}`);
+        let cmdSTX = bufferData.slice(0, 4);
+        let loopSTX = bufferData.slice(0, 3);
+        // LOOP 명령을 내렸을 경우 ACK 포함여부 확인
+        if(cmdSTX.toString() === Buffer.from([0x06, 0x4c, 0x4f, 0x4f]).toString()){
+          // ACK를 제외하고 데이터 저장
+          this.resetTrackingDataBuffer();
+          bufferData = this.trackingDataBuffer = bufferData.slice(1);
+          loopSTX = bufferData.slice(0, 3);
+        } 
+        if(loopSTX.toString() !== Buffer.from([0x4c, 0x4f, 0x4f]).toString()){ // LOOP 명령 수행 여부 확인
+          throw new Error(`Not Matching ReqAddr: ${Buffer.from([0x4c, 0x4f, 0x4f]).toString()}, ResAddr: ${loopSTX.toString()}`);
         }
-        let addValue = 0;
-        if (bufferData.length == 100) {
-          addValue = 1;
-        } else if (bufferData.length == 99) {
-          addValue = 0;
-        } else {
-          throw new Error(`Not Matching Length Expect: ${100}, Length: ${bufferData.length}`);
+        if (bufferData.length !== 99) {
+          throw new Error(`Not Matching Length Expect: ${99}, Length: ${bufferData.length}`);
         }
         protocol.forEach(protocol => {
           let startPoint = protocol.substr[0];
           let endPoint = protocol.substr[1];
-          let realStartPoint = startPoint + endPoint - 1 + addValue;
+          let realStartPoint = startPoint + endPoint - 1;
           let hexCode = '';
           let hasError = false;
-          for (let i = realStartPoint; i >= startPoint + addValue; i--) {
+          for (let i = realStartPoint; i >= startPoint; i--) {
             let TargetValue = bufferData[i].toString(16);
             if (TargetValue === 'ff') {
               TargetValue = '00';
