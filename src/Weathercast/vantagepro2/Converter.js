@@ -45,9 +45,15 @@ class Converter extends DefaultConverter {
       if(_.includes(requestData, this.baseModel.DEFAULT.COMMAND.LOOP)){
         let bufferData = responseData instanceof Buffer ? responseData : this.protocolConverter.makeMsg2Buffer(responseData);
 
+        let wakeupSTX = bufferData.slice(0, 2);
         let cmdSTX = bufferData.slice(0, 4);
         let loopSTX = bufferData.slice(0, 3);
-        // LOOP 명령을 내렸을 경우 ACK 포함여부 확인
+        // wakeUp 명령을 내렸을 경우 \n\r 포함여부 확인
+        if(wakeupSTX.toString() === Buffer.from([0x0a, 0x0d]).toString()){
+          // ACK를 제외하고 데이터 저장
+          this.resetTrackingDataBuffer();
+          throw new Error('wakeUp Event');
+        } 
         if(cmdSTX.toString() === Buffer.from([0x06, 0x4c, 0x4f, 0x4f]).toString()){
           // ACK를 제외하고 데이터 저장
           this.resetTrackingDataBuffer();

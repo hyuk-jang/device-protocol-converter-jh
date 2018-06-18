@@ -57,6 +57,7 @@ module.exports = {
     if (crcValue.toString() === baseCrcValue.toString(16)) {
       return buf.slice(indexSTX + 1, indexETX);
     } else {
+      BU.logFile(buf.toString());
       throw 'Crc Error';
     }
   }
