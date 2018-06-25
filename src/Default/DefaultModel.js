@@ -39,20 +39,26 @@ module.exports = {
   },
   /**
    * Buffer 분석하여 데이터 돌려줌
-   * @param {Buffer} buf
+   * @param {Buffer|string} buf
    * @return {Buffer}
    */
   decodingDefaultRequestMsgForTransfer: (buf) => {
     const protocolConverter = new ProtocolConverter();
+    buf = Buffer.isBuffer(buf) ? buf : Buffer.from(buf);
     
+    BU.CLI(buf);
     let indexSTX = buf.indexOf(0x02);
     let indexETX = buf.indexOf(0x03);
     let indexEOT = buf.indexOf(0x04);
     let crcValue = buf.slice(indexETX + 1, indexEOT);
     let bufBody = buf.slice(0, indexETX + 1);
+
+    BU.CLIS(indexSTX, indexETX, indexEOT);
     
     let baseCrcValue = crc.crc16xmodem(bufBody.toString());
     baseCrcValue = protocolConverter.pad(baseCrcValue, 4);
+
+    BU.CLIS(crcValue.toString() , baseCrcValue.toString(16) );
 
     if (crcValue.toString() === baseCrcValue.toString(16)) {
       return buf.slice(indexSTX + 1, indexETX);
