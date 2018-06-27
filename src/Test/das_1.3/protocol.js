@@ -1,7 +1,11 @@
 'use strict';
 
 const _ = require('lodash');
-const {parsingMethod} = require('../../format/moduleDefine');
+const {
+  parsingMethod
+} = require('../../format/moduleDefine');
+
+require('../../format/defaultDefine');
 
 const Model = require('./Model');
 

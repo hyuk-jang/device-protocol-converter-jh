@@ -1,4 +1,4 @@
-
+'use strict';
 /**
  * @typedef {Object} deviceInfo deviceInfo 생성 자료 구조
  * @property {string} target_id device ID (dialing, id, ...)
@@ -90,3 +90,5 @@
  * @prop {number=} scale 결과값에 곱할 배율
  * @prop {number=} fixed 소수점 처리 할 자리수
  */  
+
+module;

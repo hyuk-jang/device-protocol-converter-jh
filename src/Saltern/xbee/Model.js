@@ -1,15 +1,13 @@
+'use strict';
+
 const BaseModel = require('../BaseModel');
-
-
 
 class Model extends BaseModel {
   constructor() {
     super();
 
-
-
     /** 수문 */
-    this.WATER_DOOR.COMMAND.OPEN = {
+    this.device.WATER_DOOR.COMMAND.OPEN = {
       cmd: '@cgo',
       cmdList: [{
         cmd: '@cgo'
@@ -19,7 +17,7 @@ class Model extends BaseModel {
       }]
     };
 
-    this.WATER_DOOR.COMMAND.CLOSE = {
+    this.device.WATER_DOOR.COMMAND.CLOSE = {
       cmd: '@cgc',
       cmdList: [{
         cmd: '@cgc'
@@ -29,7 +27,7 @@ class Model extends BaseModel {
       }]
     };
 
-    this.WATER_DOOR.COMMAND.STATUS = {
+    this.device.WATER_DOOR.COMMAND.STATUS = {
       cmd: '@sts'
     };
 
@@ -37,7 +35,7 @@ class Model extends BaseModel {
 
 
     /** 밸브 */
-    this.VALVE.COMMAND.OPEN = {
+    this.device.VALVE.COMMAND.OPEN = {
       cmd: '@cvo',
       cmdList: [{
         cmd: '@cvo'
@@ -47,7 +45,7 @@ class Model extends BaseModel {
       }]
     };
 
-    this.VALVE.COMMAND.CLOSE = {
+    this.device.VALVE.COMMAND.CLOSE = {
       cmd: '@cvc',
       cmdList: [{
         cmd: '@cvc'
@@ -57,7 +55,7 @@ class Model extends BaseModel {
       }]
     };
 
-    this.VALVE.COMMAND.STATUS = {
+    this.device.VALVE.COMMAND.STATUS = {
       cmd: '@sts'
     };
 
@@ -65,7 +63,7 @@ class Model extends BaseModel {
 
 
     /** 펌프 */
-    this.PUMP.COMMAND.ON = {
+    this.device.PUMP.COMMAND.ON = {
       cmd: '@cpo',
       // 펌프 킬때는 명령을 내리고 10초 후에 킴
       cmdList: [{
@@ -77,7 +75,7 @@ class Model extends BaseModel {
       }]
     };
 
-    this.PUMP.COMMAND.OFF = {
+    this.device.PUMP.COMMAND.OFF = {
       cmd: '@cpc',
       cmdList: [{
         cmd: '@cpc'
@@ -87,7 +85,7 @@ class Model extends BaseModel {
       }]
     };
 
-    this.PUMP.COMMAND.STATUS = {
+    this.device.PUMP.COMMAND.STATUS = {
       cmd: '@sts'
     };
 
@@ -95,7 +93,7 @@ class Model extends BaseModel {
 
 
     /** 염도 */
-    this.SALINITY.COMMAND.MEASURE = {
+    this.device.SALINITY.COMMAND.MEASURE = {
       cmd: '@cgm',
       cmdList: [{
         cmd: '@cgm'
@@ -105,7 +103,7 @@ class Model extends BaseModel {
       }]
     };
 
-    this.SALINITY.COMMAND.STATUS = {
+    this.device.SALINITY.COMMAND.STATUS = {
       cmd: '@sts'
     };
 
@@ -113,20 +111,20 @@ class Model extends BaseModel {
 
 
     /** 수온 */
-    this.WATER_TEMPERATURE.COMMAND.STATUS = {
+    this.device.WATER_TEMPERATURE.COMMAND.STATUS = {
       cmd: '@sts'
     };
 
 
 
     /** 모듈 앞면 */
-    this.MODULE_FRONT_TEMPERATURE.COMMAND.STATUS = {
+    this.device.MODULE_FRONT_TEMPERATURE.COMMAND.STATUS = {
       cmd: '@sts'
     };
 
 
     /** 모듈 뒷면 */
-    this.MODULE_REAR_TEMPERATURE.COMMAND.STATUS = {
+    this.device.MODULE_REAR_TEMPERATURE.COMMAND.STATUS = {
       cmd: '@sts'
     };
   }

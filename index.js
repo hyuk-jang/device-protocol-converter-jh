@@ -1,4 +1,4 @@
-const AbstConverter = require('./src/Default/AbstConverter');
+const MainConverter = require('./src/Default/MainConverter');
 require('./src/format/defaultDefine');
 
 /** Intelligence를 위함 */
@@ -12,8 +12,9 @@ const BaseModel = {
 
 
 module.exports = {
-  AbstConverter,
-  BaseModel
+  AbstConverter: MainConverter,
+  MainConverter,
+  BaseModel,
 };
 
 // if __main process

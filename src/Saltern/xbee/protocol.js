@@ -9,56 +9,56 @@ const model = new Model();
 
 const onDeviceOperationStatus = {
   /** @type {Object} 수문 상태*/
-  [model.WATER_DOOR.KEY]: {
+  [model.device.WATER_DOOR.KEY]: {
     /** @type {string} 정지 */
-    0: model.WATER_DOOR.STATUS.STOP,
+    0: model.device.WATER_DOOR.STATUS.STOP,
     /** @type {string} 열림 */
-    2: model.WATER_DOOR.STATUS.OPEN,
+    2: model.device.WATER_DOOR.STATUS.OPEN,
     /** @type {string} 여는 중 */
-    3: model.WATER_DOOR.STATUS.CLOSING,
+    3: model.device.WATER_DOOR.STATUS.CLOSING,
     /** @type {string} 닫힘 */
-    4: model.WATER_DOOR.STATUS.CLOSE,
+    4: model.device.WATER_DOOR.STATUS.CLOSE,
     /** @type {string} 닫는 중 */
-    5: model.WATER_DOOR.STATUS.OPENING,
+    5: model.device.WATER_DOOR.STATUS.OPENING,
   },
   /** @type {Object} 수위 */
-  [model.WATER_LEVEL.KEY]: {
+  [model.device.WATER_LEVEL.KEY]: {
     /** @type {number} 0 단계 (수위없음) */
-    0: model.WATER_LEVEL.STATUS.ZERO,
+    0: model.device.WATER_LEVEL.STATUS.ZERO,
     /** @type {number} 1 단계 (최저) */
-    1: model.WATER_LEVEL.STATUS.ONE,
+    1: model.device.WATER_LEVEL.STATUS.ONE,
     /** @type {number} 2 단계 */
-    2: model.WATER_LEVEL.STATUS.TWO,
-    3: model.WATER_LEVEL.STATUS.TWO,
+    2: model.device.WATER_LEVEL.STATUS.TWO,
+    3: model.device.WATER_LEVEL.STATUS.TWO,
     /** @type {number} 3 단계 (최대) */
-    4: model.WATER_LEVEL.STATUS.THREE,
-    5: model.WATER_LEVEL.STATUS.THREE,
-    6: model.WATER_LEVEL.STATUS.THREE,
-    7: model.WATER_LEVEL.STATUS.THREE,
-    8: model.WATER_LEVEL.STATUS.THREE,
-    9: model.WATER_LEVEL.STATUS.THREE,
+    4: model.device.WATER_LEVEL.STATUS.THREE,
+    5: model.device.WATER_LEVEL.STATUS.THREE,
+    6: model.device.WATER_LEVEL.STATUS.THREE,
+    7: model.device.WATER_LEVEL.STATUS.THREE,
+    8: model.device.WATER_LEVEL.STATUS.THREE,
+    9: model.device.WATER_LEVEL.STATUS.THREE,
   },
   /** @type {Object} 밸브 */
-  [model.VALVE.KEY]: {
+  [model.device.VALVE.KEY]: {
     /** @type {number} 미확인 */
-    0: model.VALVE.STATUS.UNDEF,
+    0: model.device.VALVE.STATUS.UNDEF,
     /** @type {number} 닫힘 */
-    1: model.VALVE.STATUS.CLOSE,
+    1: model.device.VALVE.STATUS.CLOSE,
     /** @type {number} 열림 */
-    2: model.VALVE.STATUS.OPEN,
+    2: model.device.VALVE.STATUS.OPEN,
     /** @type {number} 작업 중 */
-    3: model.VALVE.STATUS.BUSY,
+    3: model.device.VALVE.STATUS.BUSY,
     // /** @type {number} 닫는 중 */
-    // 4: model.VALVE.STATUS.OPENING,
+    // 4: model.device.VALVE.STATUS.OPENING,
     // /** @type {number} 여는 중 */
-    // 5: model.VALVE.STATUS.CLOSING,
+    // 5: model.device.VALVE.STATUS.CLOSING,
   },
   /** @type {Object} 펌프 */
-  [model.PUMP.KEY]: {
+  [model.device.PUMP.KEY]: {
     /** @type {number} 꺼짐 */
-    0: model.PUMP.STATUS.OFF,
+    0: model.device.PUMP.STATUS.OFF,
     /** @type {number} 켜짐 */
-    1: model.PUMP.STATUS.ON,
+    1: model.device.PUMP.STATUS.ON,
   }
 
 };
@@ -73,19 +73,19 @@ exports.decodingProtocolTable = (dialing) => {
       address: '0001',
       length: 12, // 수신할 데이터 Byte,
       decodingDataList: [{
-        key: model.WATER_DOOR.KEY,
+        key: model.device.WATER_DOOR.KEY,
         byte: 2,
         callMethod: parsingMethod.convertBufToHexToDec,
       }, {
-        key: model.WATER_LEVEL.KEY,
+        key: model.device.WATER_LEVEL.KEY,
         byte: 2,
         callMethod: parsingMethod.convertBufToHexToDec,
       }, {
-        key: model.SALINITY.KEY,
+        key: model.device.SALINITY.KEY,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
       }, {
-        key: model.BATTERY.KEY,
+        key: model.device.BATTERY.KEY,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
       }]
@@ -95,25 +95,25 @@ exports.decodingProtocolTable = (dialing) => {
       address: '0002',
       length: '6',
       decodingDataList: [{
-        key: model.VALVE.KEY,
+        key: model.device.VALVE.KEY,
         byte: 2,
         callMethod: parsingMethod.convertBufToHexToDec,
       }, {
-        key: model.WATER_LEVEL.KEY,
+        key: model.device.WATER_LEVEL.KEY,
         byte: 2,
         callMethod: parsingMethod.convertBufToHexToDec,
       },
       {
-        key: model.WATER_TEMPERATURE.KEY,
+        key: model.device.WATER_TEMPERATURE.KEY,
         byte: 6,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.MODULE_REAR_TEMPERATURE.KEY,
+        key: model.device.MODULE_REAR_TEMPERATURE.KEY,
         byte: 6,
         callMethod: parsingMethod.convertBufToHexToNum,
       }, {
-        key: model.BATTERY.KEY,
+        key: model.device.BATTERY.KEY,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
       }
@@ -124,11 +124,11 @@ exports.decodingProtocolTable = (dialing) => {
       address: '0003',
       length: '6',
       decodingDataList: [{
-        key: model.PUMP.KEY,
+        key: model.device.PUMP.KEY,
         byte: 2,
         callMethod: parsingMethod.convertBufToHexToDec,
       }, {
-        key: model.BATTERY.KEY,
+        key: model.device.BATTERY.KEY,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
       }]

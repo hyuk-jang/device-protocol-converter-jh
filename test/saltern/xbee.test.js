@@ -11,18 +11,18 @@ describe('encoding Test 1', () => {
   const converter = new Converter({deviceId:'0013A20010215369'} );
   it('encoding Xbee', done => {
 
-    let cmdInfo = converter.generationCommand(model.WATER_DOOR.COMMAND.OPEN);
+    let cmdInfo = converter.generationCommand(model.device.WATER_DOOR.COMMAND.OPEN);
     let genCmdInfo =_.head(cmdInfo);
     expect(genCmdInfo.data.destination64).to.eq('0013A20010215369');
-    expect(genCmdInfo.data.data).to.eq(model.WATER_DOOR.COMMAND.OPEN.cmd);
-    expect(_.nth(cmdInfo, 1).data.data).to.be.equal(model.WATER_DOOR.COMMAND.STATUS.cmd);
+    expect(genCmdInfo.data.data).to.eq(model.device.WATER_DOOR.COMMAND.OPEN.cmd);
+    expect(_.nth(cmdInfo, 1).data.data).to.be.equal(model.device.WATER_DOOR.COMMAND.STATUS.cmd);
 
     BU.CLI(cmdInfo);
-    cmdInfo = converter.generationCommand(model.VALVE.COMMAND.CLOSE);
+    cmdInfo = converter.generationCommand(model.device.VALVE.COMMAND.CLOSE);
     genCmdInfo =_.head(cmdInfo);
     expect(genCmdInfo.data.destination64).to.be.eq('0013A20010215369');
-    expect(genCmdInfo.data.data).to.be.equal(model.VALVE.COMMAND.CLOSE.cmd);
-    expect(_.nth(cmdInfo, 1).data.data).to.be.equal(model.VALVE.COMMAND.STATUS.cmd);
+    expect(genCmdInfo.data.data).to.be.equal(model.device.VALVE.COMMAND.CLOSE.cmd);
+    expect(_.nth(cmdInfo, 1).data.data).to.be.equal(model.device.VALVE.COMMAND.STATUS.cmd);
 
     BU.CLI(converter.frameIdList); 
 

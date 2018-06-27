@@ -2,29 +2,35 @@
 const _ = require('lodash');
 const baseFormat = require('./baseFormat');
 
-require('../format/defaultDefine');
+const AbstBaseModel = require('../Default/AbstBaseModel');
 
-class BaseModel {
+class BaseModel extends AbstBaseModel {
   /** @param {protocol_info} protocol_info */
   constructor(protocol_info) {
-    this.DEFAULT = {
-      STATUS: {
-        UNDEF: 'UNDEF'
-      },
-      COMMAND: {
-        WAKEUP: '',
-        LOOP: '',
-        LOOP_INDEX: ''
+    super(protocol_info);
+
+    this.baseFormat = _.clone(baseFormat);
+
+    this.device = {
+      DEFAULT: {
+        STATUS: {
+          UNDEF: 'UNDEF'
+        },
+        COMMAND: {
+          WAKEUP: '',
+          LOOP: '',
+          LOOP_INDEX: ''
+        }
       }
     };
 
 
-    
-    if(_.get(protocol_info, 'subCategory')){
-      const Model = require(`./${protocol_info.subCategory}/Model`);
-      return new Model(this);
+    /** Protocol 정보에 따라 자동으로 세부 Model Binding */
+    if(protocol_info){
+      return this.bindingSubCategory(protocol_info);
     }
   }
+
 
   /** 현재 카테고리에 있는 장치 데이터를 저장하기 위한 모델 */
   static get BASE_MODEL() {
@@ -39,3 +45,22 @@ class BaseModel {
   }
 }
 module.exports = BaseModel;
+
+// if __main process
+if (require !== undefined && require.main === module) {
+  console.log('__main__');
+
+  /** @type {protocol_info} */
+  let protocol_info = {
+    mainCategory: 'Test',
+    subCategory: 'das_1.3'
+  };
+
+  const model = new BaseModel(protocol_info);
+  
+  console.log('@@@');
+  // console.dir(model);
+  console.log(model);
+  console.log(model.device.POWER.COMMAND.STATUS);
+
+}

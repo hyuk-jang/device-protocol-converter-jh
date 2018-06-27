@@ -1,30 +1,28 @@
+'use strict';
 const _ = require('lodash');
 const xbee_api = require('xbee-api');
+const {BU} = require('base-util-jh');
 
-const {
-  BU
-} = require('base-util-jh');
-const DefaultConverter = require('../../Default/DefaultConverter');
+const AbstConverter = require('../../Default/AbstConverter');
 const BaseModel = require('../BaseModel');
 const protocol = require('./protocol');
 
 
-require('../../format/defaultDefine');
-
 require('./define');
 
-class Converter extends DefaultConverter {
-  /** @param {protocol_info} config */
-  constructor(config) {
-    super(config);
-    this.config = config;
+class Converter extends AbstConverter {
+  /** @param {protocol_info} protocol_info */
+  constructor(protocol_info) {
+    super(protocol_info);
+    this.protocol_info = protocol_info;
 
-    this.decodingTable = protocol.decodingProtocolTable(this.config.deviceId);
+    this.decodingTable = protocol.decodingProtocolTable(this.protocol_info.deviceId);
     this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
     this.xbeeAPI = new xbee_api.XBeeAPI();
     this.frameIdList = [];
 
     /** BaseModel */
+    // automaticDecoding Method 에서 사용됨
     this.BaseModel = BaseModel;
   }
 
@@ -47,7 +45,7 @@ class Converter extends DefaultConverter {
         let frameObj = {
           type: 0x10,
           id: frameId,
-          destination64: this.config.deviceId,
+          destination64: this.protocol_info.deviceId,
           data: cmdInfo.cmd,
         };
         commandObj.data = frameObj;
@@ -63,7 +61,7 @@ class Converter extends DefaultConverter {
       let frameObj = {
         type: 0x10,
         id: frameId,
-        destination64: this.config.deviceId,
+        destination64: this.protocol_info.deviceId,
         data: generationInfo.cmd,
       };
       commandObj.data = frameObj;
@@ -172,31 +170,6 @@ class Converter extends DefaultConverter {
    */
   automaticDecoding(decodingTable, data) {
     return super.automaticDecoding(decodingTable, data);
-    // try {
-    //   // 데이터를 집어넣을 기본 자료형을 가져옴
-    //   let returnValue = BaseModel.BASE_MODEL;
-    //   // 도출된 자료가 2차 가공(ex: 0 -> Open, 1 -> Close )이 필요한 경우
-    //   const operationKeys = _.keys(this.onDeviceOperationStatus);
-    //   let startIndex = 0;
-    //   decodingTable.forEach(decodingInfo => {
-    //     // 조회할 데이터를 가져옴
-    //     let thisBuf = data.slice(startIndex, startIndex + decodingInfo.byte);
-    //     // 사용하는 메소드를 호출
-    //     let convertValue = this[decodingInfo.callMethod](thisBuf);
-    //     // 2차 가공 여부에 따라 변환
-    //     if (_.includes(operationKeys, decodingInfo.key)) {
-    //       const operationStauts = this.onDeviceOperationStatus[decodingInfo.key];
-    //       returnValue[decodingInfo.key] = operationStauts[convertValue];
-    //     } else {
-    //       returnValue[decodingInfo.key] = convertValue;
-    //     }
-    //     // index 증가
-    //     startIndex += decodingInfo.byte;
-    //   });
-    //   return returnValue;
-    // } catch (error) {
-    //   throw error;
-    // }
   }
 }
 module.exports = Converter;

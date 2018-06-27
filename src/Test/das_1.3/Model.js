@@ -1,3 +1,4 @@
+'use strict';
 const {BU} = require('base-util-jh');
 const _ = require('lodash');
 
@@ -30,6 +31,8 @@ class Model extends BaseModel {
       }
     };
 
+    // console.dir(this);
+
     this.device.SYSTEM.COMMAND.STATUS = [
       this.makeMsg('MOD')
     ];
@@ -61,11 +64,11 @@ class Model extends BaseModel {
   }
 
   /**
-   * @param {Buffer} requestBuf 인버터에 요청한 데이터
+   * @param {Buffer} requestData 인버터에 요청한 데이터
    * @return {number}
    */
-  getRequestAddr(requestBuf){
-    let cmd = _.toString(requestBuf.slice(5));
+  getRequestAddr(requestData){
+    let cmd = _.toString(requestData.slice(5));
     let addr;
     switch (cmd) {
     case 'MOD':
@@ -94,11 +97,11 @@ class Model extends BaseModel {
   }
 
   /**
-   * @param {Buffer} responseBuf 인버터에서 수신받은 데이터
+   * @param {Buffer} responseData 인버터에서 수신받은 데이터
    * @return {number}
    */
-  getResponseAddr(responseBuf){
-    return this.protocolConverter.convertBufToHexToDec(responseBuf.slice(2, 3));
+  getResponseAddr(responseData){
+    return this.convertBufToHexToDec(responseData.slice(2, 3));
   }
 
   /**
@@ -110,14 +113,14 @@ class Model extends BaseModel {
   }
 
   /**
-   * @param {Buffer} responseBuf 인버터에서 수신받은 데이터
+   * @param {Buffer} responseData 인버터에서 수신받은 데이터
    * @param {{dialing: Buffer, address: number, length: number, decodingDataList: Array.<{key: string, byte: number, callMethod: string}>}} decodingInfo 인버터에서 수신받은 데이터
    * @return {Buffer} Data Buffer만 리턴
    */
-  getValidateData(responseBuf, decodingInfo){
+  getValidateData(responseData, decodingInfo){
     // BU.CLI(responseBuf.toString());
     try {
-      let SOP = Buffer.from([_.nth(responseBuf, 0)]) ;
+      let SOP = Buffer.from([_.nth(responseData, 0)]) ;
 
       // SOP 일치 여부 체크
       if(!_.isEqual(SOP, this.SOP)){
@@ -125,7 +128,7 @@ class Model extends BaseModel {
       }
       // check Length
       // check Length (SOP, CODE, ADDRESS 제외)
-      let lengtBodyBuf = responseBuf.slice(_.sum([
+      let lengtBodyBuf = responseData.slice(_.sum([
         this.HEADER_INFO.BYTE.SOP,
         this.HEADER_INFO.BYTE.CODE,
         this.HEADER_INFO.BYTE.ADDR,
@@ -138,13 +141,13 @@ class Model extends BaseModel {
       }
   
       // check CheckSum (SOP, CODE, CHECKSUM 제외)
-      let checksumBodyBuf =  responseBuf.slice(_.sum([
+      let checksumBodyBuf =  responseData.slice(_.sum([
         this.HEADER_INFO.BYTE.SOP,
         this.HEADER_INFO.BYTE.CODE,
-      ]), _.subtract(responseBuf.length, this.HEADER_INFO.BYTE.CHECKSUM));
+      ]), _.subtract(responseData.length, this.HEADER_INFO.BYTE.CHECKSUM));
   
       // 계산된 체크섬
-      let strChecksum = this.protocolConverter.returnBufferExceptDelimiter(checksumBodyBuf, ',').toString();
+      let strChecksum = this.returnBufferExceptDelimiter(checksumBodyBuf, ',').toString();
   
       let calcChecksum = 0;
       _.forEach(strChecksum, str => {
@@ -155,8 +158,8 @@ class Model extends BaseModel {
       });
   
       // 응답받은 체크섬 
-      let checksumBuf = responseBuf.slice(_.subtract(responseBuf.length, this.HEADER_INFO.BYTE.CHECKSUM));
-      let expectChecksum = this.protocolConverter.convertBufToHexToNum(checksumBuf);
+      let checksumBuf = responseData.slice(_.subtract(responseData.length, this.HEADER_INFO.BYTE.CHECKSUM));
+      let expectChecksum = this.convertBufToHexToNum(checksumBuf);
   
       // 체크섬이 다르다면 예외 처리
       if(calcChecksum !== expectChecksum){
@@ -164,21 +167,21 @@ class Model extends BaseModel {
       }
   
       // 실제 장치 데이터를 담은 Buffer 생성
-      let dataBodyBuf =  responseBuf.slice(_.sum([
+      let dataBodyBuf =  responseData.slice(_.sum([
         this.HEADER_INFO.BYTE.SOP,
         this.HEADER_INFO.BYTE.CODE,
         this.HEADER_INFO.BYTE.ADDR,
         this.HEADER_INFO.BYTE.LENGTH,
         this.HEADER_INFO.BYTE.ID
-      ]), _.subtract(responseBuf.length, this.HEADER_INFO.BYTE.CHECKSUM));
+      ]), _.subtract(responseData.length, this.HEADER_INFO.BYTE.CHECKSUM));
   
       // 구분자 제거
-      dataBodyBuf =  this.protocolConverter.returnBufferExceptDelimiter(dataBodyBuf, ',');
+      dataBodyBuf =  this.returnBufferExceptDelimiter(dataBodyBuf, ',');
       // BU.CLI(dataBodyBuf);
   
       return dataBodyBuf;
     } catch (error) {
-      BU.CLI('Error');
+      BU.CLI('hi');
       throw error;
     }
   }

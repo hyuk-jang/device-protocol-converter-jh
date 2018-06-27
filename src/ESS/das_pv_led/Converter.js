@@ -1,23 +1,18 @@
+'use strict';
 const _ = require('lodash');
-
-const {
-  BU
-} = require('base-util-jh');
-const DefaultConverter = require('../../Default/DefaultConverter');
+const {BU} = require('base-util-jh');
+const AbstConverter = require('../../Default/AbstConverter');
 const protocol = require('./protocol');
 
-
-require('../../format/defaultDefine');
-// require('./define');
 const BaseModel = require('../BaseModel');
 
-class Converter extends DefaultConverter {
+class Converter extends AbstConverter {
   /**
    * @param {protocol_info} protocol_info
    */
   constructor(protocol_info) {
     super(protocol_info);
-    this.config = protocol_info;
+    this.protocol_info = protocol_info;
     this.decodingTable = protocol.decodingProtocolTable(protocol_info);
     this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
 

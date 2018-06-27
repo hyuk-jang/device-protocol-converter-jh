@@ -1,13 +1,17 @@
-'use strict';
 const _ = require('lodash');
 
-const {BU} = require('base-util-jh');
-const AbstConverter = require('../../Default/AbstConverter');
+const {
+  BU
+} = require('base-util-jh');
+const AbstConverter = require('../../Default/DefaultConverter');
 const protocol = require('./protocol');
 
+
+require('../../format/defaultDefine');
+// require('./define');
 const BaseModel = require('../BaseModel');
 
-class Converter extends AbstConverter {
+class Converter extends DefaultConverter {
   /**
    * protocol_info.option --> true: 3.3kW, any: 600W
    * @param {protocol_info} protocol_info
@@ -21,6 +25,7 @@ class Converter extends AbstConverter {
     /** BaseModel */
     this.BaseModel = BaseModel;
     this.baseModel = new BaseModel(protocol_info);
+
   }
 
   /**
@@ -44,7 +49,6 @@ class Converter extends AbstConverter {
       let requestData = this.getCurrTransferCmd(dcData);
       let responseData = dcData.data;
 
-      
       let reqAddr = this.baseModel.getRequestAddr(requestData);
       let resAddr = this.baseModel.getResponseAddr(responseData);
       
@@ -77,7 +81,7 @@ class Converter extends AbstConverter {
         throw new Error(`Can not find it Addr ${resAddr}`);
       }
 
-      let dataBody = this.baseModel.getValidateData(responseData, decodingTable);
+      let dataBody = this.baseModel.checkValidate(responseData, decodingTable);
       return this.automaticDecoding(decodingTable.decodingDataList, dataBody);
     } catch (error) {
       throw error;

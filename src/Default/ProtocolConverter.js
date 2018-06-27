@@ -247,7 +247,7 @@ class Converter {
    * @param {Buffer|string|string[]|number|number[]}
    */
   makeMsg2Buffer(...args) {
-    // BU.CLI(arguments);
+    // BU.CLI(args);
     if(Buffer.isBuffer(args)){
       return args;
     }
@@ -270,6 +270,8 @@ class Converter {
           let strMsg = JSON.stringify(arg);
           this.resultMakeMsg2Buffer.push(Buffer.from(strMsg));
         }
+      } else if (arg === undefined) {
+        this.resultMakeMsg2Buffer.push(Buffer.from(''));
       } else {
         this.resultMakeMsg2Buffer.push(arg);
       }

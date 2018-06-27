@@ -1,3 +1,4 @@
+'use strict';
 const {BU} = require('base-util-jh');
 const _ = require('lodash');
 
@@ -10,7 +11,7 @@ class Model extends BaseModel {
    */
   constructor(baseModel) {
     super();
-    this.dialing = this.makeMsg2Buffer(_.get(baseModel, 'protocol_info.deviceId'));
+    this.dialing = this.protocolConverter.makeMsg2Buffer(_.get(baseModel, 'protocol_info.deviceId'));
     // BU.CLI(this.dialing);
 
     this.SOP = Buffer.from('^');
@@ -30,48 +31,48 @@ class Model extends BaseModel {
       }
     };
 
-    this.BASE.SYSTEM.COMMAND.STATUS = [
+    this.device.SYSTEM.COMMAND.STATUS = [
       this.makeMsg('MOD')
     ];
 
-    this.BASE.PV.COMMAND.STATUS = [
+    this.device.PV.COMMAND.STATUS = [
       this.makeMsg('ST1'),
     ];
 
-    this.BASE.GRID.COMMAND.STATUS = [
+    this.device.GRID.COMMAND.STATUS = [
       this.makeMsg('ST2'),
       this.makeMsg('ST3')
     ];
     
-    this.BASE.POWER.COMMAND.STATUS = [
+    this.device.POWER.COMMAND.STATUS = [
       this.makeMsg('ST4'),
     ];
 
-    this.BASE.OPERATION_INFO.COMMAND.STATUS = [
+    this.device.OPERATION_INFO.COMMAND.STATUS = [
       this.makeMsg('ST6'),
     ];
 
-    this.BASE.BATTERY.COMMAND.STATUS = [
+    this.device.BATTERY.COMMAND.STATUS = [
       this.makeMsg('ST7'),
     ];
 
-    this.BASE.LED.COMMAND.STATUS = [
+    this.device.LED.COMMAND.STATUS = [
       this.makeMsg('ST8'),
     ];
 
-    this.BASE.TEMP.COMMAND.STATUS = [
+    this.device.TEMP.COMMAND.STATUS = [
       this.makeMsg('ST9'),
     ];
 
-    this.BASE.DEFAULT.COMMAND.STATUS = _.flatten( _.concat([
-      this.BASE.SYSTEM.COMMAND.STATUS,
-      this.BASE.PV.COMMAND.STATUS,
-      this.BASE.GRID.COMMAND.STATUS,
-      this.BASE.POWER.COMMAND.STATUS,
-      this.BASE.OPERATION_INFO.COMMAND.STATUS,
-      this.BASE.BATTERY.COMMAND.STATUS,
-      this.BASE.LED.COMMAND.STATUS,
-      this.BASE.TEMP.COMMAND.STATUS,
+    this.device.DEFAULT.COMMAND.STATUS = _.flatten( _.concat([
+      this.device.SYSTEM.COMMAND.STATUS,
+      this.device.PV.COMMAND.STATUS,
+      this.device.GRID.COMMAND.STATUS,
+      this.device.POWER.COMMAND.STATUS,
+      this.device.OPERATION_INFO.COMMAND.STATUS,
+      this.device.BATTERY.COMMAND.STATUS,
+      this.device.LED.COMMAND.STATUS,
+      this.device.TEMP.COMMAND.STATUS,
     ]));
   }
 
@@ -122,7 +123,7 @@ class Model extends BaseModel {
    * @return {number}
    */
   getResponseAddr(responseBuf){
-    return this.convertBufToHexToDec(responseBuf.slice(2, 3));
+    return this.protocolConverter.convertBufToHexToDec(responseBuf.slice(2, 3));
   }
 
   /**
@@ -168,7 +169,7 @@ class Model extends BaseModel {
       ]), _.subtract(responseBuf.length, this.HEADER_INFO.BYTE.CHECKSUM));
   
       // 계산된 체크섬
-      let strChecksum = this.returnBufferExceptDelimiter(checksumBodyBuf, ',').toString();
+      let strChecksum = this.protocolConverter.returnBufferExceptDelimiter(checksumBodyBuf, ',').toString();
   
       let calcChecksum = 0;
       _.forEach(strChecksum, str => {
@@ -180,7 +181,7 @@ class Model extends BaseModel {
   
       // 응답받은 체크섬 
       let checksumBuf = responseBuf.slice(_.subtract(responseBuf.length, this.HEADER_INFO.BYTE.CHECKSUM));
-      let expectChecksum = this.convertBufToHexToNum(checksumBuf);
+      let expectChecksum = this.protocolConverter.convertBufToHexToNum(checksumBuf);
   
       // 체크섬이 다르다면 예외 처리
       if(calcChecksum !== expectChecksum){
@@ -188,7 +189,7 @@ class Model extends BaseModel {
       }
   
       // 실제 장치 데이터를 담은 Buffer 생성
-      let dataBodyBuf =  responseBuf.slice(_.sum([
+      let dataBodyBuf = responseBuf.slice(_.sum([
         this.HEADER_INFO.BYTE.SOP,
         this.HEADER_INFO.BYTE.CODE,
         this.HEADER_INFO.BYTE.ADDR,
@@ -197,7 +198,7 @@ class Model extends BaseModel {
       ]), _.subtract(responseBuf.length, this.HEADER_INFO.BYTE.CHECKSUM));
   
       // 구분자 제거
-      dataBodyBuf =  this.returnBufferExceptDelimiter(dataBodyBuf, ',');
+      dataBodyBuf =  this.protocolConverter.returnBufferExceptDelimiter(dataBodyBuf, ',');
       // BU.CLI(dataBodyBuf);
   
       return dataBodyBuf;

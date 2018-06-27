@@ -1,19 +1,20 @@
 'use strict';
 const _ = require('lodash');
 const {BU} = require('base-util-jh');
-const DefaultConverter = require('../../Default/DefaultConverter');
+const AbstConverter = require('../../Default/AbstConverter');
 const protocol = require('./protocol');
 
 const BaseModel = require('../BaseModel');
 
-require('../../format/defaultDefine');
-class Converter extends DefaultConverter {
+class Converter extends AbstConverter {
   /**
    * @param {protocol_info} protocol_info
    */
   constructor(protocol_info) {
     super(protocol_info);
 
+
+    /** BaseModel */
     this.BaseModel = BaseModel;
     this.baseModel = new BaseModel(protocol_info);
   }
@@ -28,7 +29,7 @@ class Converter extends DefaultConverter {
     if(cmd){
       return this.makeDefaultCommandInfo(cmd);
     } else {
-      return this.makeDefaultCommandInfo(this.baseModel.DEFAULT.COMMAND.LOOP);
+      return this.makeDefaultCommandInfo(this.baseModel.device.DEFAULT.COMMAND.LOOP);
     }
   }
 
@@ -42,7 +43,7 @@ class Converter extends DefaultConverter {
       let requestData = this.getCurrTransferCmd(dcData);
       let responseData = dcData.data;
     
-      if(_.includes(requestData, this.baseModel.DEFAULT.COMMAND.LOOP)){
+      if(_.includes(requestData, this.baseModel.device.DEFAULT.COMMAND.LOOP)){
         let bufferData = responseData instanceof Buffer ? responseData : this.protocolConverter.makeMsg2Buffer(responseData);
 
         let wakeupSTX = bufferData.slice(0, 2);

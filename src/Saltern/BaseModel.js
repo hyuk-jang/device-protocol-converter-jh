@@ -4,144 +4,134 @@ const _ = require('lodash');
 
 const baseFormat = require('./baseFormat');
 
-require('../format/defaultDefine');
-class BaseModel {
+const AbstBaseModel = require('../Default/AbstBaseModel');
+class BaseModel extends AbstBaseModel {
   /** @param {protocol_info} protocol_info */
   constructor(protocol_info) {
+    super();
     this.baseFormat = _.clone(baseFormat);
 
-
-    this.DEFAULT = {
-      STATUS: {
-        UNDEF: 'UNDEF'
+    this.device = {
+      DEFAULT: {
+        STATUS: {
+          UNDEF: 'UNDEF'
+        }
+      },
+      WATER_DOOR: {
+        STATUS: {
+          STOP: 'STOP',
+          OPEN: 'OPEN',
+          OPENING: 'OPENING',
+          CLOSE: 'CLOSE',
+          CLOSING: 'CLOSING',
+        },
+        COMMAND: {
+          OPEN: {},
+          CLOSE: {},
+          STATUS: {}
+        },
+        /** @type {string} 수문 */
+        KEY: 'waterDoor',
+        NAME: '수문'
+      },
+      VALVE: {
+        STATUS: {
+          UNDEF: 'UNDEF',
+          CLOSE: 'CLOSE',
+          OPEN: 'OPEN',
+          BUSY: 'BUSY',
+          // CLOSING: 'CLOSING',
+          // OPENING: 'OPENING',
+        },
+        COMMAND: {
+          OPEN: {},
+          CLOSE: {},
+          STATUS: {}
+        },
+        /** @type {string} 밸브 */
+        KEY: 'valve',
+        NAME: '밸브'
+      },
+      PUMP: {
+        STATUS: {
+          OFF: 'OFF',
+          ON: 'ON'
+        },
+        COMMAND: {
+          ON: {},
+          OFF: {},
+          STATUS: {}
+        },
+        /** @type {string} 펌프 */
+        KEY: 'pump',
+        NAME: '펌프'
+      },
+      WATER_LEVEL: {
+        STATUS: {
+          ZERO: 0,
+          ONE: 1,
+          TWO: 2,
+          THREE: 3,
+        },
+        COMMAND: {
+          STATUS: {}
+        },
+        /** @type {string} 수위 */
+        KEY: 'waterLevel',
+        NAME: '수위'
+      },
+      SALINITY: {
+        STATUS: {},
+        COMMAND: {
+          MEASURE: {},
+          STATUS: {}
+        },
+        /** @type {string} 염도 */
+        KEY: 'salinity',
+        NAME: '염도'
+      },
+      WATER_TEMPERATURE: {
+        STATUS: {},
+        COMMAND: {
+          STATUS: {}
+        },
+        /** @type {string} 수중 온도 */
+        KEY: 'waterTemperature',
+        NAME: '수온'
+      },
+      MODULE_FRONT_TEMPERATURE: {
+        STATUS: {},
+        COMMAND: {
+          STATUS: {}
+        },
+        /** @type {string} 모듈 앞면 온도 */
+        KEY: 'moduleFrontTemperature',
+        NAME: '모듈 온도'
+      },
+      MODULE_REAR_TEMPERATURE: {
+        STATUS: {},
+        COMMAND: {
+          STATUS: {}
+        },
+        /** @type {string} 모듈 뒷면 온도 */
+        KEY: 'moduleRearTemperature',
+        NAME: '모듈 온도'
+      },
+      BATTERY: {
+        STATUS: {},
+        COMMAND: {
+          STATUS: {}
+        },
+        /** @type {string} 배터리 전압 */
+        KEY: 'battery',
+        NAME: '배터리 전압'
       }
     };
-    
-    
-    this.WATER_DOOR = {
-      STATUS: {
-        STOP: 'STOP',
-        OPEN: 'OPEN',
-        OPENING: 'OPENING',
-        CLOSE: 'CLOSE',
-        CLOSING: 'CLOSING',
-      },
-      COMMAND: {
-        OPEN: {},
-        CLOSE: {},
-        STATUS: {}
-      },
-      /** @type {string} 수문 */
-      KEY: 'waterDoor',
-      NAME: '수문'
-    };
 
-    this.VALVE = {
-      STATUS: {
-        UNDEF: 'UNDEF',
-        CLOSE: 'CLOSE',
-        OPEN: 'OPEN',
-        BUSY: 'BUSY',
-        // CLOSING: 'CLOSING',
-        // OPENING: 'OPENING',
-      },
-      COMMAND: {
-        OPEN: {},
-        CLOSE: {},
-        STATUS: {}
-      },
-      /** @type {string} 밸브 */
-      KEY: 'valve',
-      NAME: '밸브'
-    };
-
-    this.PUMP = {
-      STATUS: {
-        OFF: 'OFF',
-        ON: 'ON'
-      },
-      COMMAND: {
-        ON: {},
-        OFF: {},
-        STATUS: {}
-      },
-      /** @type {string} 펌프 */
-      KEY: 'pump',
-      NAME: '펌프'
-    };
-
-    this.WATER_LEVEL = {
-      STATUS: {
-        ZERO: 0,
-        ONE: 1,
-        TWO: 2,
-        THREE: 3,
-      },
-      COMMAND: {
-        STATUS: {}
-      },
-      /** @type {string} 수위 */
-      KEY: 'waterLevel',
-      NAME: '수위'
-    };
-
-    this.SALINITY = {
-      STATUS: {},
-      COMMAND: {
-        MEASURE: {},
-        STATUS: {}
-      },
-      /** @type {string} 염도 */
-      KEY: 'salinity',
-      NAME: '염도'
-    };
-
-    this.WATER_TEMPERATURE = {
-      STATUS: {},
-      COMMAND: {
-        STATUS: {}
-      },
-      /** @type {string} 수중 온도 */
-      KEY: 'waterTemperature',
-      NAME: '수온'
-    };
-
-    this.MODULE_FRONT_TEMPERATURE = {
-      STATUS: {},
-      COMMAND: {
-        STATUS: {}
-      },
-      /** @type {string} 모듈 앞면 온도 */
-      KEY: 'moduleFrontTemperature',
-      NAME: '모듈 온도'
-    };
-
-    this.MODULE_REAR_TEMPERATURE = {
-      STATUS: {},
-      COMMAND: {
-        STATUS: {}
-      },
-      /** @type {string} 모듈 뒷면 온도 */
-      KEY: 'moduleRearTemperature',
-      NAME: '모듈 온도'
-    };
-
-    this.BATTERY = {
-      STATUS: {},
-      COMMAND: {
-        STATUS: {}
-      },
-      /** @type {string} 배터리 전압 */
-      KEY: 'battery',
-      NAME: '배터리 전압'
-    };
-    
-
-    if(_.get(protocol_info, 'subCategory')){
-      const Model = require(`./${protocol_info.subCategory}/Model`);
-      return new Model(this);
+    /** Protocol 정보에 따라 자동으로 세부 Model Binding */
+    if(protocol_info){
+      return this.bindingSubCategory(protocol_info);
     }
-
   }
 
   /** 현재 카테고리에 있는 장치 데이터를 저장하기 위한 모델 */
@@ -158,3 +148,24 @@ class BaseModel {
 
 }
 module.exports = BaseModel;
+
+
+// if __main process
+if (require !== undefined && require.main === module) {
+  console.log('__main__');
+
+  /** @type {protocol_info} */
+  let protocol_info = {
+    mainCategory: 'Saltern',
+    subCategory: 'xbee'
+  };
+
+  
+  console.log(BaseModel.BASE_KEY);
+  console.log(BaseModel.GET_BASE_KEY(protocol_info));
+  const model = new BaseModel(protocol_info);
+  
+  // console.log(model);
+  console.log(model.device.PUMP.COMMAND.OFF);
+
+}

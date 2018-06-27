@@ -4,10 +4,8 @@ const _ = require('lodash');
 
 const baseFormat = require('./baseFormat');
 
-const ProtocolConverter =  require('../Default/ProtocolConverter');
-
-require('../format/defaultDefine');
-class BaseModel extends ProtocolConverter {
+const AbstBaseModel = require('../Default/AbstBaseModel');
+class BaseModel extends AbstBaseModel {
   /** @param {protocol_info} protocol_info */
   constructor(protocol_info) {
     super();
@@ -17,7 +15,7 @@ class BaseModel extends ProtocolConverter {
       this.protocol_info = protocol_info;
     }
 
-    this.BASE = {
+    this.device = {
       DEFAULT: {
         STATUS: {
           UNDEF: 'UNDEF'
@@ -76,11 +74,10 @@ class BaseModel extends ProtocolConverter {
       }
     };
 
-    if(_.get(protocol_info, 'subCategory')){
-      const Model = require(`./${protocol_info.subCategory}/Model`);
-      return new Model(this);
+    /** Protocol 정보에 따라 자동으로 세부 Model Binding */
+    if(protocol_info){
+      return this.bindingSubCategory(protocol_info);
     }
-
   }
 
   /** 현재 카테고리에 있는 장치 데이터를 저장하기 위한 모델 */
@@ -96,23 +93,23 @@ class BaseModel extends ProtocolConverter {
   }
 
   /**
-   * @param {Buffer} responseBuf 인버터에서 수신받은 데이터
+   * @param {Buffer} responseData 인버터에서 수신받은 데이터
    * @param {{dialing: Buffer, address: number, length: number, decodingDataList: Array.<{key: string, byte: number, callMethod: string}>}} decodingInfo 인버터에서 수신받은 데이터
    * @return {Buffer} Data Buffer만 리턴
    */
-  checkValidate(responseBuf, decodingInfo){}
+  getValidateData(responseData, decodingInfo){}
 
   /**
-   * @param {Buffer} requestBuf 인버터에 요청한 데이터
+   * @param {Buffer} requestData 인버터에 요청한 데이터
    * @return {number}
    */
-  getRequestAddr(requestBuf){}
+  getRequestAddr(requestData){}
 
   /**
-   * @param {Buffer} responseBuf 인버터에서 수신받은 데이터
+   * @param {Buffer} responseData 인버터에서 수신받은 데이터
    * @return {number}
    */
-  getResponseAddr(responseBuf){}
+  getResponseAddr(responseData){}
 
 }
 module.exports = BaseModel;
