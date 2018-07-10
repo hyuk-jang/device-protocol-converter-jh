@@ -4,8 +4,7 @@ const _ = require('lodash');
 
 const ProtocolConverter = require('./ProtocolConverter');
 const AbstBaseModel = require('./AbstBaseModel');
-const {definedCommanderResponse} = require('../format/moduleDefine');
-require('../format/defaultDefine');
+const {definedCommanderResponse} =  require('../../../../module/default-intelligence').dccFlagModel;
 
 class AbstConverter {
   /**
@@ -125,8 +124,8 @@ class AbstConverter {
 
 
   /**
-   * decondigInfo 리스트 만큼 Data 파싱을 진행
-   * @param {Array.<decondigInfo>} decodingTable 
+   * decodingInfo 리스트 만큼 Data 파싱을 진행
+   * @param {Array.<decodingInfo>} decodingTable 
    * @param {Buffer} data 
    */
   automaticDecoding(decodingTable, data) {

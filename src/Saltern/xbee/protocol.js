@@ -1,8 +1,7 @@
 const {
   parsingMethod
 } = require('../../format/moduleDefine');
-
-require('../../format/defaultDefine');
+require('../../../../default-intelligence');
 
 const Model = require('./Model');
 const model = new Model();

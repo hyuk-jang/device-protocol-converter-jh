@@ -2,7 +2,7 @@
 const {BU} = require('base-util-jh');
 const _ = require('lodash');
 
-const {definedCommanderResponse} = require('../format/moduleDefine');
+const {definedCommanderResponse} =  require('../../../../module/default-intelligence').dccFlagModel;
 
 class Converter {
   constructor() {

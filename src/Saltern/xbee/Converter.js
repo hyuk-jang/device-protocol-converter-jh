@@ -164,8 +164,8 @@ class Converter extends AbstConverter {
   }
 
   /**
-   * decondigInfo 리스트 만큼 Data 파싱을 진행
-   * @param {Array.<decondigInfo>} decodingTable 
+   * decodingInfo 리스트 만큼 Data 파싱을 진행
+   * @param {Array.<decodingInfo>} decodingTable 
    * @param {Buffer} data 
    */
   automaticDecoding(decodingTable, data) {

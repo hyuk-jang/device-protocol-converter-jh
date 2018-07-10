@@ -6,9 +6,8 @@ const {
 const AbstConverter = require('../../Default/DefaultConverter');
 const protocol = require('./protocol');
 
+require('../../../../default-intelligence');
 
-require('../../format/defaultDefine');
-// require('./define');
 const BaseModel = require('../BaseModel');
 
 class Converter extends DefaultConverter {
@@ -89,8 +88,8 @@ class Converter extends DefaultConverter {
   }
 
   /**
-   * decondigInfo 리스트 만큼 Data 파싱을 진행
-   * @param {Array.<decondigInfo>} decodingTable 
+   * decodingInfo 리스트 만큼 Data 파싱을 진행
+   * @param {Array.<decodingInfo>} decodingTable 
    * @param {Buffer} data 
    */
   automaticDecoding(decodingTable, data) {

@@ -1,5 +1,4 @@
 const MainConverter = require('./src/Default/MainConverter');
-require('./src/format/defaultDefine');
 
 /** Intelligence를 위함 */
 const BaseModel = {

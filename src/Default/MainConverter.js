@@ -2,7 +2,7 @@
 
 const BU = require('base-util-jh').baseUtil;
 
-require('../format/defaultDefine');
+require('../../../../module/default-intelligence');
 
 class MainConverter {
   /**
