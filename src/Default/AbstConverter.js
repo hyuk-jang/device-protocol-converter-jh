@@ -132,6 +132,7 @@ class AbstConverter {
     try {
       // 데이터를 집어넣을 기본 자료형을 가져옴
       let returnValue = this.BaseModel.BASE_MODEL;
+      BU.CLI(returnValue);
       // 도출된 자료가 2차 가공(ex: 0 -> Open, 1 -> Close )이 필요한 경우
       const operationKeys = _.keys(this.onDeviceOperationStatus);
       let startIndex = 0;
@@ -142,12 +143,19 @@ class AbstConverter {
         let convertValue = this.protocolConverter[decodingInfo.callMethod](thisBuf);
         convertValue = _.isNumber(decodingInfo.scale) && _.isNumber(decodingInfo.fixed) ? _.round(convertValue * decodingInfo.scale, decodingInfo.fixed) : convertValue;
         // 2차 가공 여부에 따라 변환
+        let realValue = convertValue;
         if (_.includes(operationKeys, decodingInfo.key)) {
           const operationStauts = this.onDeviceOperationStatus[decodingInfo.key];
-          returnValue[decodingInfo.key] = operationStauts[convertValue];
+          realValue = _.get(operationStauts, convertValue);
+        } 
+
+        // 데이터 단위가 배열일 경우
+        if(Array.isArray(returnValue[_.get(decodingInfo, 'key')])){
+          returnValue[_.get(decodingInfo, 'key')].push(realValue);
         } else {
-          returnValue[decodingInfo.key] = convertValue;
+          returnValue[_.get(decodingInfo, 'key')] = realValue;
         }
+
         // index 증가
         startIndex += decodingInfo.byte;
       });

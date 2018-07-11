@@ -21,6 +21,24 @@ module.exports = {
    */
   pvKw: null,
   /**
+   * 전류(Ampere), 단위[A]
+   * @description PV 
+   * @type {number=}
+   */
+  pvAmp2: null,
+  /**
+   * 전압(voltage), 단위[V]
+   * @description PV 
+   * @type {number=}
+   */
+  pvVol2: null,
+  /**
+   * 전압(voltage), 단위[V]
+   * @description PV 
+   * @type {number=}
+   */
+  pvKw2: null,
+  /**
    * 태양 전지 현재 전력, 단위[kW]
    * @description Power 
    * @type {number=}
@@ -141,6 +159,12 @@ module.exports = {
    */
   operTemperature: null,
   /**
+   * 측정 시간
+   * @description Measure Time 
+   * @type {number=}
+   */
+  operTime: null,
+  /**
    * 에러 리스트, 단위[Array.<{}>]
    * @description Operation 
    * @type {Array.<Object>=}
@@ -157,5 +181,5 @@ module.exports = {
    * @description troubleList 
    * @type {Array.<Object>=}
    */
-  operTroubleList: null
+  operTroubleList: null,
 };

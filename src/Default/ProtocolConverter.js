@@ -112,7 +112,10 @@ class Converter {
    */
   convertBufToHexToDec(buffer) {
     if(!Buffer.isBuffer(buffer)) return null;
-    let str = buffer.toString();
+    let str = buffer.toString('hex');
+
+    
+
     return Number(this.converter().hex2dec(str));
   }
 
