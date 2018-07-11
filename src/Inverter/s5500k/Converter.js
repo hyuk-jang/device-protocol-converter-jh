@@ -6,6 +6,7 @@ const AbstConverter = require('../../Default/AbstConverter');
 const protocol = require('./protocol');
 
 const BaseModel = require('../BaseModel');
+const Model = require('./Model');
 
 class Converter extends AbstConverter {
   /**
@@ -41,30 +42,16 @@ class Converter extends AbstConverter {
   concreteParsingData(dcData) {
     try {
 
-
-      let decodingTable = this.decodingTable.DEFAULT;
-
-      // let dataBody = this.baseModel.getValidateData( responseData, decodingTable);
-      return this.automaticDecoding(decodingTable.decodingDataList, dcData.data);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  /**
-   * decodingInfo 리스트 만큼 Data 파싱을 진행
-   * @param {Array.<decodingInfo>} decodingTable 
-   * @param {Buffer} data 
-   */
-  automaticDecoding(decodingTable, data) {
-    try {
       // 데이터를 집어넣을 기본 자료형을 가져옴
+      let data = dcData.data;
       let returnValue = this.BaseModel.BASE_MODEL;
-      // BU.CLI(returnValue);
+      let decodingTable = this.decodingTable.DEFAULT;
+      let decodingDataList = decodingTable.decodingDataList;
+
       // 도출된 자료가 2차 가공(ex: 0 -> Run, 1 -> Stop )이 필요한 경우
       const operationKeys = _.keys(this.onDeviceOperationStatus);
       let startIndex = 0;
-      decodingTable.forEach(decodingInfo => {
+      decodingDataList.forEach(decodingInfo => {
         // 조회할 데이터를 가져옴
         let thisBuf = data.slice(startIndex, startIndex + decodingInfo.byte);
         // 사용하는 메소드를 호출
@@ -74,10 +61,14 @@ class Converter extends AbstConverter {
           }
           let convertValue = this.protocolConverter[decodingInfo.callMethod](thisBuf);
           convertValue = _.isNumber(decodingInfo.scale) && _.isNumber(decodingInfo.fixed) ? _.round(convertValue * decodingInfo.scale, decodingInfo.fixed) : convertValue;
-  
+   
           returnValue[decodingInfo.key] = convertValue;
           // // 2차 가공 여부에 따라 변환
-          // if (_.includes(operationKeys, decodingInfo.key)) {
+          // if (_.includes(operationKeys, decodingInfo.calcParsingKey)) {
+          //   // 날짜 일 경우 별도 파싱
+          //   if(decodingInfo.calcParsingKey === Model.CALC_KEY.Time){
+          //     BU.CLI(convertValue);
+          //   }
           //   const operationStauts = this.onDeviceOperationStatus[decodingInfo.key];
           //   let parsingData = _.get(operationStauts, convertValue);
           //   if(decodingInfo.key === this.BaseModel.BASE_KEY.operTroubleList){
@@ -92,9 +83,11 @@ class Converter extends AbstConverter {
         startIndex += decodingInfo.byte;
       });
       return returnValue;
+
     } catch (error) {
       throw error;
     }
   }
+
 }
 module.exports = Converter;

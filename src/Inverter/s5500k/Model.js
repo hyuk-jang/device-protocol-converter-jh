@@ -30,6 +30,8 @@ class Model extends BaseModel {
       }
     };
 
+    
+
 
     this.device.DEFAULT.COMMAND.STATUS = _.flatten( _.concat([
       this.device.SYSTEM.COMMAND.STATUS,
@@ -38,6 +40,17 @@ class Model extends BaseModel {
       this.device.POWER.COMMAND.STATUS,
       this.device.OPERATION_INFO.COMMAND.STATUS
     ]));
+  }
+
+  static get CALC_KEY() {
+    return {
+      Time: 'Time',
+      INV_Status: 'INV_Status',
+      Grid_Fault: 'GridFault',
+      Fault1: 'Fault1',
+      Fault2: 'Fault2',
+      Warring: 'Warring',
+    };
   }
 
   /**
