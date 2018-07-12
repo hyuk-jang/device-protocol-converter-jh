@@ -207,11 +207,11 @@ module.exports = {
    */
   batteryTotalChargingKw: null,
   /**
-   * 배터리 방전 전력, 단위[kWh]
+   * 누적 태양광발전 전력, 단위[kWh]
    * @description Battery
    * @type {number=}
    */
-  batteryTotalDischargingKw: null,
+  totalPVGeneratingPowerKwh: null,
   /**
    * LED DC 전압, 단위[V]
    * @description LED

@@ -6,7 +6,8 @@ const {
 const AbstConverter = require('../../Default/DefaultConverter');
 const protocol = require('./protocol');
 
-require('../../../../default-intelligence');
+require('default-intelligence');
+// require('../../../../default-intelligence');
 
 const BaseModel = require('../BaseModel');
 

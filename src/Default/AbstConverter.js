@@ -4,7 +4,9 @@ const _ = require('lodash');
 
 const ProtocolConverter = require('./ProtocolConverter');
 const AbstBaseModel = require('./AbstBaseModel');
-const {definedCommanderResponse} =  require('../../../../module/default-intelligence').dccFlagModel;
+
+const {definedCommanderResponse} =  require('default-intelligence').dccFlagModel;
+// const {definedCommanderResponse} =  require('../../../../module/default-intelligence').dccFlagModel;
 
 class AbstConverter {
   /**
@@ -132,7 +134,7 @@ class AbstConverter {
     try {
       // 데이터를 집어넣을 기본 자료형을 가져옴
       let returnValue = this.BaseModel.BASE_MODEL;
-      BU.CLI(returnValue);
+      // BU.CLI(returnValue);
       // 도출된 자료가 2차 가공(ex: 0 -> Open, 1 -> Close )이 필요한 경우
       const operationKeys = _.keys(this.onDeviceOperationStatus);
       let startIndex = 0;

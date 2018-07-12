@@ -123,12 +123,13 @@ class Converter extends AbstConverter {
       // STX 체크 (# 문자 동일 체크)
       if (_.isEqual(STX, 0x23)) {
         // let boardId = data.slice(1, 5);
+        BU.CLIS(data, data.toString());
         let productType = data.slice(5, 9);
         let dataBody = data.slice(9);
   
         let decodingDataList;
         if (_.isBuffer(productType)) {
-          productType = this.protocolConverter.convertBufToHexToDec(productType);
+          productType = this.protocolConverter.convertBufToHexToNum(productType);
   
           switch (productType) {
           case 1:

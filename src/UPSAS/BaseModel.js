@@ -81,7 +81,7 @@ class BaseModel extends AbstBaseModel {
           STATUS: {}
         },
         /** @type {string} 수위 */
-        KEY: baseKey.waterDoor,
+        KEY: baseKey.waterLevel,
         NAME: '수위'
       },
       SALINITY: {

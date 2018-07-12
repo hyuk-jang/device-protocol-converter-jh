@@ -1,6 +1,6 @@
 {
   "name": "device-protocol-converter-jh",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "",
   "main": "index.js",
   "directories": {
@@ -24,6 +24,7 @@
   "dependencies": {
     "base-util-jh": "^1.1.7",
     "crc": "^3.5.0",
+    "default-intelligence": "^0.1.4",
     "lodash": "^4.17.10",
     "xbee-api": "^0.6.0"
   }

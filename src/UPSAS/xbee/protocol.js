@@ -1,5 +1,6 @@
 const { parsingMethod } = require('../../format/moduleDefine');
-require('../../../../default-intelligence');
+require('default-intelligence');
+// require('../../../../default-intelligence');
 
 const Model = require('./Model');
 const model = new Model();
@@ -71,12 +72,12 @@ exports.decodingProtocolTable = dialing => {
         {
           key: model.device.WATER_DOOR.KEY,
           byte: 2,
-          callMethod: parsingMethod.convertBufToHexToDec
+          callMethod: parsingMethod.convertBufToHexToNum
         },
         {
           key: model.device.WATER_LEVEL.KEY,
           byte: 2,
-          callMethod: parsingMethod.convertBufToHexToDec
+          callMethod: parsingMethod.convertBufToHexToNum
         },
         {
           key: model.device.SALINITY.KEY,
@@ -98,12 +99,12 @@ exports.decodingProtocolTable = dialing => {
         {
           key: model.device.VALVE.KEY,
           byte: 2,
-          callMethod: parsingMethod.convertBufToHexToDec
+          callMethod: parsingMethod.convertBufToHexToNum
         },
         {
           key: model.device.WATER_LEVEL.KEY,
           byte: 2,
-          callMethod: parsingMethod.convertBufToHexToDec
+          callMethod: parsingMethod.convertBufToHexToNum
         },
         {
           key: model.device.WATER_TEMPERATURE.KEY,
@@ -130,12 +131,12 @@ exports.decodingProtocolTable = dialing => {
         {
           key: model.device.VALVE.KEY,
           byte: 2,
-          callMethod: parsingMethod.convertBufToHexToDec
+          callMethod: parsingMethod.convertBufToHexToNum
         },
         {
           key: model.device.WATER_LEVEL.KEY,
           byte: 3,
-          callMethod: parsingMethod.convertBufToHexToDec,
+          callMethod: parsingMethod.convertBufToHexToNum,
           scale: 0.1,
           fixed: 1
         },
@@ -164,7 +165,7 @@ exports.decodingProtocolTable = dialing => {
         {
           key: model.device.PUMP.KEY,
           byte: 2,
-          callMethod: parsingMethod.convertBufToHexToDec
+          callMethod: parsingMethod.convertBufToHexToNum
         },
         {
           key: model.device.BATTERY.KEY,
