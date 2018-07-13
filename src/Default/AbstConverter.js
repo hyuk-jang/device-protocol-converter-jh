@@ -5,8 +5,8 @@ const _ = require('lodash');
 const ProtocolConverter = require('./ProtocolConverter');
 const AbstBaseModel = require('./AbstBaseModel');
 
-const {definedCommanderResponse} =  require('default-intelligence').dccFlagModel;
-// const {definedCommanderResponse} =  require('../../../../module/default-intelligence').dccFlagModel;
+// const {definedCommanderResponse} =  require('default-intelligence').dccFlagModel;
+const {definedCommanderResponse} =  require('../../../../module/default-intelligence').dccFlagModel;
 
 class AbstConverter {
   /**

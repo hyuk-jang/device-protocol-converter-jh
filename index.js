@@ -1,3 +1,5 @@
+require('../default-intelligence');
+
 const MainConverter = require('./src/Default/MainConverter');
 
 /** Intelligence를 위함 */
@@ -9,30 +11,24 @@ const BaseModel = {
   Weathercast: require('./src/Weathercast/BaseModel')
 };
 
-
 module.exports = {
   AbstConverter: MainConverter,
   MainConverter,
-  BaseModel,
+  BaseModel
 };
 
 // if __main process
 if (require !== undefined && require.main === module) {
   console.log('__main__');
 
-
-
-
-
-  process.on('uncaughtException', function (err) {
+  process.on('uncaughtException', function(err) {
     // BU.debugConsole();
     console.error(err.stack);
     console.log(err.message);
     console.log('Node NOT Exiting...');
   });
 
-
-  process.on('unhandledRejection', function (err) {
+  process.on('unhandledRejection', function(err) {
     // BU.debugConsole();
     console.error(err.stack);
     console.log(err.message);

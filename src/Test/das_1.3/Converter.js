@@ -6,12 +6,12 @@ const {
 const AbstConverter = require('../../Default/DefaultConverter');
 const protocol = require('./protocol');
 
-require('default-intelligence');
+// require('default-intelligence');
 // require('../../../../default-intelligence');
 
 const BaseModel = require('../BaseModel');
 
-class Converter extends DefaultConverter {
+class Converter extends AbstConverter {
   /**
    * protocol_info.option --> true: 3.3kW, any: 600W
    * @param {protocol_info} protocol_info

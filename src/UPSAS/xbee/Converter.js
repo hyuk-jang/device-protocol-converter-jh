@@ -115,7 +115,7 @@ class Converter extends AbstConverter {
    * @param {xbeeApi_0x90} xbeeApi_0x90 
    */
   processDataReceivePacketZigBee(xbeeApi_0x90) {
-    // BU.CLI(xbeeApi_0x90);
+    BU.CLI(xbeeApi_0x90);
     try {
       const data = xbeeApi_0x90.data;
   
