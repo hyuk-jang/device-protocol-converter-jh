@@ -19,23 +19,6 @@ const onDeviceOperationStatus = {
     /** @type {string} 닫는 중 */
     5: model.device.WATER_DOOR.STATUS.OPENING
   },
-  /** @type {Object} 수위 */
-  [model.device.WATER_LEVEL.KEY]: {
-    /** @type {number} 0 단계 (수위없음) */
-    0: model.device.WATER_LEVEL.STATUS.ZERO,
-    /** @type {number} 1 단계 (최저) */
-    1: model.device.WATER_LEVEL.STATUS.ONE,
-    /** @type {number} 2 단계 */
-    2: model.device.WATER_LEVEL.STATUS.TWO,
-    3: model.device.WATER_LEVEL.STATUS.TWO,
-    /** @type {number} 3 단계 (최대) */
-    4: model.device.WATER_LEVEL.STATUS.THREE,
-    5: model.device.WATER_LEVEL.STATUS.THREE,
-    6: model.device.WATER_LEVEL.STATUS.THREE,
-    7: model.device.WATER_LEVEL.STATUS.THREE,
-    8: model.device.WATER_LEVEL.STATUS.THREE,
-    9: model.device.WATER_LEVEL.STATUS.THREE
-  },
   /** @type {Object} 밸브 */
   [model.device.VALVE.KEY]: {
     /** @type {number} 미확인 */
@@ -126,7 +109,7 @@ exports.decodingProtocolTable = dialing => {
     salternBlockValve: {
       dialing,
       address: '0002',
-      length: '6',
+      length: '21',
       decodingDataList: [
         {
           key: model.device.VALVE.KEY,

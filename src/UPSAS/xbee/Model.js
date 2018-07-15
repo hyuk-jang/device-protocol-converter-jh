@@ -6,7 +6,6 @@ class Model extends BaseModel {
   constructor() {
     super();
 
-    /** 수문 */
     this.device.WATER_DOOR.COMMAND.OPEN = {
       cmd: '@cgo',
       cmdList: [{

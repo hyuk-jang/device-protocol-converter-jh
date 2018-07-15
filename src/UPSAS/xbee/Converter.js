@@ -17,7 +17,7 @@ class Converter extends AbstConverter {
     this.protocol_info = protocol_info;
 
     this.decodingTable = protocol.decodingProtocolTable(this.protocol_info.deviceId);
-    // this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
+    this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
     this.xbeeAPI = new xbee_api.XBeeAPI();
     this.frameIdList = [];
 
@@ -123,7 +123,7 @@ class Converter extends AbstConverter {
       // STX 체크 (# 문자 동일 체크)
       if (_.isEqual(STX, 0x23)) {
         // let boardId = data.slice(1, 5);
-        BU.CLIS(data, data.toString());
+        BU.CLI(data.toString());
         let productType = data.slice(5, 9);
         let dataBody = data.slice(9);
   
@@ -136,7 +136,8 @@ class Converter extends AbstConverter {
             decodingDataList = this.decodingTable.gateLevelSalinity;
             break;
           case 2:
-            decodingDataList = this.decodingTable.valve;
+            decodingDataList = data.toString().length === 19 ? this.decodingTable.valve : this.decodingTable.salternBlockValve;
+            // decodingDataList = this.decodingTable.valve;
             break;
           case 3:
             decodingDataList = this.decodingTable.pump;
@@ -170,7 +171,6 @@ class Converter extends AbstConverter {
    * @param {Buffer} data 
    */
   automaticDecoding(decodingTable, data) {
-    BU.CLI('T_T wtf');
     return super.automaticDecoding(decodingTable, data);
   }
 }

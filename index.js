@@ -8,7 +8,8 @@ const BaseModel = {
   ESS: require('./src/ESS/BaseModel'),
   Inverter: require('./src/Inverter/BaseModel'),
   Saltern: require('./src/Saltern/BaseModel'),
-  Weathercast: require('./src/Weathercast/BaseModel')
+  Weathercast: require('./src/Weathercast/BaseModel'),
+  UPSAS: require('./src/UPSAS/BaseModel')
 };
 
 module.exports = {
