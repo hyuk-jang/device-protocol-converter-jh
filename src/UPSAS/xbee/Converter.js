@@ -51,7 +51,7 @@ class Converter extends AbstConverter {
     }
 
     let commandInfo = _.get(foundIt, 'COMMAND', {});
-    BU.CLI(commandInfo);
+    // BU.CLI(commandInfo);
 
     /** @type {Array.<commandInfoModel>} */
     let cmdList;
@@ -83,7 +83,7 @@ class Converter extends AbstConverter {
     /** @type {Array.<commandInfo>} */
     const returnValue = [];
 
-    BU.CLI(cmdList);
+    // BU.CLI(cmdList);
     cmdList.forEach(cmdInfo => {
       /** @type {commandInfo} */
       const commandObj = {};
@@ -161,7 +161,6 @@ class Converter extends AbstConverter {
         let decodingDataList;
         if (_.isBuffer(productType)) {
           productType = this.protocolConverter.convertBufToHexToNum(productType);
-          BU.CLI(productType);
   
           switch (productType) {
           case 1:

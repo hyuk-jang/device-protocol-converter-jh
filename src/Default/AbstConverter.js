@@ -148,8 +148,15 @@ class AbstConverter {
         // 2차 가공 여부에 따라 변환
         let realValue = convertValue;
         if (_.includes(operationKeys, decodingInfo.key)) {
+
           const operationStauts = this.onDeviceOperationStatus[decodingInfo.key];
-          realValue = _.get(operationStauts, convertValue);
+
+          // 찾은 Decoding이 Function 이라면 값을 넘겨줌
+          if(operationStauts instanceof Function){
+            realValue = operationStauts(convertValue);
+          } else {
+            realValue = _.get(operationStauts, convertValue);
+          }
         } 
 
         // 데이터 단위가 배열일 경우

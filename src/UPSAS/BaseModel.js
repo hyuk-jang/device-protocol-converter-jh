@@ -47,8 +47,8 @@ class BaseModel extends AbstBaseModel {
           CLOSE: 'CLOSE',
           OPEN: 'OPEN',
           BUSY: 'BUSY',
-          // CLOSING: 'CLOSING',
-          // OPENING: 'OPENING',
+          CLOSING: 'CLOSING',
+          OPENING: 'OPENING',
         },
         COMMAND: {
           OPEN: [],
