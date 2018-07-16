@@ -5,7 +5,10 @@ const {BU} = require('base-util-jh');
 
 const AbstConverter = require('../../Default/AbstConverter');
 const BaseModel = require('../BaseModel');
+const Model = require('./Model');
 const protocol = require('./protocol');
+
+require('../../../../default-intelligence');
 
 
 require('./define');
@@ -24,36 +27,64 @@ class Converter extends AbstConverter {
     /** BaseModel */
     // automaticDecoding Method 에서 사용됨
     this.BaseModel = BaseModel;
+    this.model = new Model();
   }
 
   /**
    * 장치를 조회 및 제어하기 위한 명령 생성. 
    * cmd가 있다면 cmd에 맞는 특정 명령을 생성하고 아니라면 기본 명령을 생성
-   * @param {{cmd: string, cmdList: Array.<{cmd: string, timeout: number=}>}} generationInfo 각 Protocol Converter에 맞는 데이터
+   * @param {{key: string, value: number}} generationInfo 각 Protocol Converter에 맞는 데이터
    * @return {Array.<commandInfo>} 장치를 조회하기 위한 명령 리스트 반환
    */
   generationCommand(generationInfo) {
     // BU.CLI(generationInfo);
+
+
+    /** @type {baseModelDeviceStructure} */
+    let foundIt = _.find(this.model.device, deviceModel => {
+      return _.isEqual(_.get(deviceModel, 'KEY'), generationInfo.key);
+    });
+    
+
+    if(_.isEmpty(foundIt)){
+      throw new Error(`${generationInfo.key}는 존재하지 않습니다.`);
+    }
+
+    let commandInfo = _.get(foundIt, 'COMMAND', {});
+    BU.CLI(commandInfo);
+
+    /** @type {Array.<commandInfoModel>} */
+    let cmdList;
+    
+    // 컨트롤 밸류가 0이나 False라면 장치 작동을 Close, Off
+    if(generationInfo.value === 0 || generationInfo.value === false){
+      if(_.keys(commandInfo).includes('CLOSE')){
+        cmdList = commandInfo.CLOSE;
+      } else if(_.keys(commandInfo).includes('OFF')){
+        cmdList = commandInfo.OFF;
+      } 
+    } else if(generationInfo.value === 1 || generationInfo.value === true){
+      if(_.keys(commandInfo).includes('OPEN')){
+        cmdList = commandInfo.OPEN;
+      } else if(_.keys(commandInfo).includes('ON')){
+        cmdList = commandInfo.ON;
+      } 
+    } else if(generationInfo.value === undefined){
+      if(_.keys(commandInfo).includes('STATUS')){
+        cmdList = commandInfo.STATUS;
+      } 
+    } else {
+      throw new Error(`controlValue: ${generationInfo.value}는 유효한 값이 아닙니다.`);
+    }
+    if(cmdList === undefined || _.isEmpty(cmdList)){
+      throw new Error(`${generationInfo.key}에는 Value: ${generationInfo.value} 존재하지 않습니다.`);
+    }
+    
     /** @type {Array.<commandInfo>} */
     const returnValue = [];
-    if (_.isArray(generationInfo.cmdList)) {
-      generationInfo.cmdList.forEach(cmdInfo => {
-        /** @type {commandInfo} */
-        const commandObj = {};
-        const frameId = this.xbeeAPI.nextFrameId();
-        /** @type {xbeeApi_0x10} */
-        let frameObj = {
-          type: 0x10,
-          id: frameId,
-          destination64: this.protocol_info.deviceId,
-          data: cmdInfo.cmd,
-        };
-        commandObj.data = frameObj;
-        commandObj.commandExecutionTimeoutMs = 1000;
-        commandObj.delayExecutionTimeoutMs = _.isNumber(cmdInfo.timeout) && cmdInfo.timeout;
-        returnValue.push(commandObj);
-      });
-    } else {
+
+    BU.CLI(cmdList);
+    cmdList.forEach(cmdInfo => {
       /** @type {commandInfo} */
       const commandObj = {};
       const frameId = this.xbeeAPI.nextFrameId();
@@ -62,13 +93,13 @@ class Converter extends AbstConverter {
         type: 0x10,
         id: frameId,
         destination64: this.protocol_info.deviceId,
-        data: generationInfo.cmd,
+        data: cmdInfo.cmd,
       };
       commandObj.data = frameObj;
       commandObj.commandExecutionTimeoutMs = 1000;
+      commandObj.delayExecutionTimeoutMs = _.isNumber(cmdInfo.timeout) && cmdInfo.timeout;
       returnValue.push(commandObj);
-    }
-
+    });
     return returnValue;
   }
 
@@ -115,7 +146,7 @@ class Converter extends AbstConverter {
    * @param {xbeeApi_0x90} xbeeApi_0x90 
    */
   processDataReceivePacketZigBee(xbeeApi_0x90) {
-    BU.CLI(xbeeApi_0x90);
+    // BU.CLI(xbeeApi_0x90);
     try {
       const data = xbeeApi_0x90.data;
   
@@ -123,13 +154,14 @@ class Converter extends AbstConverter {
       // STX 체크 (# 문자 동일 체크)
       if (_.isEqual(STX, 0x23)) {
         // let boardId = data.slice(1, 5);
-        BU.CLI(data.toString());
+        // BU.CLI(data.toString());
         let productType = data.slice(5, 9);
         let dataBody = data.slice(9);
   
         let decodingDataList;
         if (_.isBuffer(productType)) {
           productType = this.protocolConverter.convertBufToHexToNum(productType);
+          BU.CLI(productType);
   
           switch (productType) {
           case 1:
@@ -145,7 +177,6 @@ class Converter extends AbstConverter {
           default:
             throw new Error(`productType: ${productType}은 Parsing 대상이 아닙니다.`);
           }
-  
           
           // BU.CLI(decodingDataList.decodingDataList);
           const hasValid = _.chain(decodingDataList.decodingDataList).map('byte').sum().isEqual(dataBody.length).value();

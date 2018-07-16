@@ -28,11 +28,11 @@ const onDeviceOperationStatus = {
     /** @type {number} 열림 */
     2: model.device.VALVE.STATUS.OPEN,
     /** @type {number} 작업 중 */
-    3: model.device.VALVE.STATUS.BUSY
-    // /** @type {number} 닫는 중 */
-    // 4: model.device.VALVE.STATUS.OPENING,
-    // /** @type {number} 여는 중 */
-    // 5: model.device.VALVE.STATUS.CLOSING,
+    3: model.device.VALVE.STATUS.BUSY,
+    /** @type {number} 닫는 중 */
+    4: model.device.VALVE.STATUS.OPENING,
+    /** @type {number} 여는 중 */
+    5: model.device.VALVE.STATUS.CLOSING,
   },
   /** @type {Object} 펌프 */
   [model.device.PUMP.KEY]: {

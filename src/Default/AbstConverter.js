@@ -132,6 +132,7 @@ class AbstConverter {
    */
   automaticDecoding(decodingTable, data) {
     try {
+      // BU.CLI(data);
       // 데이터를 집어넣을 기본 자료형을 가져옴
       let returnValue = this.BaseModel.BASE_MODEL;
       // BU.CLI(returnValue);
