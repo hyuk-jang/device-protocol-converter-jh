@@ -6,6 +6,10 @@ class Model extends BaseModel {
   constructor() {
     super();
 
+    this.device.DEFAULT.COMMAND.STATUS = [{
+      cmd: '@sts'
+    }];
+
     this.device.WATER_DOOR.COMMAND.OPEN = [{
       cmd: '@cgo'
     }, {

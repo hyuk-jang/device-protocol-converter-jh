@@ -17,8 +17,16 @@ class BaseModel extends AbstBaseModel {
     
     this.device = {
       DEFAULT: {
+        /** 
+         * @type {string} DataLogger 
+         * @default DEFAULT 기본적인 Data Logger 값
+         */
+        KEY: 'DEFAULT',
         STATUS: {
           UNDEF: 'UNDEF'
+        },
+        COMMAND: {
+          STATUS: []
         }
       },
       WATER_DOOR: {
