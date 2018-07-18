@@ -167,7 +167,8 @@ class Converter extends AbstConverter {
             decodingDataList = this.decodingTable.gateLevelSalinity;
             break;
           case 2:
-            decodingDataList = data.toString().length === 19 ? this.decodingTable.valve : this.decodingTable.salternBlockValve;
+            decodingDataList = dataBody.toString().length === 20 ? this.decodingTable.valve : this.decodingTable.salternBlockValve;
+            // BU.CLI(dataBody.toString().length, decodingDataList);
             // decodingDataList = this.decodingTable.valve;
             break;
           case 3:

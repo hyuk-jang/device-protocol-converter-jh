@@ -43,7 +43,6 @@ const onDeviceOperationStatus = {
   },
   /** @type {Object} 수위 */
   [model.device.WATER_LEVEL.KEY]: waterLevel => {
-    console.log('@@@@@@@@@@', waterLevel);
     // 20cm에서 해당 수위(cm)를 뺌
     return 20 - waterLevel;
   }
