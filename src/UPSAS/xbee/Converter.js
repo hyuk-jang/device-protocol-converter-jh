@@ -10,9 +10,6 @@ const protocol = require('./protocol');
 
 require('../../../../default-intelligence');
 
-
-require('./define');
-
 class Converter extends AbstConverter {
   /** @param {protocol_info} protocol_info */
   constructor(protocol_info) {
