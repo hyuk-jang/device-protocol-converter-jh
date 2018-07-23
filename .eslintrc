@@ -1,19 +1,14 @@
 {
-  "env": {
-    "browser": true,
-    "es6": true,
-    "node": true
-  },
-  "extends": "eslint:recommended",
-  "parserOptions": {
-    "sourceType": "module",
-    "ecmaVersion": 8
-  },
+  "extends": ["airbnb", "prettier"],
+  "plugins": ["prettier"],
   "rules": {
-    "indent": ["error", 2],
-    "linebreak-style": ["error", "windows"],
-    "quotes": ["error", "single"],
-    "semi": ["error", "always"],
-    "no-console": 0
+    "linebreak-style": "off",
+    "quotes": "error",
+    "no-console": "off",
+    "max-len": "off",
+    "no-param-reassign": "off",
+    "class-methods-use-this": "off",
+    "consistent-return": "off",
+    "prettier/prettier": ["error", "fb"]
   }
 }

@@ -51,117 +51,165 @@ const onDeviceOperationStatus = {
 exports.onDeviceOperationStatus = onDeviceOperationStatus;
 
 exports.decodingProtocolTable = dialing => {
-  /** @type {Array.<{}>} */
+  /** @type {decodingProtocolInfo} */
+  const gateLevelSalinity = {
+    dialing,
+    address: '0001',
+    length: 12, // 수신할 데이터 Byte,
+    decodingDataList:[{
+      key: model.device.WATER_DOOR.KEY,
+      byte: 2,
+      callMethod: parsingMethod.convertBufToHexToNum
+    },
+    {
+      key: model.device.WATER_LEVEL.KEY,
+      byte: 2,
+      callMethod: parsingMethod.convertBufToHexToNum
+    },
+    {
+      key: model.device.SALINITY.KEY,
+      byte: 4,
+      callMethod: parsingMethod.convertBufToHexToNum
+    },
+    {
+      key: model.device.BATTERY.KEY,
+      byte: 4,
+      callMethod: parsingMethod.convertBufToHexToNum
+    }]
+  };
+
+  /** @type {decodingProtocolInfo} */
+  const valve = {
+    dialing,
+    address: '0002',
+    length: '6',
+    decodingDataList: [
+      {
+        key: model.device.VALVE.KEY,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToHexToNum
+      },
+      {
+        key: model.device.WATER_LEVEL.KEY,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToHexToNum
+      },
+      {
+        key: model.device.WATER_TEMPERATURE.KEY,
+        byte: 6,
+        callMethod: parsingMethod.convertBufToHexToNum
+      },
+      {
+        key: model.device.MODULE_REAR_TEMPERATURE.KEY,
+        byte: 6,
+        callMethod: parsingMethod.convertBufToHexToNum
+      },
+      {
+        key: model.device.BATTERY.KEY,
+        byte: 4,
+        callMethod: parsingMethod.convertBufToHexToNum
+      }
+    ]
+  };
+
+  /** @type {decodingProtocolInfo} */
+  const salternBlockValve = {
+    dialing,
+    address: '0002',
+    length: '21',
+    decodingDataList: [
+      {
+        key: model.device.GATE_VALVE.KEY,
+        decodingKey: model.device.VALVE.KEY,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToHexToNum
+      },
+      {
+        key: model.device.WATER_LEVEL.KEY,
+        byte: 3,
+        callMethod: parsingMethod.convertBufToHexToNum,
+        scale: 0.1,
+        fixed: 1
+      },
+      {
+        key: model.device.WATER_TEMPERATURE.KEY,
+        byte: 6,
+        callMethod: parsingMethod.convertBufToHexToNum
+      },
+      {
+        key: model.device.MODULE_REAR_TEMPERATURE.KEY,
+        byte: 6,
+        callMethod: parsingMethod.convertBufToHexToNum
+      },
+      {
+        key: model.device.BATTERY.KEY,
+        byte: 4,
+        callMethod: parsingMethod.convertBufToHexToNum
+      }
+    ]
+  };
+
+  /** @type {decodingProtocolInfo} */
+  const pump = {
+    dialing,
+    address: '0003',
+    length: '6',
+    decodingDataList: [
+      {
+        key: model.device.PUMP.KEY,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToHexToNum
+      },
+      {
+        key: model.device.BATTERY.KEY,
+        byte: 4,
+        callMethod: parsingMethod.convertBufToHexToNum
+      }
+    ]
+  };
+
+  /** @type {decodingProtocolInfo} */
+  const earthModule = {
+    dialing,
+    address: '0004',
+    length: 21,
+    decodingDataList: [
+      {
+        key: model.device.VALVE.KEY,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToHexToNum
+      },
+      {
+        key: model.device.WATER_LEVEL.KEY,
+        byte: 3,
+        callMethod: parsingMethod.convertBufToHexToNum,
+        scale: 0.1,
+        fixed: 1
+      },
+      {
+        key: model.device.MODULE_REAR_TEMPERATURE.KEY,
+        byte: 6,
+        callMethod: parsingMethod.convertBufToHexToNum
+      },
+      {
+        key: model.device.MODULE_REAR_TEMPERATURE.KEY,
+        byte: 6,
+        callMethod: parsingMethod.convertBufToHexToNum
+      },
+      {
+        key: model.device.BATTERY.KEY,
+        byte: 4,
+        callMethod: parsingMethod.convertBufToHexToNum
+      }
+    ]
+  };
+
   return {
-    gateLevelSalinity: {
-      dialing,
-      address: '0001',
-      length: 12, // 수신할 데이터 Byte,
-      decodingDataList: [
-        {
-          key: model.device.WATER_DOOR.KEY,
-          byte: 2,
-          callMethod: parsingMethod.convertBufToHexToNum
-        },
-        {
-          key: model.device.WATER_LEVEL.KEY,
-          byte: 2,
-          callMethod: parsingMethod.convertBufToHexToNum
-        },
-        {
-          key: model.device.SALINITY.KEY,
-          byte: 4,
-          callMethod: parsingMethod.convertBufToHexToNum
-        },
-        {
-          key: model.device.BATTERY.KEY,
-          byte: 4,
-          callMethod: parsingMethod.convertBufToHexToNum
-        }
-      ]
-    },
-    valve: {
-      dialing,
-      address: '0002',
-      length: '6',
-      decodingDataList: [
-        {
-          key: model.device.VALVE.KEY,
-          byte: 2,
-          callMethod: parsingMethod.convertBufToHexToNum
-        },
-        {
-          key: model.device.WATER_LEVEL.KEY,
-          byte: 2,
-          callMethod: parsingMethod.convertBufToHexToNum
-        },
-        {
-          key: model.device.WATER_TEMPERATURE.KEY,
-          byte: 6,
-          callMethod: parsingMethod.convertBufToHexToNum
-        },
-        {
-          key: model.device.MODULE_REAR_TEMPERATURE.KEY,
-          byte: 6,
-          callMethod: parsingMethod.convertBufToHexToNum
-        },
-        {
-          key: model.device.BATTERY.KEY,
-          byte: 4,
-          callMethod: parsingMethod.convertBufToHexToNum
-        }
-      ]
-    },
-    salternBlockValve: {
-      dialing,
-      address: '0002',
-      length: '21',
-      decodingDataList: [
-        {
-          key: model.device.VALVE.KEY,
-          byte: 2,
-          callMethod: parsingMethod.convertBufToHexToNum
-        },
-        {
-          key: model.device.WATER_LEVEL.KEY,
-          byte: 3,
-          callMethod: parsingMethod.convertBufToHexToNum,
-          scale: 0.1,
-          fixed: 1
-        },
-        {
-          key: model.device.WATER_TEMPERATURE.KEY,
-          byte: 6,
-          callMethod: parsingMethod.convertBufToHexToNum
-        },
-        {
-          key: model.device.MODULE_REAR_TEMPERATURE.KEY,
-          byte: 6,
-          callMethod: parsingMethod.convertBufToHexToNum
-        },
-        {
-          key: model.device.BATTERY.KEY,
-          byte: 4,
-          callMethod: parsingMethod.convertBufToHexToNum
-        }
-      ]
-    },
-    pump: {
-      dialing,
-      address: '0003',
-      length: '6',
-      decodingDataList: [
-        {
-          key: model.device.PUMP.KEY,
-          byte: 2,
-          callMethod: parsingMethod.convertBufToHexToNum
-        },
-        {
-          key: model.device.BATTERY.KEY,
-          byte: 4,
-          callMethod: parsingMethod.convertBufToHexToNum
-        }
-      ]
-    }
+    gateLevelSalinity,
+    valve,
+    salternBlockValve,
+    pump,
+    earthModule
+
   };
 };

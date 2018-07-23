@@ -29,6 +29,24 @@ class Model extends BaseModel {
     }];
 
 
+    /** 수문용 밸브 */
+    this.device.GATE_VALVE.COMMAND.OPEN = [{
+      cmd: '@cvo'
+    }, {
+      cmd: '@sts',
+      timeout: 1000 * 15,
+    }];
+
+    this.device.GATE_VALVE.COMMAND.CLOSE = [{
+      cmd: '@cvc'
+    }, {
+      cmd: '@sts',
+      timeout: 1000 * 15,
+    }];
+
+    this.device.GATE_VALVE.COMMAND.STATUS = [{
+      cmd: '@sts'
+    }];
 
 
     /** 밸브 */

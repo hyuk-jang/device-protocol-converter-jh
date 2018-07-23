@@ -25,6 +25,14 @@ module.exports = {
    */
   salinity: [],
   /**
+   * 수문용 밸브 
+   * @description GV
+   * @type {number[]=}
+   * @example
+   * UNDEF, CLOSE, OPEN, CLOSING, OPENING
+   */
+  gateValve: [],
+  /**
    * 밸브(Valve)
    * @description V
    * @type {number[]=}

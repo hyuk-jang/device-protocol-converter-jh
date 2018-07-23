@@ -147,9 +147,11 @@ class AbstConverter {
         convertValue = _.isNumber(decodingInfo.scale) && _.isNumber(decodingInfo.fixed) ? _.round(convertValue * decodingInfo.scale, decodingInfo.fixed) : convertValue;
         // 2차 가공 여부에 따라 변환
         let realValue = convertValue;
-        if (_.includes(operationKeys, decodingInfo.key)) {
 
-          const operationStauts = this.onDeviceOperationStatus[decodingInfo.key];
+        let decodingKey = _.get(decodingInfo, 'decodingKey') ? _.get(decodingInfo, 'decodingKey') : _.get(decodingInfo, 'key');
+        if (_.includes(operationKeys, decodingKey)) {
+
+          const operationStauts = this.onDeviceOperationStatus[decodingKey];
 
           // 찾은 Decoding이 Function 이라면 값을 넘겨줌
           if(operationStauts instanceof Function){

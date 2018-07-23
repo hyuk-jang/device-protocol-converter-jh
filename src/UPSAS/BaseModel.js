@@ -46,6 +46,24 @@ class BaseModel extends AbstBaseModel {
         },
         /** @type {string} 수문 */
       },
+      GATE_VALVE: {
+        KEY: baseKey.gateValve,
+        NAME: '수문용 밸브',
+        STATUS: {
+          UNDEF: 'UNDEF',
+          CLOSE: 'CLOSE',
+          OPEN: 'OPEN',
+          BUSY: 'BUSY',
+          CLOSING: 'CLOSING',
+          OPENING: 'OPENING',
+        },
+        COMMAND: {
+          OPEN: [],
+          CLOSE: [],
+          STATUS: []
+        },
+        /** @type {string} 수문 */
+      },
       VALVE: {
         /** @type {string} 밸브 */
         KEY: baseKey.valve,
