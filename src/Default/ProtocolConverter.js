@@ -13,6 +13,16 @@ class Converter {
     this.definedCommanderResponse = definedCommanderResponse;
   }
 
+
+  
+  /** 
+   * Start of Heading
+   * @return {Buffer}
+   */
+  get SOH() {
+    return Buffer.from([0x01]);
+  }
+  
   /** 
    * Start of Text
    * @return {Buffer}

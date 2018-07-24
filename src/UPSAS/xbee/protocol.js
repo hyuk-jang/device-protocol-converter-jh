@@ -171,7 +171,7 @@ exports.decodingProtocolTable = dialing => {
   /** @type {decodingProtocolInfo} */
   const earthModule = {
     dialing,
-    address: '0004',
+    address: '0005',
     length: 21,
     decodingDataList: [
       {
