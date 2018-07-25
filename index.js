@@ -4,7 +4,7 @@ const MainConverter = require('./src/Default/MainConverter');
 
 /** Intelligence를 위함 */
 const BaseModel = {
-  default: require('./src/Default/DefaultModel'),
+  defaultModule: require('./src/Default/DefaultModel'),
   ESS: require('./src/ESS/BaseModel'),
   Inverter: require('./src/Inverter/BaseModel'),
   Saltern: require('./src/Saltern/BaseModel'),
