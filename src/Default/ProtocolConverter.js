@@ -63,6 +63,14 @@ class Converter {
     return Buffer.from([0x06]);
   }
 
+  /** 
+   * Cancel
+   * @return {Buffer}
+   */
+  get CAN() {
+    return Buffer.from([0x18]);
+  }
+
 
   /**
    * 기준이 되는 값(n)을 원하는 길이(width)에 맞춰 0을 앞부터 채워 반환
