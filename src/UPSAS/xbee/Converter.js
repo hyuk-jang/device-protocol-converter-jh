@@ -8,7 +8,7 @@ const BaseModel = require('../BaseModel');
 const Model = require('./Model');
 const protocol = require('./protocol');
 
-require('../../../../default-intelligence');
+const {requestDeviceControlType} =  require('../../../../default-intelligence').dcmConfigModel;
 
 class Converter extends AbstConverter {
   /** @param {protocol_info} protocol_info */
@@ -35,6 +35,7 @@ class Converter extends AbstConverter {
    */
   generationCommand(generationInfo) {
     // BU.CLI(generationInfo);
+    const genControlValue = Number(generationInfo.value);
 
 
     /** @type {baseModelDeviceStructure} */
@@ -54,27 +55,27 @@ class Converter extends AbstConverter {
     let cmdList;
     
     // 컨트롤 밸류가 0이나 False라면 장치 작동을 Close, Off
-    if(generationInfo.value === 0 || generationInfo.value === false){
+    if(genControlValue === requestDeviceControlType.FALSE){
       if(_.keys(commandInfo).includes('CLOSE')){
         cmdList = commandInfo.CLOSE;
       } else if(_.keys(commandInfo).includes('OFF')){
         cmdList = commandInfo.OFF;
       } 
-    } else if(generationInfo.value === 1 || generationInfo.value === true){
+    } else if(genControlValue === requestDeviceControlType.TRUE){
       if(_.keys(commandInfo).includes('OPEN')){
         cmdList = commandInfo.OPEN;
       } else if(_.keys(commandInfo).includes('ON')){
         cmdList = commandInfo.ON;
       } 
-    } else if(generationInfo.value === undefined){
+    } else if(genControlValue === requestDeviceControlType.MEASURE ){
       if(_.keys(commandInfo).includes('STATUS')){
         cmdList = commandInfo.STATUS;
       } 
     } else {
-      throw new Error(`controlValue: ${generationInfo.value}는 유효한 값이 아닙니다.`);
+      throw new Error(`controlValue: ${genControlValue}는 유효한 값이 아닙니다.`);
     }
     if(cmdList === undefined || _.isEmpty(cmdList)){
-      throw new Error(`${generationInfo.key}에는 Value: ${generationInfo.value} 존재하지 않습니다.`);
+      throw new Error(`${generationInfo.key}에는 Value: ${genControlValue} 존재하지 않습니다.`);
     }
     
     /** @type {Array.<commandInfo>} */
