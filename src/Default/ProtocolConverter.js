@@ -2,7 +2,8 @@
 const {BU} = require('base-util-jh');
 const _ = require('lodash');
 
-const {definedCommanderResponse} = require('../format/moduleDefine');
+// const {definedCommanderResponse} =  require('default-intelligence').dccFlagModel;
+const {definedCommanderResponse} =  require('../../../../module/default-intelligence').dccFlagModel;
 
 class Converter {
   constructor() {
@@ -12,6 +13,16 @@ class Converter {
     this.definedCommanderResponse = definedCommanderResponse;
   }
 
+
+  
+  /** 
+   * Start of Heading
+   * @return {Buffer}
+   */
+  get SOH() {
+    return Buffer.from([0x01]);
+  }
+  
   /** 
    * Start of Text
    * @return {Buffer}
@@ -50,6 +61,14 @@ class Converter {
    */
   get ACK() {
     return Buffer.from([0x06]);
+  }
+
+  /** 
+   * Cancel
+   * @return {Buffer}
+   */
+  get CAN() {
+    return Buffer.from([0x18]);
   }
 
 
@@ -112,7 +131,9 @@ class Converter {
    */
   convertBufToHexToDec(buffer) {
     if(!Buffer.isBuffer(buffer)) return null;
-    let str = buffer.toString();
+
+    let str = buffer.toString('ascii');
+
     return Number(this.converter().hex2dec(str));
   }
 
@@ -155,7 +176,7 @@ class Converter {
     let returnValue = '';
     buffer.forEach(element => {
       let bin = this.converter().hex2bin(element);
-      returnValue = returnValue.concat(this.pad(bin, binaryLength || 4));
+      returnValue = returnValue.concat(this.pad(bin, binaryLength || 8));
     });
 
     return returnValue;

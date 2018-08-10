@@ -227,7 +227,7 @@ exports.decodingProtocolTable = (protocol_info) => {
         byte: 7,
         callMethod: parsingMethod.convertBufToHexToNum
       },{
-        key: Model.BASE_KEY.batteryTotalDischargingKw,
+        key: Model.BASE_KEY.totalPVGeneratingPowerKwh,
         byte: 7,
         callMethod: parsingMethod.convertBufToHexToNum
       }]

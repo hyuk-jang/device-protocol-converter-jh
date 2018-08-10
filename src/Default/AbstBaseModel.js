@@ -1,8 +1,8 @@
 'use strict';
 
 const _ = require('lodash');
-
-require('../format/defaultDefine');
+// require('default-intelligence');
+// require('../../../default-intelligence');
 
 const ProtocolConverter = require('./ProtocolConverter');
 

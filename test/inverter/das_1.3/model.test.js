@@ -7,7 +7,8 @@ const Converter = require('../../../src/Inverter/das_1.3/Converter');
 const BaseModel = require('../../../src/Inverter/BaseModel');
 const model = new BaseModel({deviceId:Buffer.from([0x30, 0x30, 0x30]),mainCategory: 'Inverter',  subCategory: 'das_1.3'});
 
-require('../../../src/format/defaultDefine');
+// require('default-intelligence');
+// require('../../../../default-intelligence');
 
 describe.skip('encoding Test 1', () => {
   const converter = new Converter({deviceId:'001', subCategory: 'das_1.3'});

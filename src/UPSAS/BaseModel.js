@@ -17,11 +17,21 @@ class BaseModel extends AbstBaseModel {
     
     this.device = {
       DEFAULT: {
+        /** 
+         * @type {string} DataLogger 
+         * @default DEFAULT 기본적인 Data Logger 값
+         */
+        KEY: 'DEFAULT',
         STATUS: {
           UNDEF: 'UNDEF'
+        },
+        COMMAND: {
+          STATUS: []
         }
       },
       WATER_DOOR: {
+        KEY: baseKey.waterDoor,
+        NAME: '수문',
         STATUS: {
           STOP: 'STOP',
           OPEN: 'OPEN',
@@ -30,106 +40,117 @@ class BaseModel extends AbstBaseModel {
           CLOSING: 'CLOSING',
         },
         COMMAND: {
-          OPEN: {},
-          CLOSE: {},
-          STATUS: {}
+          OPEN: [],
+          CLOSE: [],
+          STATUS: []
         },
         /** @type {string} 수문 */
-        KEY: baseKey.waterDoor,
-        NAME: '수문'
       },
-      VALVE: {
+      GATE_VALVE: {
+        KEY: baseKey.gateValve,
+        NAME: '수문용 밸브',
         STATUS: {
           UNDEF: 'UNDEF',
           CLOSE: 'CLOSE',
           OPEN: 'OPEN',
           BUSY: 'BUSY',
-          // CLOSING: 'CLOSING',
-          // OPENING: 'OPENING',
+          CLOSING: 'CLOSING',
+          OPENING: 'OPENING',
         },
         COMMAND: {
-          OPEN: {},
-          CLOSE: {},
-          STATUS: {}
+          OPEN: [],
+          CLOSE: [],
+          STATUS: []
         },
+        /** @type {string} 수문 */
+      },
+      VALVE: {
         /** @type {string} 밸브 */
         KEY: baseKey.valve,
-        NAME: '밸브'
+        NAME: '밸브',
+        STATUS: {
+          UNDEF: 'UNDEF',
+          CLOSE: 'CLOSE',
+          OPEN: 'OPEN',
+          BUSY: 'BUSY',
+          CLOSING: 'CLOSING',
+          OPENING: 'OPENING',
+        },
+        COMMAND: {
+          OPEN: [],
+          CLOSE: [],
+          STATUS: []
+        },
       },
       PUMP: {
+        /** @type {string} 펌프 */
+        KEY: baseKey.pump,
+        NAME: '펌프',
         STATUS: {
           OFF: 'OFF',
           ON: 'ON'
         },
         COMMAND: {
-          ON: {},
-          OFF: {},
-          STATUS: {}
+          ON: [],
+          OFF: [],
+          STATUS: []
         },
-        /** @type {string} 펌프 */
-        KEY: baseKey.pump,
-        NAME: '펌프'
       },
       WATER_LEVEL: {
-        STATUS: {
-          ZERO: 0,
-          ONE: 1,
-          TWO: 2,
-          THREE: 3,
-        },
-        COMMAND: {
-          STATUS: {}
-        },
         /** @type {string} 수위 */
-        KEY: baseKey.waterDoor,
-        NAME: '수위'
+        KEY: baseKey.waterLevel,
+        NAME: '수위',
+        STATUS: {},
+        COMMAND: {
+          STATUS: []
+        },
       },
       SALINITY: {
-        STATUS: {},
-        COMMAND: {
-          MEASURE: {},
-          STATUS: {}
-        },
         /** @type {string} 염도 */
         KEY: baseKey.salinity,
-        NAME: '염도'
+        NAME: '염도',
+        STATUS: {},
+        COMMAND: {
+          MEASURE: [],
+          STATUS: []
+        },
       },
       WATER_TEMPERATURE: {
-        STATUS: {},
-        COMMAND: {
-          STATUS: {}
-        },
         /** @type {string} 수중 온도 */
         KEY: baseKey.waterTemperature,
-        NAME: '수온'
+        NAME: '수온',
+        STATUS: {},
+        COMMAND: {
+          STATUS: []
+        },
       },
       MODULE_FRONT_TEMPERATURE: {
-        STATUS: {},
-        COMMAND: {
-          STATUS: {}
-        },
         /** @type {string} 모듈 앞면 온도 */
         KEY: baseKey.moduleFrontTemperature,
-        NAME: '모듈 온도'
-      },
-      MODULE_REAR_TEMPERATURE: {
+        NAME: '모듈 온도',
         STATUS: {},
         COMMAND: {
-          STATUS: {}
+          STATUS: []
         },
+      },
+      MODULE_REAR_TEMPERATURE: {
         /** @type {string} 모듈 뒷면 온도 */
         // KEY: 'moduleRearTemperature',
         KEY: baseKey.moduleRearTemperature,
-        NAME: '모듈 온도'
-      },
-      BATTERY: {
+        NAME: '모듈 온도',
         STATUS: {},
         COMMAND: {
-          STATUS: {}
+          STATUS: []
         },
+      },
+      BATTERY: {
         /** @type {string} 배터리 전압 */
         KEY: baseKey.battery,
-        NAME: '배터리 전압'
+        NAME: '배터리 전압',
+        STATUS: {},
+        COMMAND: {
+          STATUS: []
+        },
       }
     };
 
@@ -141,7 +162,7 @@ class BaseModel extends AbstBaseModel {
 
   /** 현재 카테고리에 있는 장치 데이터를 저장하기 위한 모델 */
   static get BASE_MODEL() {
-    return Object.assign({}, baseFormat);
+    return  _.cloneDeep(baseFormat);
   }
 
   /** BASE_MODEL Key와 같은 값을 가진 Value를 매칭 후 반환 */

@@ -2,7 +2,8 @@
 
 const BU = require('base-util-jh').baseUtil;
 
-require('../format/defaultDefine');
+// require('default-intelligence');
+// require('../../../../module/default-intelligence');
 
 class MainConverter {
   /**
@@ -10,6 +11,7 @@ class MainConverter {
    * @param {protocol_info} protocol_info 
    */
   constructor(protocol_info) {
+    // BU.CLI(protocol_info);
     this.protocol_info = protocol_info;
     /** @type {MainConverter} */
     this.deviceCommandConverter = null;

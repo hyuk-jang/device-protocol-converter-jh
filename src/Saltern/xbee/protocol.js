@@ -1,8 +1,8 @@
 const {
   parsingMethod
 } = require('../../format/moduleDefine');
-
-require('../../format/defaultDefine');
+// require('default-intelligence');
+// require('../../../../default-intelligence');
 
 const Model = require('./Model');
 const model = new Model();
@@ -101,6 +101,35 @@ exports.decodingProtocolTable = (dialing) => {
       }, {
         key: model.device.WATER_LEVEL.KEY,
         byte: 2,
+        callMethod: parsingMethod.convertBufToHexToDec,
+      },
+      {
+        key: model.device.WATER_TEMPERATURE.KEY,
+        byte: 6,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: model.device.MODULE_REAR_TEMPERATURE.KEY,
+        byte: 6,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      }, {
+        key: model.device.BATTERY.KEY,
+        byte: 4,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      }
+      ]
+    },
+    salternBlockValve: {
+      dialing,
+      address: '0002',
+      length: '6',
+      decodingDataList: [{
+        key: model.device.VALVE.KEY,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToHexToDec,
+      }, {
+        key: model.device.WATER_LEVEL.KEY,
+        byte: 3,
         callMethod: parsingMethod.convertBufToHexToDec,
       },
       {

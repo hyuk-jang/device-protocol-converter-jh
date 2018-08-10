@@ -5,11 +5,15 @@ const ProtocolConverter = require('./ProtocolConverter');
 
 module.exports = {
   /**
+   * 프로토콜 변환 모듈을 사용 가능
+   */
+  protocolConverter: new ProtocolConverter(),
+  /**
    * STX + Buffer(msg) + ETX + CRC(4Byte) + EOT 
    * @param {string} msg 전송 Body
    * @return {Buffer} 
    */
-  encodingDefaultRequestMsgForTransfer: (msg) => {
+  encodingMsg: (msg) => {
     const converter = new ProtocolConverter();
     try {
       if (msg == null) {
@@ -42,7 +46,7 @@ module.exports = {
    * @param {Buffer|string} buf
    * @return {Buffer}
    */
-  decodingDefaultRequestMsgForTransfer: (buf) => {
+  decodingMsg: (buf) => {
     const protocolConverter = new ProtocolConverter();
     buf = Buffer.isBuffer(buf) ? buf : Buffer.from(buf);
     
