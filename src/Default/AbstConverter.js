@@ -158,7 +158,8 @@ class AbstConverter {
 
           // 찾은 Decoding이 Function 이라면 값을 넘겨줌
           if (operationStauts instanceof Function) {
-            realValue = operationStauts(convertValue);
+            const tempValue = operationStauts(convertValue);
+            realValue = _.isNumber(tempValue) ? _.round(tempValue, decodingInfo.fixed) : tempValue;
           } else {
             realValue = _.get(operationStauts, convertValue);
           }
