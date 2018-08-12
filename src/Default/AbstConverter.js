@@ -75,7 +75,7 @@ class AbstConverter {
    * @param {dcData} dcData
    */
   getCurrTransferCmd(dcData) {
-    return _.get(_.nth(dcData.commandSet.cmdList, dcData.commandSet.currCmdIndex), "data");
+    return _.get(_.nth(_.get(dcData, 'commandSet.cmdList'), _.get(dcData, 'commandSet.currCmdIndex')), "data");
   }
 
   /**
