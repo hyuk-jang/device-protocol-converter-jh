@@ -129,7 +129,7 @@ exports.decodingProtocolTable = dialing => {
         callMethod: parsingMethod.convertBufToHexToNum
       },
       {
-        key: model.device.WATER_TEMPERATURE.KEY,
+        key: model.device.BRINE_TEMPERATURE.KEY,
         byte: 6,
         callMethod: parsingMethod.convertBufToHexToNum
       },
@@ -166,7 +166,7 @@ exports.decodingProtocolTable = dialing => {
         fixed: 1
       },
       {
-        key: model.device.WATER_TEMPERATURE.KEY,
+        key: model.device.BRINE_TEMPERATURE.KEY,
         byte: 6,
         callMethod: parsingMethod.convertBufToHexToNum
       },

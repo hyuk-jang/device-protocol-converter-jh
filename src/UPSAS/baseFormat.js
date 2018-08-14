@@ -57,7 +57,7 @@ module.exports = {
    * 수온, 단위[℃]
    * @type {number[]=}
    */
-  waterTemperature: [],  
+  brineTemperature: [],  
   /**
    * 모듈 전면 온도, 단위[℃]
    * @type {number[]=}
