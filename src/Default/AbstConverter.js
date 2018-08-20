@@ -1,32 +1,29 @@
-"use strict";
-const { BU } = require("base-util-jh");
-const _ = require("lodash");
+const {BU} = require('base-util-jh');
+const _ = require('lodash');
 
-const ProtocolConverter = require("./ProtocolConverter");
-const AbstBaseModel = require("./AbstBaseModel");
+const ProtocolConverter = require('./ProtocolConverter');
+const AbstBaseModel = require('./AbstBaseModel');
 
 // const {definedCommanderResponse} =  require('default-intelligence').dccFlagModel;
-const {
-  definedCommanderResponse
-} = require("../../../../module/default-intelligence").dccFlagModel;
+const {definedCommanderResponse} = require('../../../../module/default-intelligence').dccFlagModel;
 
 class AbstConverter {
   /**
-   * @param {protocol_info} protocol_info
+   * @param {protocol_info} protocolInfo
    */
-  constructor(protocol_info) {
-    this.protocol_info = protocol_info;
+  constructor(protocolInfo) {
+    this.protocol_info = protocolInfo;
 
     this.protocolConverter = new ProtocolConverter();
 
-    this.protocolOptionInfo = _.get(protocol_info, "protocolOptionInfo");
+    this.protocolOptionInfo = _.get(protocolInfo, 'protocolOptionInfo');
 
     // 수신 받은 데이터 버퍼
-    this.trackingDataBuffer = Buffer.from("");
+    this.trackingDataBuffer = Buffer.from('');
 
     this.definedCommanderResponse = definedCommanderResponse;
 
-    this.baseModel = new AbstBaseModel(protocol_info);
+    this.model = new AbstBaseModel(protocolInfo);
     // 자식 Converter에서 구현
     this.onDeviceOperationStatus = null;
   }
@@ -50,7 +47,7 @@ class AbstConverter {
         data: bufData,
         commandExecutionTimeoutMs: _.isNumber(commandExecutionTimeoutMs)
           ? commandExecutionTimeoutMs
-          : 1000
+          : 1000,
       };
       if (_.isNumber(delayExecutionTimeoutMs)) {
         commandObj.delayExecutionTimeoutMs = delayExecutionTimeoutMs;
@@ -67,7 +64,7 @@ class AbstConverter {
    * @return {void}
    */
   resetTrackingDataBuffer() {
-    this.trackingDataBuffer = Buffer.from("");
+    this.trackingDataBuffer = Buffer.from('');
   }
 
   /**
@@ -75,7 +72,10 @@ class AbstConverter {
    * @param {dcData} dcData
    */
   getCurrTransferCmd(dcData) {
-    return _.get(_.nth(_.get(dcData, 'commandSet.cmdList'), _.get(dcData, 'commandSet.currCmdIndex')), "data");
+    return _.get(
+      _.nth(_.get(dcData, 'commandSet.cmdList'), _.get(dcData, 'commandSet.currCmdIndex')),
+      'data',
+    );
   }
 
   /**
@@ -87,7 +87,7 @@ class AbstConverter {
     const returnValue = {};
     try {
       // 수신 데이터 추적을 하는 경우라면 dcData의 Data와 합산
-      if (_.get(this.protocolOptionInfo, "hasTrackingData") === true) {
+      if (_.get(this.protocolOptionInfo, 'hasTrackingData') === true) {
         this.trackingDataBuffer = Buffer.concat([this.trackingDataBuffer, dcData.data]);
         dcData.data = this.trackingDataBuffer;
 
@@ -131,14 +131,14 @@ class AbstConverter {
     try {
       // BU.CLI(data);
       // 데이터를 집어넣을 기본 자료형을 가져옴
-      let returnValue = this.BaseModel.BASE_MODEL;
+      const returnValue = AbstBaseModel.GET_BASE_MODEL(this.protocol_info);
       // BU.CLI(returnValue);
       // 도출된 자료가 2차 가공(ex: 0 -> Open, 1 -> Close )이 필요한 경우
       const operationKeys = _.keys(this.onDeviceOperationStatus);
       let startIndex = 0;
       decodingTable.forEach(decodingInfo => {
         // 조회할 데이터를 가져옴
-        let thisBuf = data.slice(startIndex, startIndex + decodingInfo.byte);
+        const thisBuf = data.slice(startIndex, startIndex + decodingInfo.byte);
         // 사용하는 메소드를 호출
         let convertValue = this.protocolConverter[decodingInfo.callMethod](thisBuf);
         convertValue =
@@ -150,9 +150,9 @@ class AbstConverter {
 
         // BU.CLI(decodingInfo.key, realValue);
 
-        let decodingKey = _.get(decodingInfo, "decodingKey")
-          ? _.get(decodingInfo, "decodingKey")
-          : _.get(decodingInfo, "key");
+        const decodingKey = _.get(decodingInfo, 'decodingKey')
+          ? _.get(decodingInfo, 'decodingKey')
+          : _.get(decodingInfo, 'key');
         if (_.includes(operationKeys, decodingKey)) {
           const operationStauts = this.onDeviceOperationStatus[decodingKey];
 
@@ -166,10 +166,10 @@ class AbstConverter {
         }
 
         // 데이터 단위가 배열일 경우
-        if (Array.isArray(returnValue[_.get(decodingInfo, "key")])) {
-          returnValue[_.get(decodingInfo, "key")].push(realValue);
+        if (Array.isArray(returnValue[_.get(decodingInfo, 'key')])) {
+          returnValue[_.get(decodingInfo, 'key')].push(realValue);
         } else {
-          returnValue[_.get(decodingInfo, "key")] = realValue;
+          returnValue[_.get(decodingInfo, 'key')] = realValue;
         }
 
         // index 증가

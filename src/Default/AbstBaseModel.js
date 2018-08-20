@@ -1,5 +1,3 @@
-'use strict';
-
 const _ = require('lodash');
 // require('default-intelligence');
 // require('../../../default-intelligence');
@@ -7,42 +5,41 @@ const _ = require('lodash');
 const ProtocolConverter = require('./ProtocolConverter');
 
 class AbstBaseModel {
-  /** @param {protocol_info} protocol_info */
-  constructor(protocol_info) {
+  /** @param {protocol_info} protocolInfo */
+  constructor(protocolInfo) {
     this.protocolConverter = new ProtocolConverter();
     this.baseFormat = {};
 
     this.device = {
       DEFAULT: {
         STATUS: {
-          UNDEF: 'UNDEF'
+          UNDEF: 'UNDEF',
         },
         COMMAND: {
-          STATUS: null
-        }
-      }
+          STATUS: null,
+        },
+      },
     };
 
-    if(protocol_info){
-      return this.bindingSubCategory(protocol_info);
+    if (protocolInfo) {
+      return this.bindingSubCategory(protocolInfo);
     }
   }
 
   /**
    * @abstract
    * Protocol 정보에 따라서 적합한 Model을 결합시킴. Strategy Pattern 변형
-   * @param {protocol_info} protocol_info 
+   * @param {protocol_info} protocolInfo
    */
-  bindingSubCategory(protocol_info){
-    this.protocol_info = protocol_info;
+  bindingSubCategory(protocolInfo) {
+    this.protocol_info = protocolInfo;
 
-    if (_.get(protocol_info, 'mainCategory') && _.get(protocol_info, 'subCategory')) {
+    if (_.get(protocolInfo, 'mainCategory') && _.get(protocolInfo, 'subCategory')) {
       // const BaseModel = require(`./${protocol_info.mainCategory}/BaseModel`);
-      const Model = require(`../${protocol_info.mainCategory}/${protocol_info.subCategory}/Model`);
+      const Model = require(`../${protocolInfo.mainCategory}/${protocolInfo.subCategory}/Model`);
       return new Model(this);
     }
   }
-
 
   /**
    * @interface
@@ -51,7 +48,7 @@ class AbstBaseModel {
    * @param {*} decodingInfo 응답받은 장치 데이터를 분석하기 위한 정보
    * @return {*} 유효 데이터 반환. 실패시 예외 반환
    */
-  getValidateData(responseData, decodingInfo){}
+  getValidateData(responseData, decodingInfo) {}
 
   /**
    * @interface
@@ -63,7 +60,7 @@ class AbstBaseModel {
    * ENQ 국번 CMD 번지 갯수 CK_SUM EOT --> 번지
    * @return {number}
    */
-  getRequestAddr(requestData){}
+  getRequestAddr(requestData) {}
 
   /**
    * @interface
@@ -75,18 +72,18 @@ class AbstBaseModel {
    * ACK 국번 CMD 번지 DATA CK_SUM EOT --> 번지
    * @return {number}
    */
-  getResponseAddr(responseData){}
+  getResponseAddr(responseData) {}
 
-  /** 
+  /**
    * @abstract
    * @static
    * 현재 카테고리에 있는 장치 데이터를 저장하기 위한 모델
    * @desc MainCategory 폴더에 존재하는 baseFormat.js을 복사
-   * @param {protocol_info} protocol_info
+   * @param {protocol_info} protocolInfo
    * @return {Object}
    */
-  static GET_BASE_MODEL(protocol_info) {
-    const path = `../${protocol_info.mainCategory}/baseFormat`;
+  static GET_BASE_MODEL(protocolInfo) {
+    const path = `../${protocolInfo.mainCategory}/baseFormat`;
     const baseFormat = require(path);
     return Object.assign({}, baseFormat);
   }
@@ -96,47 +93,41 @@ class AbstBaseModel {
 
   /**
    * @static
-   * BASE_MODEL Key와 같은 값을 가진 Value를 매칭 후 반환 
+   * BASE_MODEL Key와 같은 값을 가진 Value를 매칭 후 반환
    * @desc MainCategory 폴더에 존재하는 baseFormat.js 의 {key: value}쌍을 {key: key}으로 변경하여 반환
-   * @param {protocol_info} protocol_info
+   * @param {protocol_info} protocolInfo
    * @return {Object}
    */
-  static GET_BASE_KEY(protocol_info) {
-    const path = `../${protocol_info.mainCategory}/baseFormat`;
+  static GET_BASE_KEY(protocolInfo) {
+    const path = `../${protocolInfo.mainCategory}/baseFormat`;
     const baseFormat = require(path);
     const baseKey = Object.assign({}, baseFormat);
-    _.forEach(baseKey, (v, k) => baseKey[k] = k);
+    _.forEach(baseKey, (v, k) => _.set(baseKey, k, k));
     return baseKey;
   }
 
   /** BASE_MODEL Key와 같은 값을 가진 Value를 매칭 후 반환 */
   static get BASE_KEY() {}
-
 }
 module.exports = AbstBaseModel;
-
-
 
 // if __main process
 if (require !== undefined && require.main === module) {
   console.log('__main__');
 
-
-
   /** @type {protocol_info} */
-  let protocol_info = {
+  const protocolInfo = {
     mainCategory: 'Saltern',
-    subCategory: 'xbee'
+    subCategory: 'xbee',
   };
 
-  const baseModl = AbstBaseModel.GET_BASE_MODEL(protocol_info);
+  const baseModl = AbstBaseModel.GET_BASE_MODEL(protocolInfo);
   console.log(baseModl);
-  const baseKeys = AbstBaseModel.GET_BASE_KEY(protocol_info);
+  const baseKeys = AbstBaseModel.GET_BASE_KEY(protocolInfo);
   console.log(baseKeys);
 
-  const model = new AbstBaseModel(protocol_info);
+  const model = new AbstBaseModel(protocolInfo);
 
   // console.dir(model);
   // console.log(model.device.DEFAULT.COMMAND);
-
 }

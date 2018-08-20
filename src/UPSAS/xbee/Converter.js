@@ -1,29 +1,25 @@
-"use strict";
-const _ = require("lodash");
-const xbee_api = require("xbee-api");
-const { BU } = require("base-util-jh");
+const _ = require('lodash');
+const xbeeApi = require('xbee-api');
+const {BU} = require('base-util-jh');
 
-const AbstConverter = require("../../Default/AbstConverter");
-const BaseModel = require("../BaseModel");
-const Model = require("./Model");
-const protocol = require("./protocol");
+const AbstConverter = require('../../Default/AbstConverter');
+const Model = require('./Model');
+const protocol = require('./protocol');
 
-const { requestDeviceControlType } = require("../../../../default-intelligence").dcmConfigModel;
+const {requestDeviceControlType} = require('../../../../default-intelligence').dcmConfigModel;
 
 class Converter extends AbstConverter {
-  /** @param {protocol_info} protocol_info */
-  constructor(protocol_info) {
-    super(protocol_info);
-    this.protocol_info = protocol_info;
+  /** @param {protocol_info} protocolInfo */
+  constructor(protocolInfo) {
+    super(protocolInfo);
+    this.protocol_info = protocolInfo;
 
     this.decodingTable = protocol.decodingProtocolTable(this.protocol_info.deviceId);
     this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
-    this.xbeeAPI = new xbee_api.XBeeAPI();
+    this.xbeeAPI = new xbeeApi.XBeeAPI();
     this.frameIdList = [];
 
     /** BaseModel */
-    // automaticDecoding Method 에서 사용됨
-    this.BaseModel = BaseModel;
     this.model = new Model();
   }
 
@@ -38,15 +34,15 @@ class Converter extends AbstConverter {
     const genControlValue = Number(generationInfo.value);
 
     /** @type {baseModelDeviceStructure} */
-    let foundIt = _.find(this.model.device, deviceModel => {
-      return _.isEqual(_.get(deviceModel, "KEY"), generationInfo.key);
-    });
+    const foundIt = _.find(this.model.device, deviceModel =>
+      _.isEqual(_.get(deviceModel, 'KEY'), generationInfo.key),
+    );
 
     if (_.isEmpty(foundIt)) {
       throw new Error(`${generationInfo.key}는 존재하지 않습니다.`);
     }
 
-    let commandInfo = _.get(foundIt, "COMMAND", {});
+    const commandInfo = _.get(foundIt, 'COMMAND', {});
     // BU.CLI(commandInfo);
 
     /** @type {Array.<commandInfoModel>} */
@@ -54,19 +50,19 @@ class Converter extends AbstConverter {
 
     // 컨트롤 밸류가 0이나 False라면 장치 작동을 Close, Off
     if (genControlValue === requestDeviceControlType.FALSE) {
-      if (_.keys(commandInfo).includes("CLOSE")) {
+      if (_.keys(commandInfo).includes('CLOSE')) {
         cmdList = commandInfo.CLOSE;
-      } else if (_.keys(commandInfo).includes("OFF")) {
+      } else if (_.keys(commandInfo).includes('OFF')) {
         cmdList = commandInfo.OFF;
       }
     } else if (genControlValue === requestDeviceControlType.TRUE) {
-      if (_.keys(commandInfo).includes("OPEN")) {
+      if (_.keys(commandInfo).includes('OPEN')) {
         cmdList = commandInfo.OPEN;
-      } else if (_.keys(commandInfo).includes("ON")) {
+      } else if (_.keys(commandInfo).includes('ON')) {
         cmdList = commandInfo.ON;
       }
     } else if (genControlValue === requestDeviceControlType.MEASURE) {
-      if (_.keys(commandInfo).includes("STATUS")) {
+      if (_.keys(commandInfo).includes('STATUS')) {
         cmdList = commandInfo.STATUS;
       }
     } else {
@@ -85,11 +81,11 @@ class Converter extends AbstConverter {
       const commandObj = {};
       const frameId = this.xbeeAPI.nextFrameId();
       /** @type {xbeeApi_0x10} */
-      let frameObj = {
+      const frameObj = {
         type: 0x10,
         id: frameId,
         destination64: this.protocol_info.deviceId,
-        data: cmdInfo.cmd
+        data: cmdInfo.cmd,
       };
       commandObj.data = frameObj;
       commandObj.commandExecutionTimeoutMs = 1000;
@@ -108,7 +104,7 @@ class Converter extends AbstConverter {
     try {
       /** @type {parsingResultFormat} */
       /** @type {xbeeApi_0x8B|xbeeApi_0x90} */
-      let responseData = dcData.data;
+      const responseData = dcData.data;
       let result;
       // 해당 프로토콜에서 생성된 명령인지 체크
       switch (responseData.type) {
@@ -129,26 +125,26 @@ class Converter extends AbstConverter {
 
   /**
    *
-   * @param {xbeeApi_0x88} xbeeApi_0x88
+   * @param {xbeeApi_0x88} xbeeApi0x88
    */
-  processDataResponseAT(xbeeApi_0x88) {}
+  processDataResponseAT(xbeeApi0x88) {}
 
   /**
    *
-   * @param {xbeeApi_0x90} xbeeApi_0x90
+   * @param {xbeeApi_0x90} xbeeApi0x90
    */
-  processDataReceivePacketZigBee(xbeeApi_0x90) {
+  processDataReceivePacketZigBee(xbeeApi0x90) {
     // BU.CLI(xbeeApi_0x90);
     try {
-      const data = xbeeApi_0x90.data;
+      const {data} = xbeeApi0x90;
 
-      let STX = _.nth(data, 0);
+      const STX = _.nth(data, 0);
       // STX 체크 (# 문자 동일 체크)
       if (_.isEqual(STX, 0x23)) {
         // let boardId = data.slice(1, 5);
         // BU.CLI(data.toString());
         let productType = data.slice(5, 9);
-        let dataBody = data.slice(9);
+        const dataBody = data.slice(9);
 
         let decodingDataList;
         if (_.isBuffer(productType)) {
@@ -180,7 +176,7 @@ class Converter extends AbstConverter {
           }
           // BU.CLI(decodingDataList);
           const hasValid = _.chain(decodingDataList.decodingDataList)
-            .map("byte")
+            .map('byte')
             .sum()
             .isEqual(dataBody.length)
             .value();
@@ -188,16 +184,15 @@ class Converter extends AbstConverter {
             throw new Error(
               `The expected length(${
                 decodingDataList.length
-              }) of the data body is different from the length(${dataBody.length}) received.`
+              }) of the data body is different from the length(${dataBody.length}) received.`,
             );
           }
 
           return this.automaticDecoding(decodingDataList.decodingDataList, dataBody);
-        } else {
-          throw new Error(`productType: ${productType}이 이상합니다.`);
         }
+        throw new Error(`productType: ${productType}이 이상합니다.`);
       } else {
-        throw new Error("STX가 일치하지 않습니다.");
+        throw new Error('STX가 일치하지 않습니다.');
       }
     } catch (error) {
       throw error;
