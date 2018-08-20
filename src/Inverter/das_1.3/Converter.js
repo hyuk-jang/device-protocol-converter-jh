@@ -1,4 +1,4 @@
-// const _ = require('lodash');
+const _ = require('lodash');
 // const {BU} = require('base-util-jh');
 const AbstConverter = require('../../Default/AbstConverter');
 const protocol = require('./protocol');
@@ -107,6 +107,8 @@ class Converter extends AbstConverter {
   //         _.isNumber(decodingInfo.scale) && _.isNumber(decodingInfo.fixed)
   //           ? _.round(convertValue * decodingInfo.scale, decodingInfo.fixed)
   //           : convertValue;
+  //       // 2차 가공 여부에 따라 변환
+  //       let realValue = convertValue;
 
   //       const decodingKey = _.get(decodingInfo, 'decodingKey')
   //         ? _.get(decodingInfo, 'decodingKey')
@@ -115,14 +117,23 @@ class Converter extends AbstConverter {
   //       // 2차 가공 여부에 따라 변환
   //       if (_.includes(operationKeys, decodingKey)) {
   //         const operationStauts = this.onDeviceOperationStatus[decodingKey];
-  //         let parsingData = _.get(operationStauts, convertValue);
-  //         if (decodingInfo.key === Model.BASE_KEY.operTroubleList) {
-  //           parsingData = _.isEmpty(parsingData) ? [] : [parsingData];
+
+  //         // 찾은 Decoding이 Function 이라면 값을 넘겨줌
+  //         if (operationStauts instanceof Function) {
+  //           const tempValue = operationStauts(convertValue);
+  //           realValue = _.isNumber(tempValue) ? _.round(tempValue, decodingInfo.fixed) : tempValue;
+  //         } else {
+  //           realValue = _.get(operationStauts, convertValue);
   //         }
-  //         returnValue[decodingInfo.key] = parsingData;
-  //       } else {
-  //         returnValue[decodingInfo.key] = convertValue;
   //       }
+
+  //       // 데이터 단위가 배열일 경우
+  //       if (Array.isArray(returnValue[_.get(decodingInfo, 'key')])) {
+  //         returnValue[_.get(decodingInfo, 'key')].push(realValue);
+  //       } else {
+  //         returnValue[_.get(decodingInfo, 'key')] = realValue;
+  //       }
+
   //       // index 증가
   //       startIndex += decodingInfo.byte;
   //     });

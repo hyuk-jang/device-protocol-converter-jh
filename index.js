@@ -1,35 +1,42 @@
 require('../default-intelligence');
 
+const defaultModule = require('./src/Default/DefaultModel');
+const ESS = require('./src/ESS/BaseModel');
+const Inverter = require('./src/Inverter/BaseModel');
+const Saltern = require('./src/Saltern/BaseModel');
+const Weathercast = require('./src/Weathercast/BaseModel');
+const UPSAS = require('./src/UPSAS/BaseModel');
+
 const MainConverter = require('./src/Default/MainConverter');
 
 /** Intelligence를 위함 */
 const BaseModel = {
-  defaultModule: require('./src/Default/DefaultModel'),
-  ESS: require('./src/ESS/BaseModel'),
-  Inverter: require('./src/Inverter/BaseModel'),
-  Saltern: require('./src/Saltern/BaseModel'),
-  Weathercast: require('./src/Weathercast/BaseModel'),
-  UPSAS: require('./src/UPSAS/BaseModel')
+  defaultModule,
+  ESS,
+  Inverter,
+  Saltern,
+  Weathercast,
+  UPSAS,
 };
 
 module.exports = {
   AbstConverter: MainConverter,
   MainConverter,
-  BaseModel
+  BaseModel,
 };
 
 // if __main process
 if (require !== undefined && require.main === module) {
   console.log('__main__');
 
-  process.on('uncaughtException', function(err) {
+  process.on('uncaughtException', err => {
     // BU.debugConsole();
     console.error(err.stack);
     console.log(err.message);
     console.log('Node NOT Exiting...');
   });
 
-  process.on('unhandledRejection', function(err) {
+  process.on('unhandledRejection', err => {
     // BU.debugConsole();
     console.error(err.stack);
     console.log(err.message);
