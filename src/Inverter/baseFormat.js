@@ -5,127 +5,127 @@ module.exports = {
   /**
    * 전류(Ampere), 단위[A]
    * @description PV
-   * @type {number=}
+   * @type {number[]=}
    */
   pvAmp: [],
   /**
    * 전압(voltage), 단위[V]
    * @description PV
-   * @type {number=}
+   * @type {number[]=}
    */
   pvVol: [],
   /**
    * 전압(voltage), 단위[V]
    * @description PV
-   * @type {number=}
+   * @type {number[]=}
    */
   pvKw: [],
   /**
    * 전류(Ampere), 단위[A]
    * @description PV
-   * @type {number=}
+   * @type {number[]=}
    */
   pvAmp2: [],
   /**
    * 전압(voltage), 단위[V]
    * @description PV
-   * @type {number=}
+   * @type {number[]=}
    */
   pvVol2: [],
   /**
    * 전압(voltage), 단위[V]
    * @description PV
-   * @type {number=}
+   * @type {number[]=}
    */
   pvKw2: [],
   /**
    * 태양 전지 현재 전력, 단위[kW]
    * @description Power
-   * @type {number=}
+   * @type {number[]=}
    */
   powerPvKw: [],
   /**
    * 인버터 현재 전력, 단위[kW]
    * @description Power
-   * @type {number=}
+   * @type {number[]=}
    */
   powerGridKw: [],
   /**
    * 하루 발전량, 단위[kWh]
    * @description Power
-   * @type {number=}
+   * @type {number[]=}
    */
   powerDailyKwh: [],
   /**
    * 인버터 누적 발전량, 단위[kWh] Cumulative Power Generation
    * @description Power
-   * @type {number=}
+   * @type {number[]=}
    */
   powerCpKwh: [],
   /**
    * 역률, 단위[%]
    * @description Power
-   * @type {number=}
+   * @type {number[]=}
    */
   powerPf: [],
   /**
    * RS 선간 전압, 단위[V]
    * @description Grid
-   * @type {number=}
+   * @type {number[]=}
    */
   gridRsVol: [],
   /**
    * ST 선간 전압, 단위[V]
    * @description Grid
-   * @type {number=}
+   * @type {number[]=}
    */
   gridStVol: [],
   /**
    * TR 선간 전압, 단위[V]
    * @description Grid
-   * @type {number=}
+   * @type {number[]=}
    */
   gridTrVol: [],
   /**
    * R상 전류, 단위[A]
    * @description Grid
-   * @type {number=}
+   * @type {number[]=}
    */
   gridRAmp: [],
   /**
    * S상 전류, 단위[A]
    * @description Grid
-   * @type {number=}
+   * @type {number[]=}
    */
   gridSAmp: [],
   /**
    * T상 전류, 단위[A]
    * @description Grid
-   * @type {number=}
+   * @type {number[]=}
    */
   gridTAmp: [],
   /**
    * 라인 주파수 Line Frequency, 단위[Hz]
    * @description Grid
-   * @type {number=}
+   * @type {number[]=}
    */
   gridLf: [],
   /**
    * 단상 or 삼상, 단위[0 or 1]
    * @description System
-   * @type {number=}
+   * @type {number[]=}
    */
   sysIsSingle: [],
   /**
    * 인버터 용량, 단위[kW] Capacity
    * @description System
-   * @type {number=}
+   * @type {number[]=}
    */
   sysCapaKw: [],
   /**
    * 인버터 계통 전압, 단위[V] Line Volatage
    * @description System
-   * @type {number=}
+   * @type {number[]=}
    */
   sysLineVoltage: [],
   /**
@@ -143,43 +143,43 @@ module.exports = {
   /**
    * 인버터 동작 유무, 단위[0 or 1]
    * @description Operation
-   * @type {number=}
+   * @type {number[]=}
    */
   operIsRun: [],
   /**
    * 인버터 에러 발생 유무, 단위[0 or 1]
    * @description Operation
-   * @type {number=}
+   * @type {number[]=}
    */
   operIsError: [],
   /**
    * 인버터 온도, 단위[°C]
    * @description Operation
-   * @type {number=}
+   * @type {number[]=}
    */
   operTemperature: [],
   /**
    * 측정 시간
    * @description Measure Time
-   * @type {number=}
+   * @type {number[]=}
    */
   operTime: [],
   /**
    * 에러 리스트, 단위[Array.<{}>]
    * @description Operation
-   * @type {Array.<Object>=}
+   * @type {Object[]=}
    */
   operErrorList: [],
   /**
    * 경고 리스트, 단위[Array.<{}>]
    * @description warningList
-   * @type {Array.<Object>=}
+   * @type {Object[]=}
    */
   operWarningList: [],
   /**
    * 경고 리스트, 단위[Array.<{}>]
    * @description troubleList
-   * @type {Array.<Object>=}
+   * @type {Object[]=}
    */
   operTroubleList: [],
 };
