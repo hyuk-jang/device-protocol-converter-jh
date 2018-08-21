@@ -143,7 +143,7 @@ class Model extends BaseModel {
     ];
 
     /** 수온 */
-    this.device.WATER_TEMPERATURE.COMMAND.STATUS = [
+    this.device.BRINE_TEMPERATURE.COMMAND.STATUS = [
       {
         cmd: '@sts',
       },

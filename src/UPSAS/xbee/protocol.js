@@ -1,7 +1,7 @@
+const {BU} = require('base-util-jh');
 const {parsingMethod} = require('../../format/moduleDefine');
 // require('default-intelligence');
 // require('../../../../default-intelligence');
-
 const Model = require('./Model');
 
 const model = new Model();
@@ -44,6 +44,7 @@ const onDeviceOperationStatus = {
   },
   /** @type {Object} 수위 */
   [model.device.WATER_LEVEL.KEY]: waterLevel =>
+    // BU.CLI(waterLevel)
     // 20cm에서 해당 수위(cm)를 뺌
     20 - waterLevel,
 };

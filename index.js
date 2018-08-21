@@ -3,7 +3,6 @@ require('../default-intelligence');
 const defaultModule = require('./src/Default/DefaultModel');
 const ESS = require('./src/ESS/BaseModel');
 const Inverter = require('./src/Inverter/BaseModel');
-const Saltern = require('./src/Saltern/BaseModel');
 const Weathercast = require('./src/Weathercast/BaseModel');
 const UPSAS = require('./src/UPSAS/BaseModel');
 
@@ -14,7 +13,6 @@ const BaseModel = {
   defaultModule,
   ESS,
   Inverter,
-  Saltern,
   Weathercast,
   UPSAS,
 };
