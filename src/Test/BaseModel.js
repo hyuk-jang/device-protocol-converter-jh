@@ -60,7 +60,7 @@ class BaseModel extends AbstBaseModel {
  
   /** 현재 카테고리에 있는 장치 데이터를 저장하기 위한 모델 */
   static get BASE_MODEL() {
-    return Object.assign({}, baseFormat);
+    return _.cloneDeep(baseFormat);
   }
 
   /** BASE_MODEL Key와 같은 값을 가진 Value를 매칭 후 반환 */
