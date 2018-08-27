@@ -32,7 +32,7 @@ class AbstBaseModel {
    * @param {protocol_info} protocolInfo
    */
   bindingSubCategory(protocolInfo) {
-    this.protocol_info = protocolInfo;
+    this.protocolInfo = protocolInfo;
 
     if (_.get(protocolInfo, 'mainCategory') && _.get(protocolInfo, 'subCategory')) {
       // const BaseModel = require(`./${protocol_info.mainCategory}/BaseModel`);
@@ -85,7 +85,7 @@ class AbstBaseModel {
   static GET_BASE_MODEL(protocolInfo) {
     const path = `../${protocolInfo.mainCategory}/baseFormat`;
     const baseFormat = require(path);
-    return _.cloneDeep(baseFormat)
+    return _.cloneDeep(baseFormat);
   }
 
   /** 현재 카테고리에 있는 장치 데이터를 저장하기 위한 모델 */

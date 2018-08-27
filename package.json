@@ -34,6 +34,7 @@
     "crc": "^3.8.0",
     "default-intelligence": "^0.1.4",
     "lodash": "^4.17.10",
+    "moment": "^2.22.2",
     "xbee-api": "^0.6.0"
   }
 }
