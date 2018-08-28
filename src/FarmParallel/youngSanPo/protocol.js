@@ -24,8 +24,14 @@ exports.decodingProtocolTable = protocolInfo => {
   const SITE = {
     dialing,
     address: 0,
-    length: 12,
+    length: 18,
     decodingDataList: [
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
       {
         key: Model.BASE_KEY.lux,
         scale: 0.1,

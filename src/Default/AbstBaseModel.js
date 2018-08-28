@@ -37,7 +37,10 @@ class AbstBaseModel {
     if (_.get(protocolInfo, 'mainCategory') && _.get(protocolInfo, 'subCategory')) {
       // const BaseModel = require(`./${protocol_info.mainCategory}/BaseModel`);
       const Model = require(`../${protocolInfo.mainCategory}/${protocolInfo.subCategory}/Model`);
-      return new Model(this);
+      // Model에 프로토콜 정보 설정
+      const model = new Model(this.protocolInfo);
+      _.set(model, 'protocolInfo', this.protocolInfo);
+      return model;
     }
   }
 
