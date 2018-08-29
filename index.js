@@ -2,6 +2,7 @@ require('../default-intelligence');
 
 const defaultModule = require('./src/Default/DefaultModel');
 const ESS = require('./src/ESS/BaseModel');
+const FarmParallel = require('./src/FarmParallel/BaseModel');
 const Inverter = require('./src/Inverter/BaseModel');
 const Weathercast = require('./src/Weathercast/BaseModel');
 const UPSAS = require('./src/UPSAS/BaseModel');
@@ -12,6 +13,7 @@ const MainConverter = require('./src/Default/MainConverter');
 const BaseModel = {
   defaultModule,
   ESS,
+  FarmParallel,
   Inverter,
   Weathercast,
   UPSAS,

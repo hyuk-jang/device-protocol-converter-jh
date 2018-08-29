@@ -125,20 +125,46 @@ class AbstConverter {
   /**
    * decodingInfo 리스트 만큼 Data 파싱을 진행
    * @param {Array.<decodingInfo>} decodingTable
-   * @param {Buffer|number[]} receiveData
+   * @param {Buffer} receiveData
    * @example
-   * >>> number[] 일 경우
    * addr: 3, length 5 --> 수신받은 데이터 [x, x, x, x, x] 5개
    * decodingTable.decodingDataList --> 3번 index ~ 7번 인덱스(addr + length - 1) 반복 체크
    * currIndex는 반복에 의해 1씩 증가 --> 해당 currIndex로 수신받은 데이터 index 추출
    */
   automaticDecoding(decodingTable, receiveData) {
-    // BU.CLI(decodingTable);
+    try {
+      // BU.CLI(data);
+      // 데이터를 집어넣을 기본 자료형을 가져옴
+      const returnModelInfo = AbstBaseModel.GET_BASE_MODEL(this.protocol_info);
+      // 수신받은 데이터에서 현재 체크 중인 값을 가져올 인덱스
+      let currIndex = 0;
+      decodingTable.forEach(decodingInfo => {
+        // 조회할 데이터를 가져옴
+        const thisData = receiveData.slice(currIndex, currIndex + decodingInfo.byte);
+        this.automaticParsingData(decodingInfo, thisData, returnModelInfo);
+        // index 증가
+        currIndex += decodingInfo.byte;
+      });
+      return returnModelInfo;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * 수신받은 데이터가 Array 형태 일 경우
+   * @desc Modbus에서 수신받은 데이터 파싱할 때 사용
+   * @param {decodingProtocolInfo} decodingTable
+   * @param {number[]} receiveData 수신 받은 배열 데이터
+   * @example
+   * addr: 3, length 5 --> 수신받은 데이터 [x, x, x, x, x] 5개
+   * decodingTable.decodingDataList --> 3번 index ~ 7번 인덱스(addr + length - 1) 반복 체크
+   * currIndex는 반복에 의해 1씩 증가 --> 해당 currIndex로 수신받은 데이터 index 추출
+   */
+  automaticDecodingForArray(decodingTable, receiveData) {
     try {
       // 데이터를 집어넣을 기본 자료형을 가져옴
       const returnModelInfo = AbstBaseModel.GET_BASE_MODEL(this.protocol_info);
-      // 도출된 자료가 2차 가공(ex: 0 -> Open, 1 -> Close )이 필요한 경우
-      const operationKeys = _.keys(this.onDeviceOperationStatus);
       // 수신받은 데이터에서 현재 체크 중인 값을 가져올 인덱스
       let currIndex = 0;
 
@@ -148,117 +174,63 @@ class AbstConverter {
       for (let index = decodingTable.address; index < remainedDataListLength; index += 1) {
         // 해당 디코딩 정보 추출
         const decodingInfo = decodingTable.decodingDataList[index];
-
-        // 디코딩 정보 여부 체크
-        if (!_.isEmpty(decodingInfo)) {
-          // 조회할 데이터를 가져옴
-          const thisData = _.nth(receiveData, currIndex);
-          let convertValue;
-          // 사용하는 메소드를 호출
-          if (_.isNil(decodingInfo.callMethod)) {
-            convertValue = thisData;
-          } else {
-            convertValue = this.protocolConverter[decodingInfo.callMethod](thisData);
-          }
-          // 배율 및 소수점 처리를 사용한다면 적용
-          convertValue =
-            _.isNumber(decodingInfo.scale) && _.isNumber(decodingInfo.fixed)
-              ? _.round(convertValue * decodingInfo.scale, decodingInfo.fixed)
-              : convertValue;
-
-          // decodingKey가 있다면 해당 key로. 기본값은 key로 변환 키 정의
-          const decodingKey = _.get(decodingInfo, 'decodingKey')
-            ? _.get(decodingInfo, 'decodingKey')
-            : _.get(decodingInfo, 'key');
-          // 변환키가 정의되어있는지 확인
-          if (_.includes(operationKeys, decodingKey)) {
-            const operationStauts = this.onDeviceOperationStatus[decodingKey];
-            // 찾은 Decoding이 Function 이라면 값을 넘겨줌
-            if (operationStauts instanceof Function) {
-              const tempValue = operationStauts(convertValue);
-              convertValue = _.isNumber(tempValue)
-                ? _.round(tempValue, decodingInfo.fixed)
-                : tempValue;
-            } else {
-              convertValue = _.get(operationStauts, convertValue);
-            }
-          }
-
-          // 데이터 단위가 배열일 경우
-          if (Array.isArray(returnModelInfo[_.get(decodingInfo, 'key')])) {
-            returnModelInfo[_.get(decodingInfo, 'key')].push(convertValue);
-          } else {
-            returnModelInfo[_.get(decodingInfo, 'key')] = convertValue;
-          }
-        }
+        // 파싱 의뢰
+        this.automaticParsingData(decodingInfo, _.nth(receiveData, currIndex), returnModelInfo);
         currIndex += decodingInfo.byte || 1;
       }
       return returnModelInfo;
     } catch (error) {
       throw error;
     }
+  }
 
-    // try {
-    //   // BU.CLI(data);
-    //   // 데이터를 집어넣을 기본 자료형을 가져옴
-    //   const returnModelInfo = AbstBaseModel.GET_BASE_MODEL(this.protocol_info);
-    //   // 도출된 자료가 2차 가공(ex: 0 -> Open, 1 -> Close )이 필요한 경우
-    //   const operationKeys = _.keys(this.onDeviceOperationStatus);
-    //   // 수신받은 데이터에서 현재 체크 중인 값을 가져올 인덱스
-    //   let currIndex = 0;
-    //   decodingTable.forEach(decodingInfo => {
-    //     // 디코딩 정보 여부 체크
-    //     if (_.isEmpty(decodingInfo)) {
-    //       return false;
-    //     }
-    //     // 조회할 데이터를 가져옴
-    //     const thisData = receiveData.slice(currIndex, currIndex + decodingInfo.byte);
-    //     let convertValue;
-    //     // 사용하는 메소드를 호출
-    //     if (_.isNil(decodingInfo.callMethod)) {
-    //       convertValue = thisData;
-    //     } else {
-    //       convertValue = this.protocolConverter[decodingInfo.callMethod](thisData);
-    //     }
-    //     // 배율 및 소수점 처리를 사용한다면 적용
-    //     convertValue =
-    //       _.isNumber(decodingInfo.scale) && _.isNumber(decodingInfo.fixed)
-    //         ? _.round(convertValue * decodingInfo.scale, decodingInfo.fixed)
-    //         : convertValue;
+  /**
+   * 데이터 자동 파싱 후 model에 삽입
+   * @param {decodingInfo} decodingInfo
+   * @param {*} parsingData
+   * @param {Object} modelInfo
+   */
+  automaticParsingData(decodingInfo, parsingData, modelInfo) {
+    let returnValue = null;
+    if (!_.isEmpty(decodingInfo)) {
+      // 사용하는 메소드를 호출
+      if (_.isNil(decodingInfo.callMethod)) {
+        returnValue = parsingData;
+      } else {
+        returnValue = this.protocolConverter[decodingInfo.callMethod](parsingData);
+      }
 
-    //     // decodingKey가 있다면 해당 key로. 기본값은 key로 변환 키 정의
-    //     const decodingKey = _.get(decodingInfo, 'decodingKey')
-    //       ? _.get(decodingInfo, 'decodingKey')
-    //       : _.get(decodingInfo, 'key');
-    //     // 변환키가 정의되어있는지 확인
-    //     if (_.includes(operationKeys, decodingKey)) {
-    //       const operationStauts = this.onDeviceOperationStatus[decodingKey];
+      // 배율 및 소수점 처리를 사용한다면 적용
+      returnValue =
+        _.isNumber(decodingInfo.scale) && _.isNumber(decodingInfo.fixed)
+          ? _.round(returnValue * decodingInfo.scale, decodingInfo.fixed)
+          : returnValue;
 
-    //       // 찾은 Decoding이 Function 이라면 값을 넘겨줌
-    //       if (operationStauts instanceof Function) {
-    //         const tempValue = operationStauts(convertValue);
-    //         convertValue = _.isNumber(tempValue)
-    //           ? _.round(tempValue, decodingInfo.fixed)
-    //           : tempValue;
-    //       } else {
-    //         convertValue = _.get(operationStauts, convertValue);
-    //       }
-    //     }
+      // decodingKey가 있다면 해당 key로. 기본값은 key로 변환 키 정의
+      const decodingKey = _.get(decodingInfo, 'decodingKey')
+        ? _.get(decodingInfo, 'decodingKey')
+        : _.get(decodingInfo, 'key');
+      // 변환키가 정의되어있는지 확인
+      if (_.includes(_.keys(this.onDeviceOperationStatus), decodingKey)) {
+        const operationStauts = this.onDeviceOperationStatus[decodingKey];
+        // 찾은 Decoding이 Function 이라면 값을 넘겨줌
+        if (operationStauts instanceof Function) {
+          const tempValue = operationStauts(returnValue);
+          returnValue = _.isNumber(tempValue) ? _.round(tempValue, decodingInfo.fixed) : tempValue;
+        } else {
+          returnValue = _.get(operationStauts, returnValue);
+        }
+      }
 
-    //     // 데이터 단위가 배열일 경우
-    //     if (Array.isArray(returnModelInfo[_.get(decodingInfo, 'key')])) {
-    //       returnModelInfo[_.get(decodingInfo, 'key')].push(convertValue);
-    //     } else {
-    //       returnModelInfo[_.get(decodingInfo, 'key')] = convertValue;
-    //     }
+      // 데이터 단위가 배열일 경우
+      if (Array.isArray(modelInfo[_.get(decodingInfo, 'key')])) {
+        modelInfo[_.get(decodingInfo, 'key')].push(returnValue);
+      } else {
+        modelInfo[_.get(decodingInfo, 'key')] = returnValue;
+      }
+    }
 
-    //     // index 증가
-    //     currIndex += decodingInfo.byte;
-    //   });
-    //   return returnModelInfo;
-    // } catch (error) {
-    //   throw error;
-    // }
+    return modelInfo;
   }
 }
 module.exports = AbstConverter;

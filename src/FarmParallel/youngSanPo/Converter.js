@@ -58,7 +58,7 @@ class Converter extends AbstConverter {
       // 실제 파싱 데이터 추출
       const dataBody = resDataList.slice(0, requestData.length);
       /** @type {BASE_MODEL} */
-      const returnValue = this.automaticDecoding(decodingTable, dataBody);
+      const returnValue = this.automaticDecodingForArray(decodingTable, dataBody);
       // 계측 시간을 포함할 경우
       if (startAddr < headerLength) {
         const measureDate = moment();
