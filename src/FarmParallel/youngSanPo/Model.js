@@ -20,6 +20,14 @@ class Model extends BaseModel {
         length: 18,
       },
     ];
+
+    this.device.LUX.COMMAND.STATUS = [
+      {
+        unitId: this.dialing,
+        address: 6,
+        length: 1,
+      },
+    ];
   }
 }
 

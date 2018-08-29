@@ -24,8 +24,8 @@ class Converter extends AbstConverter {
   /**
    * 장치를 조회 및 제어하기 위한 명령 생성.
    * cmd가 있다면 cmd에 맞는 특정 명령을 생성하고 아니라면 기본 명령을 생성
-   * @param {Array.<Buffer>} cmdList 각 Protocol Converter에 맞는 데이터
-   * @return {Array.<commandInfo>} 장치를 조회하기 위한 명령 리스트 반환
+   * @param {{unitId: string, address: number, length: number}[]} cmdList 각 Protocol Converter에 맞는 데이터
+   * @return {commandInfo[]} 장치를 조회하기 위한 명령 리스트 반환
    */
   generationCommand(cmdList) {
     return this.makeDefaultCommandInfo(cmdList, 1000);
@@ -52,46 +52,42 @@ class Converter extends AbstConverter {
       const decodingTable = this.decodingTable.SITE;
       // 요청 시작 주소를 가져옴
       const startAddr = requestData.address;
-      const startBodyAddr = startAddr < headerLength ? 0 : startAddr - headerLength;
       // 실제 시작하는 주소 세팅
-      decodingTable.address = startBodyAddr;
-      // 종료 주소를 가져옴
-      const endAddr = _.sum([startAddr, requestData.length]);
-
-      BU.CLIS(startAddr, startBodyAddr, endAddr);
+      decodingTable.address = startAddr;
 
       // 실제 파싱 데이터 추출
-      const dataBody = resDataList.slice(startBodyAddr, endAddr);
-
-      BU.CLI(dataBody);
+      const dataBody = resDataList.slice(0, requestData.length);
       /** @type {BASE_MODEL} */
       const returnValue = this.automaticDecoding(decodingTable, dataBody);
       // 계측 시간을 포함할 경우
       if (startAddr < headerLength) {
         const measureDate = moment();
-        for (let index = startAddr; index > 0; index -= 1) {
+        let currIndex = 0;
+        for (let index = startAddr; index < headerLength; index += 1) {
+          const indexValue = _.nth(resDataList, currIndex);
           switch (index) {
             case 0:
-              measureDate.year(_.nth(resDataList, index));
+              measureDate.year(_.sum([2000, indexValue]));
               break;
             case 1:
-              measureDate.month(_.nth(resDataList, index));
+              measureDate.month(_.subtract(indexValue, 1));
               break;
             case 2:
-              measureDate.day(_.nth(resDataList, index));
+              measureDate.date(indexValue);
               break;
             case 3:
-              measureDate.hour(_.nth(resDataList, index));
+              measureDate.hour(indexValue);
               break;
             case 4:
-              measureDate.minute(_.nth(resDataList, index));
+              measureDate.minute(indexValue);
               break;
             case 5:
-              measureDate.second(_.nth(resDataList, index));
+              measureDate.second(indexValue);
               break;
             default:
               break;
           }
+          currIndex += 1;
         }
         returnValue.writeDate.push(measureDate.toDate());
       }
@@ -106,75 +102,74 @@ class Converter extends AbstConverter {
    * @override
    * decodingInfo 리스트 만큼 Data 파싱을 진행
    * @param {decodingProtocolInfo} decodingTable
-   * @param {number[]} resDataList
+   * @param {Buffer|number[]} receiveData
+   * @example
+   * addr: 3, length 5 --> 수신받은 데이터 [x, x, x, x, x] 5개
+   * decodingTable.decodingDataList --> 3번 index ~ 7번 인덱스(addr + length - 1) 반복 체크
+   * currIndex는 반복에 의해 1씩 증가 --> 해당 currIndex로 수신받은 데이터 index 추출
    */
-  automaticDecoding(decodingTable, resDataList) {
+  automaticDecodings(decodingTable, receiveData) {
+    // BU.CLI(decodingTable);
     try {
-      // BU.CLI(data);
       // 데이터를 집어넣을 기본 자료형을 가져옴
-      const returnValue = BASE_MODEL;
-      // BU.CLI(returnValue);
+      const returnModelInfo = Model.BASE_MODEL;
       // 도출된 자료가 2차 가공(ex: 0 -> Open, 1 -> Close )이 필요한 경우
       const operationKeys = _.keys(this.onDeviceOperationStatus);
-      let startIndex = decodingTable.address;
+      // 수신받은 데이터에서 현재 체크 중인 값을 가져올 인덱스
+      let currIndex = 0;
 
-      decodingTable.decodingDataList.forEach(decodingInfo => {
-        // 조회할 데이터를 가져옴
-        const thisData = _.nth(resDataList, startIndex);
-        let convertValue;
-        // 사용하는 메소드를 호출
-        if (_.isNil(decodingInfo.callMethod)) {
-          convertValue = thisData;
-        } else {
-          convertValue = this.protocolConverter[decodingInfo.callMethod](thisData);
-        }
-        // 배율 및 소수점 처리를 사용한다면 적용
-        convertValue =
-          _.isNumber(decodingInfo.scale) && _.isNumber(decodingInfo.fixed)
-            ? _.round(convertValue * decodingInfo.scale, decodingInfo.fixed)
-            : convertValue;
-        // 2차 가공 여부에 따라 변환
-        let realValue = convertValue;
+      // 총 체크해야할 데이터 범위를 계산 (시작주소 + 수신 데이터 길이)
+      const remainedDataListLength = _.sum([receiveData.length, decodingTable.address]);
+      // 시작주소부터 체크 시작
+      for (let index = decodingTable.address; index < remainedDataListLength; index += 1) {
+        // 해당 디코딩 정보 추출
+        const decodingInfo = decodingTable.decodingDataList[index];
 
-        // BU.CLI(decodingInfo.key, realValue);
-
-        // decodingKey가 있다면 해당 key로. 기본값은 key로 변환 키 정의
-        const decodingKey = _.get(decodingInfo, 'decodingKey')
-          ? _.get(decodingInfo, 'decodingKey')
-          : _.get(decodingInfo, 'key');
-        // 변환키가 정의되어있는지 확인
-        if (_.includes(operationKeys, decodingKey)) {
-          BU.CLI(decodingKey);
-          const operationStauts = this.onDeviceOperationStatus[decodingKey];
-          BU.CLI(operationStauts);
-
-          // 찾은 Decoding이 Function 이라면 값을 넘겨줌
-          if (operationStauts instanceof Function) {
-            const tempValue = operationStauts(convertValue);
-            realValue = _.isNumber(tempValue) ? _.round(tempValue, decodingInfo.fixed) : tempValue;
+        // 디코딩 정보 여부 체크
+        if (!_.isEmpty(decodingInfo)) {
+          // 조회할 데이터를 가져옴
+          const thisData = _.nth(receiveData, currIndex);
+          let convertValue;
+          // 사용하는 메소드를 호출
+          if (_.isNil(decodingInfo.callMethod)) {
+            convertValue = thisData;
           } else {
-            // const key = _(operationStauts)
-            //   .keys()
-            //   .every(_.isNumber)
-            //   ? Number(convertValue)
-            //   : _.toString(convertValue);
-            // BU.CLI(key)
-            // realValue = _.get(operationStauts, key);
-            realValue = _.get(operationStauts, convertValue);
+            convertValue = this.protocolConverter[decodingInfo.callMethod](thisData);
+          }
+          // 배율 및 소수점 처리를 사용한다면 적용
+          convertValue =
+            _.isNumber(decodingInfo.scale) && _.isNumber(decodingInfo.fixed)
+              ? _.round(convertValue * decodingInfo.scale, decodingInfo.fixed)
+              : convertValue;
+
+          // decodingKey가 있다면 해당 key로. 기본값은 key로 변환 키 정의
+          const decodingKey = _.get(decodingInfo, 'decodingKey')
+            ? _.get(decodingInfo, 'decodingKey')
+            : _.get(decodingInfo, 'key');
+          // 변환키가 정의되어있는지 확인
+          if (_.includes(operationKeys, decodingKey)) {
+            const operationStauts = this.onDeviceOperationStatus[decodingKey];
+            // 찾은 Decoding이 Function 이라면 값을 넘겨줌
+            if (operationStauts instanceof Function) {
+              const tempValue = operationStauts(convertValue);
+              convertValue = _.isNumber(tempValue)
+                ? _.round(tempValue, decodingInfo.fixed)
+                : tempValue;
+            } else {
+              convertValue = _.get(operationStauts, convertValue);
+            }
+          }
+
+          // 데이터 단위가 배열일 경우
+          if (Array.isArray(returnModelInfo[_.get(decodingInfo, 'key')])) {
+            returnModelInfo[_.get(decodingInfo, 'key')].push(convertValue);
+          } else {
+            returnModelInfo[_.get(decodingInfo, 'key')] = convertValue;
           }
         }
-
-        // 데이터 단위가 배열일 경우
-        if (Array.isArray(returnValue[_.get(decodingInfo, 'key')])) {
-          returnValue[_.get(decodingInfo, 'key')].push(realValue);
-        } else {
-          returnValue[_.get(decodingInfo, 'key')] = realValue;
-        }
-
-        // index 증가, 기본값은 1
-        startIndex += decodingInfo.byte || 1;
-      });
-      return returnValue;
+        currIndex += decodingInfo.byte || 1;
+      }
+      return returnModelInfo;
     } catch (error) {
       throw error;
     }

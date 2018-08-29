@@ -1,13 +1,17 @@
-const {expect} = require('chai');
-const {BU} = require('base-util-jh');
 const _ = require('lodash');
 
+const moment = require('moment');
+const {expect} = require('chai');
+const {BU} = require('base-util-jh');
+
 const Converter = require('../../../src/FarmParallel/youngSanPo/Converter');
-const BaseModel = require('../../../src/FarmParallel/BaseModel');
+const Model = require('../../../src/FarmParallel/youngSanPo/Model');
+
+const {BASE_MODEL} = Model;
 
 const {decodingProtocolTable} = require('../../../src/FarmParallel/youngSanPo/protocol');
 
-const model = new BaseModel({
+const model = new Model({
   deviceId: '1',
   mainCategory: 'FarmParallel',
   subCategory: 'youngSanPo',
@@ -42,7 +46,7 @@ describe('Decoding Test', () => {
 
     // console.dir(protocol);
     // 명령 생성
-    const commandStorage = converter.generationCommand(model.device.DEFAULT.COMMAND.STATUS);
+    let commandStorage = converter.generationCommand(model.device.DEFAULT.COMMAND.STATUS);
 
     // 명령 발송 객체 생성
     // /** @type {dcData} */
@@ -51,137 +55,48 @@ describe('Decoding Test', () => {
         cmdList: commandStorage,
         currCmdIndex: 0,
       },
+      data: [],
     };
 
     // data 18개 전부
-    const fullData = [18, 8, 28, 14, 50, 51, 2200, 15, 302, 450, 800, 30, 352, 479, 80, 24, 10, 1];
+    const fullData = [17, 5, 25, 14, 50, 51, 2200, 15, 302, 450, 800, 30, 352, 479, 80, 24, 10, 1];
 
     // 수신 받은 데이터 생성
+    /** @type {BASE_MODEL} */
     let res;
-    // 0. 시스템 데이터 파싱, 에러 날 경우 강제 삭제 테스트
+    // 전체 데이터 파싱 테스트
     dcData.data = fullData;
     res = converter.parsingUpdateData(dcData).data;
-    BU.CLI(res);
-    expect(_.get(res, 'name')).to.eq('Error');
+    // BU.CLI(res);
+    // BU.CLI(moment(_.head(res.writeDate)).format('YYYY-MM-DD HH:mm:ss'));
+    expect(_.head(res.co2)).to.be.eq(80.0);
 
-    done();
-  });
-
-  it('automaticDecoding', done => {
-    const converter = new Converter({
-      deviceId: '001',
-      mainCategory: 'Inverter',
-      subCategory: 'das_1.3',
-      option: true,
-      protocolOptionInfo: {hasTrackingData: true},
-    });
-    // 명령 생성
-    const commandStorage = converter.generationCommand(model.device.DEFAULT.COMMAND.STATUS);
-
-    // 명령 발송 객체 생성
-    // /** @type {dcData} */
-    const dcData = {
-      commandSet: {
-        cmdList: commandStorage,
-        currCmdIndex: 0,
-      },
-    };
-
-    // 수신 받은 데이터 생성
-    let res;
-    // 0. 시스템 데이터 파싱, 에러 날 경우 강제 삭제 테스트
-    dcData.data = Buffer.from('^001,3,0100,380,24');
-    res = converter.parsingUpdateData(dcData).data;
-    expect(_.get(res, 'name')).to.eq('Error');
-    dcData.data = Buffer.from('^,,380,24');
-    res = converter.parsingUpdateData(dcData).data;
-    expect(_.get(res, 'name')).to.eq('Error');
-    dcData.data = Buffer.from('^D,24');
-    res = converter.parsingUpdateData(dcData).data;
-    expect(_.get(res, 'name')).to.eq('Error');
-
-    // 정상 데이터가 들어와도 에러
-    dcData.data = Buffer.from('^D017001,3,0100,380,24');
-    res = converter.parsingUpdateData(dcData).data;
-    expect(_.get(res, 'name')).to.eq('Error');
-
-    // 리셋 처리 후 정상 데이터가 들어오면 진행
-    converter.resetTrackingDataBuffer();
-    dcData.data = Buffer.from('^D017001,3,0100,380,24');
+    // 조도만 가져오고자 할 경우
+    commandStorage = converter.generationCommand(model.device.LUX.COMMAND.STATUS);
+    BU.CLI(_.head(commandStorage));
+    dcData.commandSet.cmdList = commandStorage;
+    dcData.data = [38];
     res = converter.parsingUpdateData(dcData).data;
     // BU.CLI(res);
-    expect(_.get(res, 'name')).to.not.eq('Error');
+    // BU.CLI(moment(_.head(res.writeDate)).format('YYYY-MM-DD HH:mm:ss'));
+    expect(_.head(res.lux)).to.be.eq(3.8);
 
-    // 1. 시스템 데이터 파싱
-    dcData.data = Buffer.from('^D017001,');
-    res = converter.parsingUpdateData(dcData);
-    BU.CLI(res.data.message);
-    dcData.data = Buffer.from('3,0100,380,24');
+    // 테스트 요청
+    commandStorage = converter.generationCommand([
+      {
+        unitId: '1',
+        address: 2,
+        length: 13,
+      },
+    ]);
+    dcData.commandSet.cmdList = commandStorage;
+    dcData.data = [28, 14, 50, 51, 2200, 15, 302, 450, 800, 30, 352, 480, 80, 24, 10, 1];
+
     res = converter.parsingUpdateData(dcData).data;
-    BU.CLI(res.data);
+    // BU.CLI(res);
+    expect(_.head(res.outsideAirReh)).to.be.eq(48.0);
 
-    BU.CLI(res);
-    // 10kW급 테스트 (scale, fixed Test)
-    expect(_.get(res, BaseModel.BASE_KEY.sysLineVoltage)).to.eq(380);
-    expect(_.get(res, BaseModel.BASE_KEY.sysCapaKw)).to.eq(10);
-    expect(_.get(res, BaseModel.BASE_KEY.sysIsSingle)).to.eq(0);
-
-    // 1. 시스템 데이터 파싱
-    dcData.data = Buffer.from('^D017001,');
-    res = converter.parsingUpdateData(dcData);
-    BU.CLI(res.data.message);
-    dcData.data = Buffer.from('3,0100,380,24');
-    res = converter.parsingUpdateData(dcData).data;
-    // 10kW급 테스트 (scale, fixed Test)
-    expect(_.get(res, BaseModel.BASE_KEY.sysLineVoltage)).to.eq(380);
-    expect(_.get(res, BaseModel.BASE_KEY.sysCapaKw)).to.eq(10);
-    expect(_.get(res, BaseModel.BASE_KEY.sysIsSingle)).to.eq(0);
-
-    // 2. PV 데이터 파싱
-    dcData.commandSet.currCmdIndex = 1;
-    dcData.data = Buffer.from('^D120001,400,0200,0080,18');
-    res = converter.parsingUpdateData(dcData).data;
-    BU.CLI(res);
-    expect(_.get(res, BaseModel.BASE_KEY.pvVol)).to.eq(400);
-    expect(_.get(res, BaseModel.BASE_KEY.pvAmp)).to.eq(20);
-    expect(_.get(res, BaseModel.BASE_KEY.pvKw)).to.eq(8);
-
-    // 3. GRID VOL 데이터 파싱
-    dcData.commandSet.currCmdIndex = 2;
-    dcData.data = Buffer.from('^D222001,380,379,381,600,55');
-    res = converter.parsingUpdateData(dcData).data;
-    expect(_.get(res, BaseModel.BASE_KEY.gridRsVol)).to.eq(380);
-    expect(_.get(res, BaseModel.BASE_KEY.gridStVol)).to.eq(379);
-    expect(_.get(res, BaseModel.BASE_KEY.gridTrVol)).to.eq(381);
-    expect(_.get(res, BaseModel.BASE_KEY.gridLf)).to.eq(60);
-
-    // 4. GRID AMP 데이터 파싱
-    dcData.commandSet.currCmdIndex = 3;
-    dcData.data = Buffer.from('^D321001,0118,0119,0118,38');
-    res = converter.parsingUpdateData(dcData).data;
-    expect(_.get(res, BaseModel.BASE_KEY.gridRAmp)).to.eq(11.8);
-    expect(_.get(res, BaseModel.BASE_KEY.gridSAmp)).to.eq(11.9);
-    expect(_.get(res, BaseModel.BASE_KEY.gridTAmp)).to.eq(11.8);
-
-    // 5. Power 데이터 파싱
-    dcData.commandSet.currCmdIndex = 4;
-    dcData.data = Buffer.from('^D419001,0078,0000100,31');
-    res = converter.parsingUpdateData(dcData).data;
-    expect(_.get(res, BaseModel.BASE_KEY.powerGridKw)).to.eq(7.8);
-    expect(_.get(res, BaseModel.BASE_KEY.powerCpKwh)).to.eq(100);
-
-    // 6. Operation 데이터 파싱
-    dcData.commandSet.currCmdIndex = 5;
-    dcData.data = Buffer.from('^D612001,0,0,0,10');
-    res = converter.parsingUpdateData(dcData).data;
-    expect(_.get(res, BaseModel.BASE_KEY.operIsError)).to.eq(0);
-    expect(_.get(res, BaseModel.BASE_KEY.operIsRun)).to.eq(1);
-    expect(_.get(res, BaseModel.BASE_KEY.operTroubleList).length).to.eq(0);
-
-    dcData.data = Buffer.from('^D612001,0,0,Z,45');
-    res = converter.parsingUpdateData(dcData).data;
-    BU.CLI(res);
-    expect(_.get(res, BaseModel.BASE_KEY.operTroubleList).length).to.eq(1);
+    // BU.CLI(moment(_.head(res.writeDate)).format('YYYY-MM-DD HH:mm:ss'));
 
     done();
   });

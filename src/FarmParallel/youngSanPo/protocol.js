@@ -79,8 +79,6 @@ exports.decodingProtocolTable = protocolInfo => {
       },
       {
         key: Model.BASE_KEY.windDirection,
-        scale: 0.1,
-        fixed: 1,
       },
       {
         key: Model.BASE_KEY.r1,
