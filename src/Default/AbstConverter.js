@@ -3,6 +3,7 @@ const _ = require('lodash');
 
 const ProtocolConverter = require('./ProtocolConverter');
 const AbstBaseModel = require('./AbstBaseModel');
+const defaultWrapper = require('./defaultWrapper');
 
 // const {definedCommanderResponse} =  require('default-intelligence').dccFlagModel;
 const {definedCommanderResponse} = require('../../../../module/default-intelligence').dccFlagModel;
@@ -12,7 +13,7 @@ class AbstConverter {
    * @param {protocol_info} protocolInfo
    */
   constructor(protocolInfo) {
-    this.protocol_info = protocolInfo;
+    this.protocolInfo = protocolInfo;
 
     this.protocolConverter = new ProtocolConverter();
 
@@ -26,6 +27,22 @@ class AbstConverter {
     this.model = new AbstBaseModel(protocolInfo);
     // 자식 Converter에서 구현
     this.onDeviceOperationStatus = null;
+  }
+
+  /**
+   * protocolInfo.wrapperCategory 에 따라 데이터를 frame으로 감싼 후 반환
+   * @param {*} data Cover를 씌울 원 데이터
+   */
+  coverFrame(data) {
+    return defaultWrapper.wrapFrameMsg(this.protocolInfo, data);
+  }
+
+  /**
+   * 수신받은 dcData에서 frame을 걷어내고, dcData에서 전송 명령 또한 frame을 걷어냄
+   * @param {dcData} dcData
+   */
+  peelFrame(dcData) {
+    defaultWrapper.decodingDcData(this.protocolInfo, dcData);
   }
 
   /**
@@ -44,7 +61,7 @@ class AbstConverter {
     cmdDataList.forEach(bufData => {
       /** @type {commandInfo} */
       const commandObj = {
-        data: bufData,
+        data: this.coverFrame(bufData),
         commandExecutionTimeoutMs: _.isNumber(commandExecutionTimeoutMs)
           ? commandExecutionTimeoutMs
           : 1000,
@@ -87,12 +104,15 @@ class AbstConverter {
     const returnValue = {};
     try {
       // 수신 데이터 추적을 하는 경우라면 dcData의 Data와 합산
-      if (_.get(this.protocolOptionInfo, 'hasTrackingData') === true) {
+      if (_.get(this, 'protocolOptionInfo.hasTrackingData') === true) {
         this.trackingDataBuffer = Buffer.concat([this.trackingDataBuffer, dcData.data]);
         dcData.data = this.trackingDataBuffer;
 
         // BU.CLI(dcData.data.toString());
       }
+
+      // protocolInfo.wrapperCategory 여부에 따라 dcData.data 및 dcData.commandSet 수정
+      this.peelFrame(dcData);
 
       // BU.CLI('@@@@@@@@@@');
       try {
@@ -135,7 +155,7 @@ class AbstConverter {
     try {
       // BU.CLI(data);
       // 데이터를 집어넣을 기본 자료형을 가져옴
-      const returnModelInfo = AbstBaseModel.GET_BASE_MODEL(this.protocol_info);
+      const returnModelInfo = AbstBaseModel.GET_BASE_MODEL(this.protocolInfo);
       // 수신받은 데이터에서 현재 체크 중인 값을 가져올 인덱스
       let currIndex = 0;
       decodingTable.forEach(decodingInfo => {
@@ -164,7 +184,7 @@ class AbstConverter {
   automaticDecodingForArray(decodingTable, receiveData) {
     try {
       // 데이터를 집어넣을 기본 자료형을 가져옴
-      const returnModelInfo = AbstBaseModel.GET_BASE_MODEL(this.protocol_info);
+      const returnModelInfo = AbstBaseModel.GET_BASE_MODEL(this.protocolInfo);
       // 수신받은 데이터에서 현재 체크 중인 값을 가져올 인덱스
       let currIndex = 0;
 

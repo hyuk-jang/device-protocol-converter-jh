@@ -6,13 +6,11 @@ const BaseModel = require('../BaseModel');
 class Model extends BaseModel {
   /**
    *
-   * @param {BaseModel} baseModel
+   * @param {protocol_info} protocolInfo
    */
-  constructor(baseModel) {
+  constructor(protocolInfo) {
     super();
-    this.dialing = this.protocolConverter.makeMsg2Buffer(
-      _.get(baseModel, 'protocol_info.deviceId'),
-    );
+    this.dialing = this.protocolConverter.makeMsg2Buffer(_.get(protocolInfo, 'deviceId'));
     // BU.CLI(this.dialing);
 
     this.SOP = Buffer.from('^');

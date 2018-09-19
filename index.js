@@ -1,6 +1,7 @@
 require('../default-intelligence');
 
 const defaultModule = require('./src/Default/DefaultModel');
+const defaultWrapper = require('./src/Default/defaultWrapper');
 const ESS = require('./src/ESS/BaseModel');
 const FarmParallel = require('./src/FarmParallel/BaseModel');
 const Inverter = require('./src/Inverter/BaseModel');
@@ -12,6 +13,7 @@ const MainConverter = require('./src/Default/MainConverter');
 /** Intelligence를 위함 */
 const BaseModel = {
   defaultModule,
+  defaultWrapper,
   ESS,
   FarmParallel,
   Inverter,

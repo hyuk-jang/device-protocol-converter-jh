@@ -1,5 +1,5 @@
 const _ = require('lodash');
-// const {BU} = require('base-util-jh');
+const {BU} = require('base-util-jh');
 const AbstConverter = require('../../Default/AbstConverter');
 const protocol = require('./protocol');
 
@@ -12,7 +12,7 @@ class Converter extends AbstConverter {
    */
   constructor(protocolInfo) {
     super(protocolInfo);
-    this.protocol_info = protocolInfo;
+    this.protocolInfo = protocolInfo;
     this.decodingTable = protocol.decodingProtocolTable(protocolInfo);
     this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
 
@@ -27,6 +27,8 @@ class Converter extends AbstConverter {
    * @return {Array.<commandInfo>} 장치를 조회하기 위한 명령 리스트 반환
    */
   generationCommand(cmdList) {
+    BU.CLI(this.protocolInfo);
+    BU.CLI(cmdList);
     return this.makeDefaultCommandInfo(cmdList, 1000);
   }
 
