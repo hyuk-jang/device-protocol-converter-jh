@@ -16,8 +16,8 @@
   "license": "ISC",
   "devDependencies": {
     "chai": "^4.1.2",
-    "docdash": "^0.4.0",
-    "eslint": "^5.4.0",
+    "docdash": "^1.0.0",
+    "eslint": "^5.6.0",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^3.0.1",
@@ -27,13 +27,13 @@
     "eslint-plugin-react": "^7.11.1",
     "jsdoc": "^3.5.5",
     "mocha": "^5.2.0",
-    "prettier": "^1.14.2"
+    "prettier": "^1.14.3"
   },
   "dependencies": {
-    "base-util-jh": "^1.1.13",
+    "base-util-jh": "^1.1.14",
     "crc": "^3.8.0",
-    "default-intelligence": "^0.1.4",
-    "lodash": "^4.17.10",
+    "default-intelligence": "^0.1.5",
+    "lodash": "^4.17.11",
     "moment": "^2.22.2",
     "xbee-api": "^0.6.0"
   }

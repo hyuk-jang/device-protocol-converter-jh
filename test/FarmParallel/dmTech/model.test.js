@@ -4,17 +4,17 @@ const moment = require('moment');
 const {expect} = require('chai');
 const {BU} = require('base-util-jh');
 
-const Converter = require('../../../src/FarmParallel/youngSanPo/Converter');
-const Model = require('../../../src/FarmParallel/youngSanPo/Model');
+const Converter = require('../../../src/FarmParallel/dmTech/Converter');
+const Model = require('../../../src/FarmParallel/dmTech/Model');
 
 const {BASE_MODEL} = Model;
 
-const {decodingProtocolTable} = require('../../../src/FarmParallel/youngSanPo/protocol');
+const {decodingProtocolTable} = require('../../../src/FarmParallel/dmTech/protocol');
 
 const model = new Model({
   deviceId: '1',
   mainCategory: 'FarmParallel',
-  subCategory: 'youngSanPo',
+  subCategory: 'dmTech',
 });
 
 // require('default-intelligence');
@@ -23,10 +23,10 @@ const model = new Model({
 const protocolInfo = {
   deviceId: '1',
   mainCategory: 'FarmParallel',
-  subCategory: 'youngSanPo',
+  subCategory: 'dmTech',
 };
 
-describe('encoding Test 1', () => {
+describe.only('encoding Test 1', () => {
   const converter = new Converter(protocolInfo);
   it('generate Msg', done => {
     let cmd = converter.generationCommand(model.device.DEFAULT.COMMAND.STATUS);
@@ -41,7 +41,7 @@ describe('encoding Test 1', () => {
 
 describe('Decoding Test', () => {
   const converter = new Converter(protocolInfo);
-  it.only('receive Buffer To Data Body', done => {
+  it('receive Buffer To Data Body', done => {
     const protocol = decodingProtocolTable(protocolInfo.deviceId);
 
     // console.dir(protocol);
