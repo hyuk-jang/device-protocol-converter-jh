@@ -23,13 +23,15 @@ class Converter extends AbstConverter {
   /**
    * 장치를 조회 및 제어하기 위한 명령 생성.
    * cmd가 있다면 cmd에 맞는 특정 명령을 생성하고 아니라면 기본 명령을 생성
-   * @param {{unitId: string, fnCode: number, address: number, length: number}[]} cmdList 각 Protocol Converter에 맞는 데이터
+   * @param {{unitId: string, fnCode: number, address: number, dataLength: number}[]} cmdList 각 Protocol Converter에 맞는 데이터
    * @return {commandInfo[]} 장치를 조회하기 위한 명령 리스트 반환
    */
   generationCommand(cmdList) {
     BU.CLI(cmdList);
     cmdList.map(cmdInfo => {
-      const {unitId, fnCode, address, length} = cmdInfo;
+      const {unitId, fnCode, address, dataLength} = cmdInfo;
+
+      // this.protocolConverter.conver
 
       // _.forEach()
 
@@ -50,7 +52,7 @@ class Converter extends AbstConverter {
       const headerLength = 6;
       /**
        * 요청한 명령 추출
-       * @type {{unitId: string, address: number, length: number}}
+       * @type {{unitId: string, address: number, dataLength: number}}
        */
       const requestData = this.getCurrTransferCmd(dcData);
 
@@ -64,7 +66,7 @@ class Converter extends AbstConverter {
       decodingTable.address = startAddr;
 
       // 실제 파싱 데이터 추출
-      const dataBody = resDataList.slice(0, requestData.length);
+      const dataBody = resDataList.slice(0, requestData.dataLength);
       /** @type {BASE_MODEL} */
       const returnValue = this.automaticDecodingForArray(decodingTable, dataBody);
       // 계측 시간을 포함할 경우
