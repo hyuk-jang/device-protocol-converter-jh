@@ -217,7 +217,7 @@ exports.decodingProtocolTable = protocolInfo => {
   const SYSTEM = {
     dialing,
     address: 0,
-    length: 17,
+    bodyLength: 17,
     decodingDataList: [
       {
         key: Model.BASE_KEY.sysIsSingle,
@@ -244,7 +244,7 @@ exports.decodingProtocolTable = protocolInfo => {
     dialing: _.get(protocolInfo, 'deviceId'),
     code: 'D',
     address: 1,
-    length: 20, // 수신할 데이터 Byte,
+    bodyLength: 20, // 수신할 데이터 Byte,
     decodingDataList: [
       {
         key: Model.BASE_KEY.pvVol,
@@ -272,7 +272,7 @@ exports.decodingProtocolTable = protocolInfo => {
     dialing: _.get(protocolInfo, 'deviceId'),
     code: 'D',
     address: 2,
-    length: 22, // 수신할 데이터 Byte,
+    bodyLength: 22, // 수신할 데이터 Byte,
     decodingDataList: [
       {
         key: Model.BASE_KEY.gridRsVol,
@@ -303,7 +303,7 @@ exports.decodingProtocolTable = protocolInfo => {
     dialing: _.get(protocolInfo, 'deviceId'),
     code: 'D',
     address: 3,
-    length: 21, // 수신할 데이터 Byte,
+    bodyLength: 21, // 수신할 데이터 Byte,
     decodingDataList: [
       {
         key: Model.BASE_KEY.gridRAmp,
@@ -333,7 +333,7 @@ exports.decodingProtocolTable = protocolInfo => {
     dialing: _.get(protocolInfo, 'deviceId'),
     code: 'D',
     address: 4,
-    length: 19, // 수신할 데이터 Byte,
+    bodyLength: 19, // 수신할 데이터 Byte,
     decodingDataList: [
       {
         key: Model.BASE_KEY.powerGridKw,
@@ -354,7 +354,7 @@ exports.decodingProtocolTable = protocolInfo => {
     dialing: _.get(protocolInfo, 'deviceId'),
     code: 'D',
     address: 6,
-    length: 12, // 수신할 데이터 Byte,
+    bodyLength: 12, // 수신할 데이터 Byte,
     decodingDataList: [
       {
         key: Model.BASE_KEY.operIsError,

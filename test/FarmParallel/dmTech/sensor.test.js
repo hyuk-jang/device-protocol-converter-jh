@@ -11,23 +11,22 @@ const {BASE_MODEL} = Model;
 
 const {decodingProtocolTable} = require('../../../src/FarmParallel/dmTech/protocol');
 
-const model = new Model({
-  deviceId: '1',
-  mainCategory: 'FarmParallel',
-  subCategory: 'dmTech',
-});
-
-// require('default-intelligence');
-// require('../../../../default-intelligence');
-
 const protocolInfo = {
   deviceId: '1',
   mainCategory: 'FarmParallel',
   subCategory: 'dmTech',
 };
+// 명령 모델 객체를 생성.(protocolInfo 강제 입력)
+const model = new Model(protocolInfo);
 
+// require('default-intelligence');
+// require('../../../../default-intelligence');
+
+// 센서류 데이터를 가져오기 위한 명령 변환 테스트
 describe.only('encoding Test 1', () => {
   const converter = new Converter(protocolInfo);
+  // 1. 모든 데이터 요청
+  // 2. 특정 데이터 요청
   it('generate Msg', done => {
     let cmd = converter.generationCommand(model.device.DEFAULT.COMMAND.STATUS);
 

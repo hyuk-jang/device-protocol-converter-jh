@@ -12,9 +12,8 @@ class Converter extends AbstConverter {
   /** @param {protocol_info} protocolInfo */
   constructor(protocolInfo) {
     super(protocolInfo);
-    this.protocol_info = protocolInfo;
 
-    this.decodingTable = protocol.decodingProtocolTable(this.protocol_info.deviceId);
+    this.decodingTable = protocol.decodingProtocolTable(this.protocolInfo.deviceId);
     this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
     this.xbeeAPI = new xbeeApi.XBeeAPI();
     this.frameIdList = [];
@@ -84,7 +83,7 @@ class Converter extends AbstConverter {
       const frameObj = {
         type: 0x10,
         id: frameId,
-        destination64: this.protocol_info.deviceId,
+        destination64: this.protocolInfo.deviceId,
         data: cmdInfo.cmd,
       };
       commandObj.data = frameObj;
@@ -183,7 +182,7 @@ class Converter extends AbstConverter {
           if (!hasValid) {
             throw new Error(
               `The expected length(${
-                decodingDataList.length
+                decodingDataList.bodyLength
               }) of the data body is different from the length(${dataBody.length}) received.`,
             );
           }

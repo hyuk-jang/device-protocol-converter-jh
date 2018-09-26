@@ -1,5 +1,3 @@
-'use strict';
-
 const _ = require('lodash');
 const {parsingMethod} = require('../../format/moduleDefine');
 
@@ -49,53 +47,57 @@ const onDeviceOperationStatus = {
 };
 exports.onDeviceOperationStatus = onDeviceOperationStatus;
 
-
 /**
- * 
- * @param {protocol_info} protocol_info 
+ *
+ * @param {protocol_info} protocol_info
  */
-exports.decodingProtocolTable = (protocol_info) => {
-  return {
-    SYSTEM: {
-      dialing: _.get(protocol_info, 'deviceId'),
-      code: 'D',
-      address: 0,
-      length: 17, // 수신할 데이터 Byte,
-      decodingDataList: [{
+exports.decodingProtocolTable = protocol_info => ({
+  SYSTEM: {
+    dialing: _.get(protocol_info, 'deviceId'),
+    code: 'D',
+    address: 0,
+    length: 17, // 수신할 데이터 Byte,
+    decodingDataList: [
+      {
         key: Model.BASE_KEY.sysIsSingle,
         startIndex: 2,
         byte: 1,
         callMethod: parsingMethod.convertBufToHexToNum,
-      }, {
+      },
+      {
         key: Model.BASE_KEY.sysCapaKw,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
-        fixed: 0
-      }, {
+        fixed: 0,
+      },
+      {
         key: Model.BASE_KEY.sysLineVoltage,
         byte: 3,
         callMethod: parsingMethod.convertBufToHexToNum,
-      }]
-    },
-    PV: {
-      dialing: _.get(protocol_info, 'deviceId'),
-      code: 'D',
-      address: 1,
-      length: 20, // 수신할 데이터 Byte,
-      // length: 28, // 수신할 데이터 Byte,
-      decodingDataList: [{
+      },
+    ],
+  },
+  PV: {
+    dialing: _.get(protocol_info, 'deviceId'),
+    code: 'D',
+    address: 1,
+    length: 20, // 수신할 데이터 Byte,
+    // length: 28, // 수신할 데이터 Byte,
+    decodingDataList: [
+      {
         key: Model.BASE_KEY.pvVol,
         byte: 3,
         callMethod: parsingMethod.convertBufToHexToNum,
-
-      }, {
+      },
+      {
         key: Model.BASE_KEY.pvAmp,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
-        fixed: 1
-      }, {
+        fixed: 1,
+      },
+      {
         key: Model.BASE_KEY.pvKw,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
@@ -107,174 +109,204 @@ exports.decodingProtocolTable = (protocol_info) => {
       //   byte: 7,
       //   callMethod: parsingMethod.convertBufToHexToNum,
       // }
-      ]
-    },
-    GRID_VOL: {
-      dialing: _.get(protocol_info, 'deviceId'),
-      code: 'D',
-      address: 2,
-      length: 22, // 수신할 데이터 Byte,
-      decodingDataList: [{
+    ],
+  },
+  GRID_VOL: {
+    dialing: _.get(protocol_info, 'deviceId'),
+    code: 'D',
+    address: 2,
+    length: 22, // 수신할 데이터 Byte,
+    decodingDataList: [
+      {
         key: Model.BASE_KEY.gridRsVol,
         byte: 3,
         callMethod: parsingMethod.convertBufToHexToNum,
-      }, {
+      },
+      {
         key: Model.BASE_KEY.gridStVol,
         byte: 3,
         callMethod: parsingMethod.convertBufToHexToNum,
-      }, {
+      },
+      {
         key: Model.BASE_KEY.gridTrVol,
         byte: 3,
         callMethod: parsingMethod.convertBufToHexToNum,
-      }, {
+      },
+      {
         key: Model.BASE_KEY.gridLf,
         byte: 3,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
-        fixed: 1
-      }]
-    },
-    GRID_AMP: {
-      dialing: _.get(protocol_info, 'deviceId'),
-      code: 'D',
-      address: 3,
-      length: 21, // 수신할 데이터 Byte,
-      decodingDataList: [{
+        fixed: 1,
+      },
+    ],
+  },
+  GRID_AMP: {
+    dialing: _.get(protocol_info, 'deviceId'),
+    code: 'D',
+    address: 3,
+    length: 21, // 수신할 데이터 Byte,
+    decodingDataList: [
+      {
         key: Model.BASE_KEY.gridRAmp,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
-        fixed: 1
-      }, {
+        fixed: 1,
+      },
+      {
         key: Model.BASE_KEY.gridSAmp,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
-        fixed: 1
-      }, {
+        fixed: 1,
+      },
+      {
         key: Model.BASE_KEY.gridTAmp,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
-        fixed: 1
-      }]
-    },
-    POWER: {
-      dialing: _.get(protocol_info, 'deviceId'),
-      code: 'D',
-      address: 4,
-      length: 19, // 수신할 데이터 Byte,
-      decodingDataList: [{
+        fixed: 1,
+      },
+    ],
+  },
+  POWER: {
+    dialing: _.get(protocol_info, 'deviceId'),
+    code: 'D',
+    address: 4,
+    length: 19, // 수신할 데이터 Byte,
+    decodingDataList: [
+      {
         key: Model.BASE_KEY.powerGridKw,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: _.get(protocol_info, 'option.isUseKw') === true ? 0.1 : 0.001,
         fixed: _.get(protocol_info, 'option.isUseKw') === true ? 1 : 3,
-      }, {
+      },
+      {
         key: Model.BASE_KEY.powerTotalKwh,
         byte: 7,
         callMethod: parsingMethod.convertBufToHexToNum,
-      }]
-    },
-    OPERATION: {
-      dialing: _.get(protocol_info, 'deviceId'),
-      code: 'D',
-      address: 6,
-      length: 12, // 수신할 데이터 Byte,
-      decodingDataList: [{
+      },
+    ],
+  },
+  OPERATION: {
+    dialing: _.get(protocol_info, 'deviceId'),
+    code: 'D',
+    address: 6,
+    length: 12, // 수신할 데이터 Byte,
+    decodingDataList: [
+      {
         key: Model.BASE_KEY.operIsError,
         byte: 1,
         callMethod: parsingMethod.convertBufToHexToNum,
-      }, {
+      },
+      {
         key: Model.BASE_KEY.operMode,
         byte: 1,
         callMethod: parsingMethod.convertBufToHexToNum,
-      }, {
+      },
+      {
         key: Model.BASE_KEY.operStatus,
         byte: 1,
         callMethod: parsingMethod.convertBufToHex,
-      }]
-    },
-    BATTERY: {
-      dialing: _.get(protocol_info, 'deviceId'),
-      code: 'D',
-      address: 7,
-      length: 41, // 수신할 데이터 Byte,
-      decodingDataList: [{
+      },
+    ],
+  },
+  BATTERY: {
+    dialing: _.get(protocol_info, 'deviceId'),
+    code: 'D',
+    address: 7,
+    length: 41, // 수신할 데이터 Byte,
+    decodingDataList: [
+      {
         key: Model.BASE_KEY.batteryVol,
         byte: 3,
         callMethod: parsingMethod.convertBufToHexToNum,
-      }, {
+      },
+      {
         key: Model.BASE_KEY.batteryAmp,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
-        fixed: 1
-      }, {
+        fixed: 1,
+      },
+      {
         key: Model.BASE_KEY.batteryChargingKw,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: _.get(protocol_info, 'option.isUseKw') === true ? 0.1 : 0.001,
         fixed: _.get(protocol_info, 'option.isUseKw') === true ? 1 : 3,
-      },{
+      },
+      {
         key: Model.BASE_KEY.batteryDischargingKw,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: _.get(protocol_info, 'option.isUseKw') === true ? 0.1 : 0.001,
         fixed: _.get(protocol_info, 'option.isUseKw') === true ? 1 : 3,
-      },{
+      },
+      {
         key: Model.BASE_KEY.batteryTotalChargingKw,
         byte: 7,
-        callMethod: parsingMethod.convertBufToHexToNum
-      },{
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
         key: Model.BASE_KEY.totalPVGeneratingPowerKwh,
         byte: 7,
-        callMethod: parsingMethod.convertBufToHexToNum
-      }]
-    },
-    LED: {
-      dialing: _.get(protocol_info, 'deviceId'),
-      code: 'D',
-      address: 8,
-      length: 28, // 수신할 데이터 Byte,
-      decodingDataList: [{
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+    ],
+  },
+  LED: {
+    dialing: _.get(protocol_info, 'deviceId'),
+    code: 'D',
+    address: 8,
+    length: 28, // 수신할 데이터 Byte,
+    decodingDataList: [
+      {
         key: Model.BASE_KEY.ledDcVol,
         byte: 3,
         callMethod: parsingMethod.convertBufToHexToNum,
-      },{
+      },
+      {
         key: Model.BASE_KEY.ledDcAmp,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
-        fixed: 1
-      },{
+        fixed: 1,
+      },
+      {
         key: Model.BASE_KEY.ledUsingKw,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: _.get(protocol_info, 'option.isUseKw') === true ? 0.1 : 0.001,
         fixed: _.get(protocol_info, 'option.isUseKw') === true ? 1 : 3,
-      }, {
+      },
+      {
         key: Model.BASE_KEY.ledTotalUsingKwh,
         byte: 7,
         callMethod: parsingMethod.convertBufToHexToNum,
-      }]
-    },
-    INPUT: {
-      dialing: _.get(protocol_info, 'deviceId'),
-      code: 'D',
-      address: 9,
-      length: 19, // 수신할 데이터 Byte,
-      decodingDataList: [{
+      },
+    ],
+  },
+  INPUT: {
+    dialing: _.get(protocol_info, 'deviceId'),
+    code: 'D',
+    address: 9,
+    length: 19, // 수신할 데이터 Byte,
+    decodingDataList: [
+      {
         key: Model.BASE_KEY.inputLineKw,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: _.get(protocol_info, 'option.isUseKw') === true ? 0.1 : 0.001,
         fixed: _.get(protocol_info, 'option.isUseKw') === true ? 1 : 3,
-      }, {
+      },
+      {
         key: Model.BASE_KEY.inputLineTotalKwh,
         byte: 7,
         callMethod: parsingMethod.convertBufToHexToNum,
-      }]
-    },
-  };
-};
+      },
+    ],
+  },
+});

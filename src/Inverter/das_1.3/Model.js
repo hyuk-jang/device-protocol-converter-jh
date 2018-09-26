@@ -99,7 +99,7 @@ class Model extends BaseModel {
 
   /**
    * @param {Buffer} responseBuf 인버터에서 수신받은 데이터
-   * @param {{dialing: Buffer, address: number, length: number, decodingDataList: Array.<{key: string, byte: number, callMethod: string}>}} decodingInfo 인버터에서 수신받은 데이터
+   * @param {decodingProtocolInfo} decodingInfo 인버터에서 수신받은 데이터
    * @return {Buffer} Data Buffer만 리턴
    */
   getValidateData(responseBuf, decodingInfo) {
@@ -123,9 +123,9 @@ class Model extends BaseModel {
       );
 
       // BU.CLIS(lengtBodyBuf.toString(),decodingInfo );
-      if (lengtBodyBuf.toString().length !== decodingInfo.length) {
+      if (lengtBodyBuf.toString().length !== decodingInfo.bodyLength) {
         throw new Error(
-          `length가 맞지 않습니다\n expect: ${decodingInfo.length}\t res: ${
+          `length가 맞지 않습니다\n expect: ${decodingInfo.bodyLength}\t res: ${
             lengtBodyBuf.toString().length
           }`,
         );

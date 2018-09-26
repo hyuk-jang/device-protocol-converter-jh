@@ -55,7 +55,7 @@ exports.decodingProtocolTable = dialing => {
   const gateLevelSalinity = {
     dialing,
     address: '0001',
-    length: 12, // 수신할 데이터 Byte,
+    bodyLength: 12, // 수신할 데이터 Byte,
     decodingDataList: [
       {
         key: model.device.WATER_DOOR.KEY,
@@ -86,7 +86,7 @@ exports.decodingProtocolTable = dialing => {
   const newGateLevelSalinity = {
     dialing,
     address: '0001',
-    length: 13, // 수신할 데이터 Byte,
+    bodyLength: 13, // 수신할 데이터 Byte,
     decodingDataList: [
       {
         key: model.device.WATER_DOOR.KEY,
@@ -117,7 +117,7 @@ exports.decodingProtocolTable = dialing => {
   const valve = {
     dialing,
     address: '0002',
-    length: '6',
+    bodyLength: '6',
     decodingDataList: [
       {
         key: model.device.VALVE.KEY,
@@ -151,7 +151,7 @@ exports.decodingProtocolTable = dialing => {
   const salternBlockValve = {
     dialing,
     address: '0002',
-    length: 21,
+    bodyLength: 21,
     decodingDataList: [
       {
         key: model.device.GATE_VALVE.KEY,
@@ -188,7 +188,7 @@ exports.decodingProtocolTable = dialing => {
   const pump = {
     dialing,
     address: '0003',
-    length: 6,
+    bodyLength: 6,
     decodingDataList: [
       {
         key: model.device.PUMP.KEY,
@@ -207,7 +207,7 @@ exports.decodingProtocolTable = dialing => {
   const earthModule = {
     dialing,
     address: '0005',
-    length: 21,
+    bodyLength: 21,
     decodingDataList: [
       {
         key: model.device.VALVE.KEY,

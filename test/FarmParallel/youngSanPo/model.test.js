@@ -29,11 +29,13 @@ const protocolInfo = {
 describe('encoding Test 1', () => {
   const converter = new Converter(protocolInfo);
   it('generate Msg', done => {
-    let cmd = converter.generationCommand(model.device.DEFAULT.COMMAND.STATUS);
-
-    expect(cmd.length).to.eq(1);
-    cmd = converter.generationCommand(model.device.CO2.COMMAND.STATUS);
-    expect(cmd.length).to.eq(0);
+    let cmdList = converter.generationCommand(model.device.DEFAULT.COMMAND.STATUS);
+    BU.CLI(cmdList);
+    const cmdInfo = _.head(cmdList);
+    expect(cmdList.length).to.eq(1);
+    expect(cmdInfo.data.unitId).to.eq('1');
+    cmdList = converter.generationCommand(model.device.CO2.COMMAND.STATUS);
+    expect(cmdList.length).to.eq(0);
 
     done();
   });
@@ -41,7 +43,7 @@ describe('encoding Test 1', () => {
 
 describe('Decoding Test', () => {
   const converter = new Converter(protocolInfo);
-  it.only('receive Buffer To Data Body', done => {
+  it('receive Buffer To Data Body', done => {
     const protocol = decodingProtocolTable(protocolInfo.deviceId);
 
     // console.dir(protocol);
