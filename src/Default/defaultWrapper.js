@@ -1,4 +1,7 @@
 const _ = require('lodash');
+
+const {BU} = require('base-util-jh');
+
 const defaultModel = require('./DefaultModel');
 const ProtocolConverter = require('./ProtocolConverter');
 
@@ -27,6 +30,7 @@ const defaultWrapper = {
    * @param {dcData} dcData
    */
   decodingDcData: (protocolInfo, dcData) => {
+    // BU.CLIS(protocolInfo, dcData);
     const protocolConverter = new ProtocolConverter();
 
     if (_.get(protocolInfo, 'wrapperCategory', undefined) !== undefined) {
@@ -37,6 +41,7 @@ const defaultWrapper = {
       _.set(dcData, 'data', defaultWrapper.peelFrameMsg(protocolInfo, dcData.data));
     }
 
+    // BU.CLI(dcData);
     return dcData;
   },
   /**
@@ -45,6 +50,7 @@ const defaultWrapper = {
    * @param {dcData} data
    */
   peelFrameMsg: (protocolInfo, data) => {
+    // BU.CLIS(protocolInfo, data);
     let peeledData;
     // 전송 명령 frame을 걷어냄
     switch (_.get(protocolInfo, 'wrapperCategory', undefined)) {
@@ -72,6 +78,7 @@ const defaultWrapper = {
         cmd = 'I';
         break;
       case 'Sensor':
+      case 'FarmParallel':
         cmd = 'S';
         break;
       default:

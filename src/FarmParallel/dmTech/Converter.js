@@ -23,22 +23,23 @@ class Converter extends AbstConverter {
   /**
    * 장치를 조회 및 제어하기 위한 명령 생성.
    * cmd가 있다면 cmd에 맞는 특정 명령을 생성하고 아니라면 기본 명령을 생성
-   * @param {{unitId: string, fnCode: number, address: number, dataLength: number}[]} cmdList 각 Protocol Converter에 맞는 데이터
+   * @param {fpSensorRequestFormat[]} cmdList 각 Protocol Converter에 맞는 데이터
    * @return {commandInfo[]} 장치를 조회하기 위한 명령 리스트 반환
    */
   generationCommand(cmdList) {
-    BU.CLI(cmdList);
-    cmdList.map(cmdInfo => {
+    // BU.CLI(cmdList);
+    const returnBufferList = cmdList.map(cmdInfo => {
       const {unitId, fnCode, address, dataLength} = cmdInfo;
-
-      // this.protocolConverter.conver
-
-      // _.forEach()
-
-      // this.protocolConverter.makeMsg2Buffer(cmdin)
+      const returnBuffer = Buffer.concat([
+        this.protocolConverter.convertNumToHxToBuf(unitId, 1),
+        this.protocolConverter.convertNumToHxToBuf(fnCode, 1),
+        this.protocolConverter.convertNumToHxToBuf(address, 2),
+        this.protocolConverter.convertNumToHxToBuf(dataLength, 2),
+      ]);
+      return returnBuffer;
     });
 
-    return this.makeDefaultCommandInfo(cmdList, 1000);
+    return this.makeDefaultCommandInfo(returnBufferList, 1000);
   }
 
   /**
@@ -48,20 +49,55 @@ class Converter extends AbstConverter {
    */
   concreteParsingData(dcData) {
     try {
+      // BU.CLI(dcData);
       // RTC 날짜 배열 길이
       const headerLength = 6;
       /**
        * 요청한 명령 추출
-       * @type {{unitId: string, address: number, dataLength: number}}
+       * @type {Buffer}
        */
       const requestData = this.getCurrTransferCmd(dcData);
+      const slaveAddr = requestData.readIntBE(0, 1);
+      const fnCode = requestData.readIntBE(1, 1);
+      const registerAddr = requestData.readInt16BE(2);
+      const dataLength = requestData.readInt16BE(4);
 
-      /** @type {number[]} */
-      const resDataList = dcData.data;
+      /** @type {Buffer} */
+      const resBuffer = dcData.data;
+
+      // 수신받은 데이터 2 Byte Hi-Lo 형식으로 파싱
+      const resSlaveAddr = resBuffer.readIntBE(0, 1);
+      const resFnCode = resBuffer.readIntBE(1, 1);
+      const resDataLength = resBuffer.readInt16BE(2);
+
+      // 같은 slaveId가 아닐 경우
+      if (!_.isEqual(slaveAddr, resSlaveAddr)) {
+        throw new Error(
+          `The expected slaveId: ${slaveAddr}. but received slaveId: ${resSlaveAddr} `,
+        );
+      }
+
+      // 수신받은 Function Code가 다를 경우
+      if (!_.isEqual(fnCode, resFnCode)) {
+        throw new Error(`The expected fnCode: ${fnCode}. but received fnCode: ${resFnCode}`);
+      }
+
+      // 수신받은 데이터의 길이가 다를 경우
+      if (!_.isEqual(dataLength, resDataLength)) {
+        throw new Error(
+          `The expected dataLength: ${dataLength}. but received dataLength: ${resDataLength}`,
+        );
+      }
+
+      // 실제 장치 데이터 배열화
+      const resDataList = [];
+      for (let index = 4; index < resBuffer.length; index += 2) {
+        resDataList.push(resBuffer.readInt16BE(index));
+      }
 
       const decodingTable = this.decodingTable.SITE;
       // 요청 시작 주소를 가져옴
-      const startAddr = requestData.address;
+      const startAddr = registerAddr;
       // 실제 시작하는 주소 세팅
       decodingTable.address = startAddr;
 
@@ -201,3 +237,11 @@ if (require !== undefined && require.main === module) {
   const cmdInfo = converter.generationCommand(converter.model.device.DEFAULT.COMMAND.STATUS);
   BU.CLI(cmdInfo);
 }
+
+/**
+ * @typedef {Object} fpSensorRequestFormat modbusRTU 요청 데이터 포맷
+ * @property {number} unitId ModbusRTU 장치 ID
+ * @property {number} address 가져올 시작 주소
+ * @property {number} dataLength 가져올 데이터 개수
+ * @property {number} fnCode FunctionCode @default 4 (ReadInputRegister)
+ */

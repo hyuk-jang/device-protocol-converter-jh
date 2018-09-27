@@ -43,7 +43,7 @@ describe('encoding Test 1', () => {
 
 describe('Decoding Test', () => {
   const converter = new Converter(protocolInfo);
-  it('receive Buffer To Data Body', done => {
+  it.only('receive Buffer To Data Body', done => {
     const protocol = decodingProtocolTable(protocolInfo.deviceId);
 
     // console.dir(protocol);
@@ -69,7 +69,7 @@ describe('Decoding Test', () => {
     // 전체 데이터 파싱 테스트
     dcData.data = fullData;
     res = converter.parsingUpdateData(dcData).data;
-    // BU.CLI(res);
+    BU.CLI(res);
     // BU.CLI(moment(_.head(res.writeDate)).format('YYYY-MM-DD HH:mm:ss'));
     expect(_.head(res.co2)).to.be.eq(80.0);
 
@@ -95,7 +95,7 @@ describe('Decoding Test', () => {
     dcData.data = [28, 14, 50, 51, 2200, 15, 302, 450, 800, 30, 352, 480, 80, 24, 10, 1];
 
     res = converter.parsingUpdateData(dcData).data;
-    // BU.CLI(res);
+    BU.CLI(res);
     expect(_.head(res.outsideAirReh)).to.be.eq(48.0);
 
     // BU.CLI(moment(_.head(res.writeDate)).format('YYYY-MM-DD HH:mm:ss'));

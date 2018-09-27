@@ -101,6 +101,7 @@ class AbstConverter {
    * @return {parsingResultFormat}
    */
   parsingUpdateData(dcData) {
+    // BU.CLI(dcData);
     const returnValue = {};
     try {
       // 수신 데이터 추적을 하는 경우라면 dcData의 Data와 합산
@@ -113,6 +114,7 @@ class AbstConverter {
 
       // protocolInfo.wrapperCategory 여부에 따라 dcData.data 및 dcData.commandSet 수정
       this.peelFrame(dcData);
+      BU.CLI(dcData)
 
       // BU.CLI('@@@@@@@@@@');
       try {
@@ -183,6 +185,8 @@ class AbstConverter {
    */
   automaticDecodingForArray(decodingTable, receiveData) {
     try {
+      // BU.CLI(receiveData);
+      // BU.CLI(decodingTable);
       // 데이터를 집어넣을 기본 자료형을 가져옴
       const returnModelInfo = AbstBaseModel.GET_BASE_MODEL(this.protocolInfo);
       // 수신받은 데이터에서 현재 체크 중인 값을 가져올 인덱스
@@ -194,10 +198,12 @@ class AbstConverter {
       for (let index = decodingTable.address; index < remainedDataListLength; index += 1) {
         // 해당 디코딩 정보 추출
         const decodingInfo = decodingTable.decodingDataList[index];
+        // BU.CLI(decodingInfo)
         // 파싱 의뢰
         this.automaticParsingData(decodingInfo, _.nth(receiveData, currIndex), returnModelInfo);
         currIndex += decodingInfo.byte || 1;
       }
+      // BU.CLI(returnModelInfo);
       return returnModelInfo;
     } catch (error) {
       throw error;

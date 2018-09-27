@@ -1,6 +1,15 @@
 const parsingMethod = {
   /**
-   * 
+   * 10진수를 Hex로 변환한 후 Buffer로 반환
+   * @param {number|number[]} dec 10진수 number, Hx로 바꿀 값
+   * @param {number} byteLength Hex to Hex 후 Byte Length. Buffer의 길이가 적을 경우 앞에서부터 0x00 채움
+   * @return {Buffer}
+   * @example
+   * (Dec) 555 -> (Hex)'02 2B' -> <Buffer 02 2B>
+   */
+  convertNumToHxToBuf: 'convertNumToHxToBuf',
+  /**
+   *
    * @param {number} dec 10진수 number, Buffer로 바꿀 값
    * @param {number} byteLength Hex to Ascii Buffer 후 Byte Length. Buffer의 길이가 적을 경우 앞에서부터 0 채움
    * @return {Buffer}
@@ -10,7 +19,7 @@ const parsingMethod = {
   convertNumToHexToBuf: 'convertNumToHexToBuf',
   /**
    * Buffer를 Ascii Char로 변환 후 해당 값을 Hex Number로 인식하고 Dec Number로 변환
-   * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34> 
+   * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
    * @returns {number} Dec
    * @example
    * <Buffer 30 30 34 31> -> (Hex)'0041' -> (Dec) 65
@@ -18,16 +27,16 @@ const parsingMethod = {
   convertBufToHexToDec: 'convertBufToHexToDec',
   /**
    * Buffer를 Ascii Char로 변환 후 반환
-   * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34> 
-   * @returns {string} 
+   * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
+   * @returns {string}
    * @example
    * <Buffer 30 30 34 31> -> (Hex)'0041'
    */
   convertBufToHex: 'convertBufToHex',
   /**
    * Buffer를 Ascii Char로 변환 후 해당 값을 Hex Number로 인식하고 Dec Number로 변환
-   * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34> 
-   * @param {string} encoding 
+   * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
+   * @param {string} encoding
    * @returns {number} Dec
    * @example
    * <Buffer 30 30 34 31> -> (Hex)'0041' -> (Dec) 41
@@ -47,6 +56,6 @@ const parsingMethod = {
    * @example
    * (Hex)'0041' -> (string) '0000000001000001'
    */
-  convertHexToBin: 'convertHexToBin'
+  convertHexToBin: 'convertHexToBin',
 };
 exports.parsingMethod = parsingMethod;

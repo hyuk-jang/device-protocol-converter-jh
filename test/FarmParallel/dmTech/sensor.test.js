@@ -9,12 +9,12 @@ const Model = require('../../../src/FarmParallel/dmTech/Model');
 
 const {BASE_MODEL} = Model;
 
-const {decodingProtocolTable} = require('../../../src/FarmParallel/dmTech/protocol');
-
+/** @type {protocol_info} */
 const protocolInfo = {
-  deviceId: '1',
+  deviceId: 1,
   mainCategory: 'FarmParallel',
   subCategory: 'dmTech',
+  wrapperCategory: 'default',
 };
 // 명령 모델 객체를 생성.(protocolInfo 강제 입력)
 const model = new Model(protocolInfo);
@@ -23,80 +23,135 @@ const model = new Model(protocolInfo);
 // require('../../../../default-intelligence');
 
 // 센서류 데이터를 가져오기 위한 명령 변환 테스트
-describe.only('encoding Test 1', () => {
+describe('encoding Test 1', () => {
   const converter = new Converter(protocolInfo);
   // 1. 모든 데이터 요청
   // 2. 특정 데이터 요청
   it('generate Msg', done => {
-    let cmd = converter.generationCommand(model.device.DEFAULT.COMMAND.STATUS);
+    const statusCmdList = model.device.DEFAULT.COMMAND.STATUS;
+    const statusCmdInfo = _.head(statusCmdList);
+    let cmdList = converter.generationCommand(statusCmdList);
 
-    expect(cmd.length).to.eq(1);
-    cmd = converter.generationCommand(model.device.CO2.COMMAND.STATUS);
-    expect(cmd.length).to.eq(0);
+    const cmdInfo = _.head(cmdList);
+    /** @type {Buffer} */
+    const bufData = cmdInfo.data;
+
+    const STX = bufData.slice(0, 1);
+    const CODE = bufData.slice(1, 2);
+    const slaveAddr = bufData.slice(2, 3);
+    const fnCode = bufData.slice(3, 4);
+    const registerAddr = bufData.slice(4, 6);
+    const dataLength = bufData.slice(6, 8);
+    const ETX = bufData.slice(bufData.length - 1);
+
+    const isSTX = _.isEqual(STX, converter.protocolConverter.STX);
+    const isETX = _.isEqual(ETX, converter.protocolConverter.ETX);
+
+    // 프로토콜에 맞는 데이터인지 모두 확인
+    expect(isSTX).to.be.true;
+    expect(CODE.toString()).to.be.eq('S');
+    expect(isETX).to.be.true;
+
+    expect(slaveAddr.readUIntBE(0, 1)).to.eq(Number(statusCmdInfo.unitId));
+    expect(fnCode.readUIntBE(0, 1)).to.eq(statusCmdInfo.fnCode);
+    expect(registerAddr.readUIntBE(0, 2)).to.eq(statusCmdInfo.address);
+    expect(dataLength.readUIntBE(0, 2)).to.eq(statusCmdInfo.dataLength);
+
+    expect(cmdList.length).to.eq(1);
+    cmdList = converter.generationCommand(model.device.LUX.COMMAND.STATUS);
+    // 데이터 눈으로 확인. 일일이 쓰기 귀찮음
+    BU.CLI(cmdList);
+    expect(cmdList.length).to.eq(1);
 
     done();
   });
 });
 
-describe('Decoding Test', () => {
+describe.only('Decoding Test', () => {
   const converter = new Converter(protocolInfo);
-  it('receive Buffer To Data Body', done => {
-    const protocol = decodingProtocolTable(protocolInfo.deviceId);
-
-    // console.dir(protocol);
+  // 1. addr: 0, length: 18 을 가진 가상 데이터 생성
+  // 2. 가상 데이터 파싱 테스트
+  // 3. addr: 6, length: 1 을 가진 가상 데이터 파싱
+  it('receive Full Data Buffer To Data Body', done => {
+    const statusCmdList = model.device.DEFAULT.COMMAND.STATUS;
+    const statusCmdInfo = _.head(statusCmdList);
     // 명령 생성
-    let commandStorage = converter.generationCommand(model.device.DEFAULT.COMMAND.STATUS);
-
+    const cmdList = converter.generationCommand(statusCmdList);
     // 명령 발송 객체 생성
     // /** @type {dcData} */
     const dcData = {
       commandSet: {
-        cmdList: commandStorage,
+        cmdList,
         currCmdIndex: 0,
       },
       data: [],
     };
 
     // data 18개 전부
+    const {unitId, fnCode, address, dataLength} = statusCmdInfo;
+    const mbapHeader = Buffer.concat([
+      converter.protocolConverter.convertNumToHxToBuf(unitId, 1),
+      converter.protocolConverter.convertNumToHxToBuf(fnCode, 1),
+      converter.protocolConverter.convertNumToHxToBuf(dataLength, 2),
+    ]);
     const fullData = [17, 5, 25, 14, 50, 51, 2200, 15, 302, 450, 800, 30, 352, 479, 80, 24, 10, 1];
 
+    const bufFullData = converter.protocolConverter.convertNumToHxToBuf(fullData, 2);
+
+    // 1. addr: 0, length: 18 을 가진 가상 데이터 생성
+    const coverdBufFullData = converter.coverFrame(Buffer.concat([mbapHeader, bufFullData]));
+
     // 수신 받은 데이터 생성
+    // 2. 가상 데이터 파싱 테스트
+    dcData.data = coverdBufFullData;
     /** @type {BASE_MODEL} */
-    let res;
-    // 전체 데이터 파싱 테스트
-    dcData.data = fullData;
-    res = converter.parsingUpdateData(dcData).data;
-    // BU.CLI(res);
+    const res = converter.parsingUpdateData(dcData).data;
     // BU.CLI(moment(_.head(res.writeDate)).format('YYYY-MM-DD HH:mm:ss'));
+
     expect(_.head(res.co2)).to.be.eq(80.0);
-
-    // 조도만 가져오고자 할 경우
-    commandStorage = converter.generationCommand(model.device.LUX.COMMAND.STATUS);
-    BU.CLI(_.head(commandStorage));
-    dcData.commandSet.cmdList = commandStorage;
-    dcData.data = [38];
-    res = converter.parsingUpdateData(dcData).data;
-    BU.CLI(res);
-    // BU.CLI(moment(_.head(res.writeDate)).format('YYYY-MM-DD HH:mm:ss'));
-    expect(_.head(res.lux)).to.be.eq(3.8);
-
-    // 테스트 요청
-    commandStorage = converter.generationCommand([
-      {
-        unitId: '1',
-        address: 2,
-        length: 13,
+    done();
+  });
+  // 1. addr: 0, length: 18 을 가진 가상 데이터 생성
+  // 2. 가상 데이터 파싱 테스트
+  // 3. addr: 6, length: 1 을 가진 가상 데이터 파싱
+  it.only('receive Lux Data Buffer To Data Body', done => {
+    const statusCmdList = model.device.LUX.COMMAND.STATUS;
+    const statusCmdInfo = _.head(statusCmdList);
+    // 명령 생성
+    const cmdList = converter.generationCommand(statusCmdList);
+    // 명령 발송 객체 생성
+    // /** @type {dcData} */
+    const dcData = {
+      commandSet: {
+        cmdList,
+        currCmdIndex: 0,
       },
+      data: [],
+    };
+
+    // data 18개 전부
+    const {unitId, fnCode, address, dataLength} = statusCmdInfo;
+    const mbapHeader = Buffer.concat([
+      converter.protocolConverter.convertNumToHxToBuf(unitId, 1),
+      converter.protocolConverter.convertNumToHxToBuf(fnCode, 1),
+      converter.protocolConverter.convertNumToHxToBuf(dataLength, 2),
     ]);
-    dcData.commandSet.cmdList = commandStorage;
-    dcData.data = [28, 14, 50, 51, 2200, 15, 302, 450, 800, 30, 352, 480, 80, 24, 10, 1];
+    const fullData = [2200, 15, 302, 450, 800, 30, 352, 479, 80, 24, 10, 1];
 
-    res = converter.parsingUpdateData(dcData).data;
-    // BU.CLI(res);
-    expect(_.head(res.outsideAirReh)).to.be.eq(48.0);
+    const bufFullData = converter.protocolConverter.convertNumToHxToBuf(fullData, 2);
 
+    // 1. addr: 0, length: 18 을 가진 가상 데이터 생성
+    const coverdBufFullData = converter.coverFrame(Buffer.concat([mbapHeader, bufFullData]));
+
+    // 수신 받은 데이터 생성
+    // 2. 가상 데이터 파싱 테스트
+    dcData.data = coverdBufFullData;
+    /** @type {BASE_MODEL} */
+    const res = converter.parsingUpdateData(dcData).data;
     // BU.CLI(moment(_.head(res.writeDate)).format('YYYY-MM-DD HH:mm:ss'));
 
+    BU.CLI(res);
+    expect(_.head(res.lux)).to.be.eq(220);
     done();
   });
 });

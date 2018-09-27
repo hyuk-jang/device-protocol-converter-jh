@@ -103,7 +103,7 @@ class Model extends BaseModel {
    * @return {Buffer} Data Buffer만 리턴
    */
   getValidateData(responseBuf, decodingInfo) {
-    // BU.CLI(responseBuf.toString());
+    // BU.CLI(responseBuf.toString(), decodingInfo);
     try {
       const SOP = Buffer.from([_.nth(responseBuf, 0)]);
 
@@ -146,7 +146,7 @@ class Model extends BaseModel {
       _.forEach(strChecksum, str => {
         let num = _.toNumber(str);
         // 문자라면 A~Z --> 10~35로 변환
-        num = isNaN(num) ? _.head(Buffer.from(str)) - 55 : num;
+        num = _.isNaN(num) ? _.head(Buffer.from(str)) - 55 : num;
         calcChecksum += num;
       });
 
@@ -181,7 +181,7 @@ class Model extends BaseModel {
 
       return dataBodyBuf;
     } catch (error) {
-      BU.CLI('Error');
+      // BU.CLI('Error');
       throw error;
     }
   }

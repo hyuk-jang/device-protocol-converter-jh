@@ -40,6 +40,7 @@ class Converter extends AbstConverter {
    */
   concreteParsingData(dcData) {
     try {
+      // BU.CLI(dcData);
       // 요청한 명령 추출
       const requestData = this.getCurrTransferCmd(dcData);
       // 응답 받은 데이터 추출
