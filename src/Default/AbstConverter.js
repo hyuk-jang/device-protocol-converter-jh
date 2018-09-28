@@ -114,7 +114,7 @@ class AbstConverter {
 
       // protocolInfo.wrapperCategory 여부에 따라 dcData.data 및 dcData.commandSet 수정
       this.peelFrame(dcData);
-      BU.CLI(dcData)
+      // BU.CLI(dcData)
 
       // BU.CLI('@@@@@@@@@@');
       try {
