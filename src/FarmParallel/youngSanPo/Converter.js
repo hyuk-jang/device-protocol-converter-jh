@@ -23,10 +23,14 @@ class Converter extends AbstConverter {
   /**
    * 장치를 조회 및 제어하기 위한 명령 생성.
    * cmd가 있다면 cmd에 맞는 특정 명령을 생성하고 아니라면 기본 명령을 생성
-   * @param {{unitId: string, address: number, dataLength: number}[]} cmdList 각 Protocol Converter에 맞는 데이터
+   * @override
+   * @param {generationInfo} generationInfo 각 Protocol Converter에 맞는 데이터
    * @return {commandInfo[]} 장치를 조회하기 위한 명령 리스트 반환
    */
-  generationCommand(cmdList) {
+  generationCommand(generationInfo) {
+    /** @type {fpSensorRequestFormat[]} */
+    const cmdList = this.defaultGenCMD(generationInfo);
+
     return this.makeDefaultCommandInfo(cmdList, 1000);
   }
 

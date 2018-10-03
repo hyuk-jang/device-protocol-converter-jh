@@ -30,7 +30,8 @@ describe('encoding Test 1', () => {
   it('generate Msg', done => {
     const statusCmdList = model.device.DEFAULT.COMMAND.STATUS;
     const statusCmdInfo = _.head(statusCmdList);
-    let cmdList = converter.generationCommand(statusCmdList);
+
+    let cmdList = converter.generationCommand({key: model.device.DEFAULT.KEY, value: 2});
 
     const cmdInfo = _.head(cmdList);
     /** @type {Buffer} */
@@ -58,7 +59,10 @@ describe('encoding Test 1', () => {
     expect(dataLength.readUIntBE(0, 2)).to.eq(statusCmdInfo.dataLength);
 
     expect(cmdList.length).to.eq(1);
-    cmdList = converter.generationCommand(model.device.LUX.COMMAND.STATUS);
+    cmdList = converter.generationCommand({
+      key: model.device.LUX.KEY,
+      value: 2,
+    });
     // 데이터 눈으로 확인. 일일이 쓰기 귀찮음
     BU.CLI(cmdList);
     expect(cmdList.length).to.eq(1);
@@ -67,7 +71,7 @@ describe('encoding Test 1', () => {
   });
 });
 
-describe.only('Decoding Test', () => {
+describe('Decoding Test', () => {
   const converter = new Converter(protocolInfo);
   // 1. addr: 0, length: 18 을 가진 가상 데이터 생성
   // 2. 가상 데이터 파싱 테스트
@@ -76,7 +80,8 @@ describe.only('Decoding Test', () => {
     const statusCmdList = model.device.DEFAULT.COMMAND.STATUS;
     const statusCmdInfo = _.head(statusCmdList);
     // 명령 생성
-    const cmdList = converter.generationCommand(statusCmdList);
+    const cmdList = converter.generationCommand({key: model.device.DEFAULT.KEY, value: 2});
+    // const cmdList = converter.generationCommand(statusCmdList);
     // 명령 발송 객체 생성
     // /** @type {dcData} */
     const dcData = {
@@ -114,11 +119,15 @@ describe.only('Decoding Test', () => {
   // 1. addr: 0, length: 18 을 가진 가상 데이터 생성
   // 2. 가상 데이터 파싱 테스트
   // 3. addr: 6, length: 1 을 가진 가상 데이터 파싱
-  it.only('receive Lux Data Buffer To Data Body', done => {
+  it('receive Lux Data Buffer To Data Body', done => {
     const statusCmdList = model.device.LUX.COMMAND.STATUS;
     const statusCmdInfo = _.head(statusCmdList);
     // 명령 생성
-    const cmdList = converter.generationCommand(statusCmdList);
+    // const cmdList = converter.generationCommand(statusCmdList);
+    const cmdList = converter.generationCommand({
+      key: model.device.LUX.KEY,
+      value: 2,
+    });
     // 명령 발송 객체 생성
     // /** @type {dcData} */
     const dcData = {

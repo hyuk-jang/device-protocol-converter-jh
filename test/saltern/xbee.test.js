@@ -33,6 +33,7 @@ describe.only('encoding Test 1', () => {
       value: requestDeviceControlType.FALSE,
     });
     genCmdInfo = _.head(cmdInfo);
+    BU.CLI(genCmdInfo);
     expect(genCmdInfo.data.destination64).to.be.eq('0013A20010215369');
     expect(genCmdInfo.data.data).to.be.equal(_.nth(model.device.VALVE.COMMAND.CLOSE, 0).cmd);
     expect(_.nth(cmdInfo, 1).data.data).to.be.equal(

@@ -15,7 +15,7 @@ const model = new BaseModel({
 // require('default-intelligence');
 // require('../../../../default-intelligence');
 
-describe.skip('encoding Test 1', () => {
+describe('encoding Test 1', () => {
   const converter = new Converter({deviceId: '001', subCategory: 'das_1.3'});
   it('encoding das', done => {
     BU.CLI(model.device.PV.COMMAND.STATUS);
@@ -30,11 +30,13 @@ describe.skip('encoding Test 1', () => {
   });
 
   it('generate Msg', done => {
-    let cmd = converter.generationCommand(model.device.GRID.COMMAND.STATUS);
+    let cmd = converter.generationCommand({
+      key: model.device.GRID.KEY,
+    });
     BU.CLI(cmd);
 
     expect(cmd.length).to.eq(2);
-    cmd = converter.generationCommand(model.device.DEFAULT.COMMAND.STATUS);
+    cmd = converter.generationCommand({key: model.device.DEFAULT.KEY});
     BU.CLI(cmd);
     expect(cmd.length).to.eq(6);
 
@@ -88,8 +90,8 @@ describe('Decoding Test', () => {
       // wrapperCategory: 'default',
     });
     // 명령 생성
-    const commandStorage = converter.generationCommand(model.device.DEFAULT.COMMAND.STATUS);
-    BU.CLI(commandStorage)
+    const commandStorage = converter.generationCommand({key: model.device.DEFAULT.KEY});
+    BU.CLI(commandStorage);
 
     // 명령 발송 객체 생성
     // /** @type {dcData} */
@@ -207,8 +209,8 @@ describe('Decoding Test', () => {
       wrapperCategory: 'default',
     });
     // 명령 생성
-    const commandStorage = converter.generationCommand(model.device.DEFAULT.COMMAND.STATUS);
-    BU.CLI(commandStorage)
+    const commandStorage = converter.generationCommand({key: model.device.DEFAULT.KEY});
+    BU.CLI(commandStorage);
 
     // 명령 발송 객체 생성
     // /** @type {dcData} */
@@ -218,54 +220,51 @@ describe('Decoding Test', () => {
         currCmdIndex: 0,
       },
     };
-    BU.CLI(originDcData)
+    BU.CLI(originDcData);
 
     // 수신 받은 데이터 생성
     let res;
     // 0. 시스템 데이터 파싱, 에러 날 경우 강제 삭제 테스트
     let dcData;
-    dcData = _.cloneDeep(originDcData)
+    dcData = _.cloneDeep(originDcData);
     dcData.data = Buffer.from('^001,3,0100,380,24');
-    dcData.data = converter.coverFrame(dcData.data)
+    dcData.data = converter.coverFrame(dcData.data);
     res = converter.parsingUpdateData(dcData).data;
     expect(_.get(res, 'name')).to.eq('Error');
 
-    dcData = _.cloneDeep(originDcData)
+    dcData = _.cloneDeep(originDcData);
     dcData.data = Buffer.from('^,,380,24');
-    dcData.data = converter.coverFrame(dcData.data)
+    dcData.data = converter.coverFrame(dcData.data);
     res = converter.parsingUpdateData(dcData).data;
     expect(_.get(res, 'name')).to.eq('Error');
 
-
-    dcData = _.cloneDeep(originDcData)
+    dcData = _.cloneDeep(originDcData);
     dcData.data = Buffer.from('^D,24');
-    dcData.data = converter.coverFrame(dcData.data)
-    res = converter.parsingUpdateData(dcData).data;
-    expect(_.get(res, 'name')).to.eq('Error');
-    
-    // 정상 데이터가 들어와도 에러
-    dcData = _.cloneDeep(originDcData)
-    dcData.data = Buffer.from('^D017001,3,0100,380,24');
-    dcData.data = converter.coverFrame(dcData.data)
+    dcData.data = converter.coverFrame(dcData.data);
     res = converter.parsingUpdateData(dcData).data;
     expect(_.get(res, 'name')).to.eq('Error');
 
+    // 정상 데이터가 들어와도 에러
+    dcData = _.cloneDeep(originDcData);
+    dcData.data = Buffer.from('^D017001,3,0100,380,24');
+    dcData.data = converter.coverFrame(dcData.data);
+    res = converter.parsingUpdateData(dcData).data;
+    expect(_.get(res, 'name')).to.eq('Error');
 
     // 리셋 처리 후 정상 데이터가 들어오면 진행
     converter.resetTrackingDataBuffer();
-    dcData = _.cloneDeep(originDcData)
+    dcData = _.cloneDeep(originDcData);
     dcData.data = Buffer.from('^D017001,3,0100,380,24');
-    dcData.data = converter.coverFrame(dcData.data)
+    dcData.data = converter.coverFrame(dcData.data);
     res = converter.parsingUpdateData(dcData).data;
     expect(_.get(res, 'name')).to.not.eq('Error');
 
-
     // 1. 시스템 데이터 파싱
-    dcData = _.cloneDeep(originDcData)
+    dcData = _.cloneDeep(originDcData);
     dcData.data = Buffer.from('^D017001,3,0100,380,24');
-    dcData.data = converter.coverFrame(dcData.data)
+    dcData.data = converter.coverFrame(dcData.data);
     res = converter.parsingUpdateData(dcData).data;
-    
+
     // 10kW급 테스트 (scale, fixed Test)
     expect(_.get(res, BaseModel.BASE_KEY.sysLineVoltage)).to.eq(380);
     expect(_.get(res, BaseModel.BASE_KEY.sysCapaKw)).to.eq(10);
@@ -274,9 +273,9 @@ describe('Decoding Test', () => {
     // 2. PV 데이터 파싱
     originDcData.commandSet.currCmdIndex = 1;
 
-    dcData = _.cloneDeep(originDcData)
+    dcData = _.cloneDeep(originDcData);
     dcData.data = Buffer.from('^D120001,400,0200,0080,18');
-    dcData.data = converter.coverFrame(dcData.data)
+    dcData.data = converter.coverFrame(dcData.data);
     res = converter.parsingUpdateData(dcData).data;
     expect(_.get(res, BaseModel.BASE_KEY.pvVol)).to.eq(400);
     expect(_.get(res, BaseModel.BASE_KEY.pvAmp)).to.eq(20);
@@ -284,9 +283,9 @@ describe('Decoding Test', () => {
 
     // 3. GRID VOL 데이터 파싱
     originDcData.commandSet.currCmdIndex = 2;
-    dcData = _.cloneDeep(originDcData)
+    dcData = _.cloneDeep(originDcData);
     dcData.data = Buffer.from('^D222001,380,379,381,600,55');
-    dcData.data = converter.coverFrame(dcData.data)
+    dcData.data = converter.coverFrame(dcData.data);
     res = converter.parsingUpdateData(dcData).data;
 
     expect(_.get(res, BaseModel.BASE_KEY.gridRsVol)).to.eq(380);
@@ -296,9 +295,9 @@ describe('Decoding Test', () => {
 
     // 4. GRID AMP 데이터 파싱
     originDcData.commandSet.currCmdIndex = 3;
-    dcData = _.cloneDeep(originDcData)
+    dcData = _.cloneDeep(originDcData);
     dcData.data = Buffer.from('^D321001,0118,0119,0118,38');
-    dcData.data = converter.coverFrame(dcData.data)
+    dcData.data = converter.coverFrame(dcData.data);
     res = converter.parsingUpdateData(dcData).data;
 
     expect(_.get(res, BaseModel.BASE_KEY.gridRAmp)).to.eq(11.8);
@@ -307,26 +306,26 @@ describe('Decoding Test', () => {
 
     // 5. Power 데이터 파싱
     originDcData.commandSet.currCmdIndex = 4;
-    dcData = _.cloneDeep(originDcData)
+    dcData = _.cloneDeep(originDcData);
     dcData.data = Buffer.from('^D419001,0078,0000100,31');
-    dcData.data = converter.coverFrame(dcData.data)
+    dcData.data = converter.coverFrame(dcData.data);
     res = converter.parsingUpdateData(dcData).data;
     expect(_.get(res, BaseModel.BASE_KEY.powerGridKw)).to.eq(7.8);
     expect(_.get(res, BaseModel.BASE_KEY.powerCpKwh)).to.eq(100);
 
     // 6. Operation 데이터 파싱
     originDcData.commandSet.currCmdIndex = 5;
-    dcData = _.cloneDeep(originDcData)
+    dcData = _.cloneDeep(originDcData);
     dcData.data = Buffer.from('^D612001,0,0,0,10');
-    dcData.data = converter.coverFrame(dcData.data)
+    dcData.data = converter.coverFrame(dcData.data);
     res = converter.parsingUpdateData(dcData).data;
     expect(_.get(res, BaseModel.BASE_KEY.operIsError)).to.eq(0);
     expect(_.get(res, BaseModel.BASE_KEY.operIsRun)).to.eq(1);
     expect(_.get(res, BaseModel.BASE_KEY.operTroubleList).length).to.eq(0);
 
-    dcData = _.cloneDeep(originDcData)
+    dcData = _.cloneDeep(originDcData);
     dcData.data = Buffer.from('^D612001,0,0,Z,45');
-    dcData.data = converter.coverFrame(dcData.data)
+    dcData.data = converter.coverFrame(dcData.data);
     res = converter.parsingUpdateData(dcData).data;
     // BU.CLI(res);
     expect(_.get(res, BaseModel.BASE_KEY.operTroubleList).length).to.eq(1);

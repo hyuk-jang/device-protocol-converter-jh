@@ -11,6 +11,8 @@ const onDeviceOperationStatus = {
     /** @type {string} 비 감지 On */
     1: 'ON',
   },
+  [Model.BASE_KEY.outsideAirTemperature]: temp => _.subtract(temp, 40),
+  [Model.BASE_KEY.soilTemperature]: temp => _.subtract(temp, 40),
 };
 exports.onDeviceOperationStatus = onDeviceOperationStatus;
 

@@ -15,6 +15,7 @@ class BaseModel extends AbstBaseModel {
 
     this.device = {
       DEFAULT: {
+        KEY: 'DEFAULT',
         STATUS: {
           UNDEF: 'UNDEF',
         },

@@ -6,7 +6,10 @@ const AbstBaseModel = require('./AbstBaseModel');
 const defaultWrapper = require('./defaultWrapper');
 
 // const {definedCommanderResponse} =  require('default-intelligence').dccFlagModel;
-const {definedCommanderResponse} = require('../../../../module/default-intelligence').dccFlagModel;
+const {dccFlagModel, dcmConfigModel} = require('../../../../module/default-intelligence');
+
+const {definedCommanderResponse} = dccFlagModel;
+const {requestDeviceControlType} = dcmConfigModel;
 
 class AbstConverter {
   /**
@@ -96,6 +99,64 @@ class AbstConverter {
   }
 
   /**
+   * 장치를 조회 및 제어하기 위한 명령 생성.
+   * cmd가 있다면 cmd에 맞는 특정 명령을 생성하고 아니라면 기본 명령을 생성
+   * @param {generationInfo} generationInfo 각 Protocol Converter에 맞는 데이터
+   */
+  defaultGenCMD(generationInfo) {
+    // value값이 없다면 기본 값 설정(MEASURE)
+    const genControlValue = _.isNil(generationInfo.value)
+      ? requestDeviceControlType.MEASURE
+      : Number(generationInfo.value);
+
+    /** @type {baseModelDeviceStructure} */
+    const foundIt = _.find(this.model.device, deviceModel =>
+      _.isEqual(_.get(deviceModel, 'KEY'), generationInfo.key),
+    );
+
+    if (_.isEmpty(foundIt)) {
+      throw new Error(`${generationInfo.key}는 존재하지 않습니다.`);
+    }
+
+    // BU.CLI(generationInfo);
+    const commandInfo = _.get(foundIt, 'COMMAND', {});
+    // BU.CLI(commandInfo);
+
+    /** @type {Object[]} */
+    let cmdList;
+
+    // 컨트롤 밸류가 0이나 False라면 장치 작동을 Close, Off
+    if (genControlValue === requestDeviceControlType.FALSE) {
+      if (_.keys(commandInfo).includes('CLOSE')) {
+        cmdList = commandInfo.CLOSE;
+      } else if (_.keys(commandInfo).includes('OFF')) {
+        cmdList = commandInfo.OFF;
+      }
+    } else if (genControlValue === requestDeviceControlType.TRUE) {
+      if (_.keys(commandInfo).includes('OPEN')) {
+        cmdList = commandInfo.OPEN;
+      } else if (_.keys(commandInfo).includes('ON')) {
+        cmdList = commandInfo.ON;
+      }
+    } else if (genControlValue === requestDeviceControlType.MEASURE) {
+      if (_.keys(commandInfo).includes('STATUS')) {
+        cmdList = commandInfo.STATUS;
+      }
+    } else if (genControlValue === requestDeviceControlType.SET) {
+      // Set 은 메소드로 이루어져 있어야하며 set 값을 반영한 결과를 돌려줌
+      if (_.keys(commandInfo).includes('SET')) {
+        cmdList = commandInfo.SET(generationInfo.setValue);
+      }
+    } else {
+      throw new Error(`controlValue: ${genControlValue}는 유효한 값이 아닙니다.`);
+    }
+    if (cmdList === undefined || _.isEmpty(cmdList)) {
+      throw new Error(`${generationInfo.key}에는 Value: ${genControlValue} 존재하지 않습니다.`);
+    }
+    return cmdList;
+  }
+
+  /**
    * 데이터 분석 요청
    * @param {dcData} dcData 장치로 요청한 명령
    * @return {parsingResultFormat}
@@ -141,7 +202,6 @@ class AbstConverter {
    * @param {dcData} dcData 장치로 요청한 명령
    * @return {*}
    */
-
   concreteParsingData(dcData) {}
 
   /**

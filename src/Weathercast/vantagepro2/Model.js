@@ -1,5 +1,4 @@
-
-const BaseModel = require('../baseModel');
+const BaseModel = require('../BaseModel');
 
 class Model extends BaseModel {
   constructor() {

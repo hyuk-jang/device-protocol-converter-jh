@@ -29,48 +29,8 @@ class Converter extends AbstConverter {
    * @return {Array.<commandInfo>} 장치를 조회하기 위한 명령 리스트 반환
    */
   generationCommand(generationInfo) {
-    // BU.CLI(generationInfo);
-    const genControlValue = Number(generationInfo.value);
-
-    /** @type {baseModelDeviceStructure} */
-    const foundIt = _.find(this.model.device, deviceModel =>
-      _.isEqual(_.get(deviceModel, 'KEY'), generationInfo.key),
-    );
-
-    if (_.isEmpty(foundIt)) {
-      throw new Error(`${generationInfo.key}는 존재하지 않습니다.`);
-    }
-
-    const commandInfo = _.get(foundIt, 'COMMAND', {});
-    // BU.CLI(commandInfo);
-
     /** @type {Array.<commandInfoModel>} */
-    let cmdList;
-
-    // 컨트롤 밸류가 0이나 False라면 장치 작동을 Close, Off
-    if (genControlValue === requestDeviceControlType.FALSE) {
-      if (_.keys(commandInfo).includes('CLOSE')) {
-        cmdList = commandInfo.CLOSE;
-      } else if (_.keys(commandInfo).includes('OFF')) {
-        cmdList = commandInfo.OFF;
-      }
-    } else if (genControlValue === requestDeviceControlType.TRUE) {
-      if (_.keys(commandInfo).includes('OPEN')) {
-        cmdList = commandInfo.OPEN;
-      } else if (_.keys(commandInfo).includes('ON')) {
-        cmdList = commandInfo.ON;
-      }
-    } else if (genControlValue === requestDeviceControlType.MEASURE) {
-      if (_.keys(commandInfo).includes('STATUS')) {
-        cmdList = commandInfo.STATUS;
-      }
-    } else {
-      throw new Error(`controlValue: ${genControlValue}는 유효한 값이 아닙니다.`);
-    }
-    if (cmdList === undefined || _.isEmpty(cmdList)) {
-      throw new Error(`${generationInfo.key}에는 Value: ${genControlValue} 존재하지 않습니다.`);
-    }
-
+    const cmdList = this.defaultGenCMD(generationInfo);
     /** @type {Array.<commandInfo>} */
     const returnValue = [];
 

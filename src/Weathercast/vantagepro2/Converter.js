@@ -37,7 +37,7 @@ class Converter extends AbstConverter {
    */
   concreteParsingData(dcData) {
     try {
-      const requestData = this.getCurrTransferCmd(dcData);
+      // const requestData = this.getCurrTransferCmd(dcData);
       const responseData = dcData.data;
 
       // if(_.includes(requestData, this.baseModel.device.DEFAULT.COMMAND.LOOP)){
@@ -191,7 +191,7 @@ if (require !== undefined && require.main === module) {
     '4c4f4f1400e3056f74260332bf020a0c3701ffffffffffffffffffffffffffffff43ffffffffffffff00000902010000ffff00000d000d00ca002e016004ffffffffffffff0000000000000000000000000000000000004c0102876e02f9070a0de828',
     '4c4f4fec000c03af749b034063030706f800ffffffffffffffffffffffffffffff48ffffffffffffff0000188a010000ffff000059016b028e00a8011b0affffffffffffff000000000000000000000000000000000000ae00062dbf02d8070a0d17b7',
   ];
-  
+
   const con = new Converter();
   arr.forEach(currentItem => {
     const buf = Buffer.from(currentItem, 'hex');

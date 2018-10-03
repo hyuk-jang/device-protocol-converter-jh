@@ -29,12 +29,12 @@ const protocolInfo = {
 describe('encoding Test 1', () => {
   const converter = new Converter(protocolInfo);
   it('generate Msg', done => {
-    let cmdList = converter.generationCommand(model.device.DEFAULT.COMMAND.STATUS);
+    let cmdList = converter.generationCommand({key: model.device.DEFAULT.KEY, value: 2});
     BU.CLI(cmdList);
     const cmdInfo = _.head(cmdList);
     expect(cmdList.length).to.eq(1);
     expect(cmdInfo.data.unitId).to.eq('1');
-    cmdList = converter.generationCommand(model.device.CO2.COMMAND.STATUS);
+    cmdList = converter.generationCommand({key: model.device.CO2.KEY, value: 2});
     expect(cmdList.length).to.eq(0);
 
     done();
@@ -43,12 +43,12 @@ describe('encoding Test 1', () => {
 
 describe('Decoding Test', () => {
   const converter = new Converter(protocolInfo);
-  it.only('receive Buffer To Data Body', done => {
+  it('receive Buffer To Data Body', done => {
     const protocol = decodingProtocolTable(protocolInfo.deviceId);
 
     // console.dir(protocol);
     // 명령 생성
-    let commandStorage = converter.generationCommand(model.device.DEFAULT.COMMAND.STATUS);
+    let commandStorage = converter.generationCommand({key: model.device.DEFAULT.KEY, value: 2});
 
     // 명령 발송 객체 생성
     // /** @type {dcData} */
@@ -74,7 +74,7 @@ describe('Decoding Test', () => {
     expect(_.head(res.co2)).to.be.eq(80.0);
 
     // 조도만 가져오고자 할 경우
-    commandStorage = converter.generationCommand(model.device.LUX.COMMAND.STATUS);
+    commandStorage = converter.generationCommand({key: model.device.LUX.KEY, value: 2});
     BU.CLI(_.head(commandStorage));
     dcData.commandSet.cmdList = commandStorage;
     dcData.data = [38];
@@ -82,21 +82,6 @@ describe('Decoding Test', () => {
     BU.CLI(res);
     // BU.CLI(moment(_.head(res.writeDate)).format('YYYY-MM-DD HH:mm:ss'));
     expect(_.head(res.lux)).to.be.eq(3.8);
-
-    // 테스트 요청
-    commandStorage = converter.generationCommand([
-      {
-        unitId: '1',
-        address: 2,
-        length: 13,
-      },
-    ]);
-    dcData.commandSet.cmdList = commandStorage;
-    dcData.data = [28, 14, 50, 51, 2200, 15, 302, 450, 800, 30, 352, 480, 80, 24, 10, 1];
-
-    res = converter.parsingUpdateData(dcData).data;
-    BU.CLI(res);
-    expect(_.head(res.outsideAirReh)).to.be.eq(48.0);
 
     // BU.CLI(moment(_.head(res.writeDate)).format('YYYY-MM-DD HH:mm:ss'));
 
