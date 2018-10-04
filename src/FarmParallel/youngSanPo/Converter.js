@@ -36,10 +36,11 @@ class Converter extends AbstConverter {
 
   /**
    * 데이터 분석 요청
-   * @param {dcData} dcData 장치로 요청한 명령
+   * @param {Buffer} deviceData 장치로 요청한 명령
+   * @param {Buffer} currTransferCmd 현재 요청한 명령
    * @return {parsingResultFormat}
    */
-  concreteParsingData(dcData) {
+  concreteParsingData(deviceData, currTransferCmd) {
     try {
       // RTC 날짜 배열 길이
       const headerLength = 6;
@@ -47,10 +48,10 @@ class Converter extends AbstConverter {
        * 요청한 명령 추출
        * @type {{unitId: string, address: number, dataLength: number}}
        */
-      const requestData = this.getCurrTransferCmd(dcData);
+      const requestData = currTransferCmd;
 
       /** @type {number[]} */
-      const resDataList = dcData.data;
+      const resDataList = deviceData;
 
       const decodingTable = this.decodingTable.SITE;
       // 요청 시작 주소를 가져옴
@@ -70,7 +71,8 @@ class Converter extends AbstConverter {
           const indexValue = _.nth(resDataList, currIndex);
           switch (index) {
             case 0:
-              measureDate.year(_.sum([2000, indexValue]));
+              // measureDate.year(_.sum([2000, indexValue]));
+              measureDate.year(indexValue);
               break;
             case 1:
               measureDate.month(_.subtract(indexValue, 1));

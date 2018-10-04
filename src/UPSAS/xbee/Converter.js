@@ -56,25 +56,24 @@ class Converter extends AbstConverter {
 
   /**
    * 데이터 분석 요청
-   * @param {dcData} dcData 장치로 요청한 명령
+   * @param {xbeeApi_0x8B|xbeeApi_0x90} deviceData 장치로 요청한 명령
    * @return {parsingResultFormat}
    */
-  concreteParsingData(dcData) {
+  concreteParsingData(deviceData) {
+    BU.CLI(deviceData);
     try {
       /** @type {parsingResultFormat} */
-      /** @type {xbeeApi_0x8B|xbeeApi_0x90} */
-      const responseData = dcData.data;
       let result;
       // 해당 프로토콜에서 생성된 명령인지 체크
-      switch (responseData.type) {
+      switch (deviceData.type) {
         case 0x88:
           result = this.processDataResponseAT();
           break;
         case 0x90:
-          result = this.processDataReceivePacketZigBee(dcData.data);
+          result = this.processDataReceivePacketZigBee(deviceData);
           break;
         default:
-          throw new Error(`Not Matching Type ${responseData.type}`);
+          throw new Error(`Not Matching Type ${deviceData.type}`);
       }
       return result;
     } catch (error) {
@@ -93,7 +92,7 @@ class Converter extends AbstConverter {
    * @param {xbeeApi_0x90} xbeeApi0x90
    */
   processDataReceivePacketZigBee(xbeeApi0x90) {
-    // BU.CLI(xbeeApi_0x90);
+    BU.CLI(xbeeApi0x90);
     try {
       const {data} = xbeeApi0x90;
 

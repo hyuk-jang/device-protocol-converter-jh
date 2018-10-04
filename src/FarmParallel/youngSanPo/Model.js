@@ -24,8 +24,8 @@ class Model extends BaseModel {
     this.device.DEFAULT.COMMAND.STATUS = [
       {
         unitId: this.dialing,
-        address: 0,
-        dataLength: 18,
+        address: 6,
+        dataLength: 12,
       },
     ];
 
@@ -33,6 +33,15 @@ class Model extends BaseModel {
       {
         unitId: this.dialing,
         address: 6,
+        dataLength: 1,
+      },
+    ];
+
+    this.device.SOIL_TEMPERATURE.COMMAND.STATUS = [
+      {
+        unitId: this.dialing,
+        fnCode: 4,
+        address: 8,
         dataLength: 1,
       },
     ];

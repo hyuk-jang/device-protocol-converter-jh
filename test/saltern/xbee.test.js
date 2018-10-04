@@ -10,7 +10,7 @@ const {requestDeviceControlType} = require('../../../default-intelligence').dcmC
 
 const model = new Model();
 
-describe.only('encoding Test 1', () => {
+describe('encoding Test 1', () => {
   const converter = new Converter({deviceId: '0013A20010215369'});
   it('encoding Xbee', done => {
     BU.CLI(model.device.WATER_DOOR.COMMAND.OPEN);
@@ -49,7 +49,11 @@ describe.only('encoding Test 1', () => {
 describe('Decoding Test', function() {
   // const baseFormat = require('../../src/Saltern/baseFormat');
   // const {deviceModel} = require('../../src/Saltern/baseModel');
-  const converter = new Converter({deviceId: '0013A20010215369'});
+  const converter = new Converter({
+    mainCategory: 'UPSAS',
+    subCategory: 'xbee',
+    deviceId: '0013A20010215369',
+  });
   it('automaticDecoding', function(done) {
     // BU.CLI(baseFormat);
     // BU.CLI(deviceModel);

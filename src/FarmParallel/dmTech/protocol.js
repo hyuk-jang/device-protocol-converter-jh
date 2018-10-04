@@ -36,13 +36,9 @@ exports.decodingProtocolTable = protocolInfo => {
       {},
       {
         key: Model.BASE_KEY.lux,
-        scale: 0.1,
-        fixed: 1,
       },
       {
         key: Model.BASE_KEY.solar,
-        scale: 0.1,
-        fixed: 1,
       },
       {
         key: Model.BASE_KEY.soilTemperature,
@@ -56,8 +52,6 @@ exports.decodingProtocolTable = protocolInfo => {
       },
       {
         key: Model.BASE_KEY.co2,
-        scale: 0.1,
-        fixed: 1,
       },
       {
         key: Model.BASE_KEY.soilWaterValue,
@@ -75,12 +69,12 @@ exports.decodingProtocolTable = protocolInfo => {
         fixed: 1,
       },
       {
+        key: Model.BASE_KEY.windDirection,
+      },
+      {
         key: Model.BASE_KEY.windSpeed,
         scale: 0.1,
         fixed: 1,
-      },
-      {
-        key: Model.BASE_KEY.windDirection,
       },
       {
         key: Model.BASE_KEY.r1,

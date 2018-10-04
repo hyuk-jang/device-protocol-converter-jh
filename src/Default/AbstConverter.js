@@ -41,11 +41,12 @@ class AbstConverter {
   }
 
   /**
-   * 수신받은 dcData에서 frame을 걷어내고, dcData에서 전송 명령 또한 frame을 걷어냄
-   * @param {dcData} dcData
+   * protocolInfo.wrapperCategory 에 따라 데이터를 frame 해제 후 반환
+   * @param {*} data
    */
-  peelFrame(dcData) {
-    defaultWrapper.decodingDcData(this.protocolInfo, dcData);
+  peelFrame(data) {
+    // BU.CLI(data)
+    return defaultWrapper.peelFrameMsg(this.protocolInfo, data);
   }
 
   /**
@@ -162,24 +163,21 @@ class AbstConverter {
    * @return {parsingResultFormat}
    */
   parsingUpdateData(dcData) {
-    // BU.CLI(dcData);
+    // BU.CLIN(dcData);
     const returnValue = {};
     try {
       // 수신 데이터 추적을 하는 경우라면 dcData의 Data와 합산
       if (_.get(this, 'protocolOptionInfo.hasTrackingData') === true) {
         this.trackingDataBuffer = Buffer.concat([this.trackingDataBuffer, dcData.data]);
         dcData.data = this.trackingDataBuffer;
-
         // BU.CLI(dcData.data.toString());
       }
-
-      // protocolInfo.wrapperCategory 여부에 따라 dcData.data 및 dcData.commandSet 수정
-      this.peelFrame(dcData);
-      // BU.CLI(dcData)
-
-      // BU.CLI('@@@@@@@@@@');
       try {
-        returnValue.data = this.concreteParsingData(dcData);
+        // protocolInfo.wrapperCategory 여부에 따라 frame 해제
+        returnValue.data = this.concreteParsingData(
+          this.peelFrame(dcData.data),
+          this.peelFrame(this.getCurrTransferCmd(dcData)),
+        );
       } catch (error) {
         throw error;
       }
@@ -199,10 +197,11 @@ class AbstConverter {
 
   /**
    * 실제 데이터 분석 요청
-   * @param {dcData} dcData 장치로 요청한 명령
+   * @param {*} deviceData 장치로 요청한 명령
+   * @param {*} currTransferCmd 장치로 요청한 명령
    * @return {*}
    */
-  concreteParsingData(dcData) {}
+  concreteParsingData(deviceData, currTransferCmd) {}
 
   /**
    * decodingInfo 리스트 만큼 Data 파싱을 진행
@@ -261,7 +260,7 @@ class AbstConverter {
         // BU.CLI(decodingInfo)
         // 파싱 의뢰
         this.automaticParsingData(decodingInfo, _.nth(receiveData, currIndex), returnModelInfo);
-        currIndex += decodingInfo.byte || 1;
+        currIndex += _.get(decodingInfo, 'byte', 1);
       }
       // BU.CLI(returnModelInfo);
       return returnModelInfo;

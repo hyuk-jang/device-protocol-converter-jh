@@ -8,16 +8,16 @@ const ProtocolConverter = require('./ProtocolConverter');
 const defaultWrapper = {
   /**
    * @param {protocol_info} protocolInfo
-   * @param {Buffer} data
+   * @param {Buffer} bufData
    */
-  wrapFrameMsg: (protocolInfo, data) => {
+  wrapFrameMsg: (protocolInfo, bufData) => {
     let returnValue;
     switch (_.get(protocolInfo, 'wrapperCategory', undefined)) {
       case 'default':
-        returnValue = defaultWrapper.defaultWrapFrame(protocolInfo, data);
+        returnValue = defaultWrapper.defaultWrapFrame(protocolInfo, bufData);
         break;
       default:
-        returnValue = data;
+        returnValue = bufData;
         break;
     }
 
@@ -47,18 +47,18 @@ const defaultWrapper = {
   /**
    * 수신받은 data를 frame을 걷어내고 반환
    * @param {protocol_info} protocolInfo
-   * @param {dcData} data
+   * @param {Buffer} bufData
    */
-  peelFrameMsg: (protocolInfo, data) => {
-    // BU.CLIS(protocolInfo, data);
+  peelFrameMsg: (protocolInfo, bufData) => {
+    BU.CLIS(protocolInfo, bufData);
     let peeledData;
     // 전송 명령 frame을 걷어냄
     switch (_.get(protocolInfo, 'wrapperCategory', undefined)) {
       case 'default':
-        peeledData = defaultWrapper.defaultPeelFrame(data);
+        peeledData = defaultWrapper.defaultPeelFrame(bufData);
         break;
       default:
-        peeledData = data;
+        peeledData = bufData;
         break;
     }
 
@@ -68,9 +68,9 @@ const defaultWrapper = {
   /**
    * @desc 전송 프레임: STX CMD [*] ETX
    * @param {protocol_info} protocolInfo
-   * @param {Buffer} data
+   * @param {Buffer} bufData
    */
-  defaultWrapFrame: (protocolInfo, data) => {
+  defaultWrapFrame: (protocolInfo, bufData) => {
     const protocolConverter = new ProtocolConverter();
     let cmd = '';
     switch (protocolInfo.mainCategory) {
@@ -87,9 +87,9 @@ const defaultWrapper = {
     }
 
     const bufCmd = protocolConverter.makeMsg2Buffer(cmd);
-    const bufData = protocolConverter.makeMsg2Buffer(data);
+    const bufBody = protocolConverter.makeMsg2Buffer(bufData);
 
-    const result = defaultModel.encodingSimpleMsg(Buffer.concat([bufCmd, bufData]));
+    const result = defaultModel.encodingSimpleMsg(Buffer.concat([bufCmd, bufBody]));
     return result;
   },
 

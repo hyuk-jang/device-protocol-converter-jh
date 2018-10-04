@@ -73,7 +73,7 @@ describe('encoding Test 1', () => {
 
 describe('Decoding Test', () => {
   const converter = new Converter(protocolInfo);
-  // 1. addr: 0, length: 18 을 가진 가상 데이터 생성
+  // 1. addr: 6, length: 12 을 가진 가상 데이터 생성
   // 2. 가상 데이터 파싱 테스트
   // 3. addr: 6, length: 1 을 가진 가상 데이터 파싱
   it('receive Full Data Buffer To Data Body', done => {
@@ -82,52 +82,6 @@ describe('Decoding Test', () => {
     // 명령 생성
     const cmdList = converter.generationCommand({key: model.device.DEFAULT.KEY, value: 2});
     // const cmdList = converter.generationCommand(statusCmdList);
-    // 명령 발송 객체 생성
-    // /** @type {dcData} */
-    const dcData = {
-      commandSet: {
-        cmdList,
-        currCmdIndex: 0,
-      },
-      data: [],
-    };
-
-    // data 18개 전부
-    const {unitId, fnCode, address, dataLength} = statusCmdInfo;
-    const mbapHeader = Buffer.concat([
-      converter.protocolConverter.convertNumToHxToBuf(unitId, 1),
-      converter.protocolConverter.convertNumToHxToBuf(fnCode, 1),
-      converter.protocolConverter.convertNumToHxToBuf(dataLength, 2),
-    ]);
-    const fullData = [17, 5, 25, 14, 50, 51, 2200, 15, 302, 450, 800, 30, 352, 479, 80, 24, 10, 1];
-
-    const bufFullData = converter.protocolConverter.convertNumToHxToBuf(fullData, 2);
-
-    // 1. addr: 0, length: 18 을 가진 가상 데이터 생성
-    const coverdBufFullData = converter.coverFrame(Buffer.concat([mbapHeader, bufFullData]));
-
-    // 수신 받은 데이터 생성
-    // 2. 가상 데이터 파싱 테스트
-    dcData.data = coverdBufFullData;
-    /** @type {BASE_MODEL} */
-    const res = converter.parsingUpdateData(dcData).data;
-    // BU.CLI(moment(_.head(res.writeDate)).format('YYYY-MM-DD HH:mm:ss'));
-
-    expect(_.head(res.co2)).to.be.eq(80.0);
-    done();
-  });
-  // 1. addr: 0, length: 18 을 가진 가상 데이터 생성
-  // 2. 가상 데이터 파싱 테스트
-  // 3. addr: 6, length: 1 을 가진 가상 데이터 파싱
-  it('receive Lux Data Buffer To Data Body', done => {
-    const statusCmdList = model.device.LUX.COMMAND.STATUS;
-    const statusCmdInfo = _.head(statusCmdList);
-    // 명령 생성
-    // const cmdList = converter.generationCommand(statusCmdList);
-    const cmdList = converter.generationCommand({
-      key: model.device.LUX.KEY,
-      value: 2,
-    });
     // 명령 발송 객체 생성
     // /** @type {dcData} */
     const dcData = {
@@ -157,10 +111,57 @@ describe('Decoding Test', () => {
     dcData.data = coverdBufFullData;
     /** @type {BASE_MODEL} */
     const res = converter.parsingUpdateData(dcData).data;
+    BU.CLI(res);
+    // BU.CLI(moment(_.head(res.writeDate)).format('YYYY-MM-DD HH:mm:ss'));
+
+    expect(_.head(res.soilWaterValue)).to.be.eq(3.0);
+    done();
+  });
+  // 1. addr: 0, length: 18 을 가진 가상 데이터 생성
+  // 2. 가상 데이터 파싱 테스트
+  // 3. addr: 6, length: 1 을 가진 가상 데이터 파싱
+  it('receive Lux Data Buffer To Data Body', done => {
+    const statusCmdList = model.device.LUX.COMMAND.STATUS;
+    const statusCmdInfo = _.head(statusCmdList);
+    // 명령 생성
+    // const cmdList = converter.generationCommand(statusCmdList);
+    const cmdList = converter.generationCommand({
+      key: model.device.LUX.KEY,
+      value: 2,
+    });
+    // 명령 발송 객체 생성
+    // /** @type {dcData} */
+    const dcData = {
+      commandSet: {
+        cmdList,
+        currCmdIndex: 0,
+      },
+      data: [],
+    };
+
+    // data 12개 전부
+    const {unitId, fnCode, address, dataLength} = statusCmdInfo;
+    const mbapHeader = Buffer.concat([
+      converter.protocolConverter.convertNumToHxToBuf(unitId, 1),
+      converter.protocolConverter.convertNumToHxToBuf(fnCode, 1),
+      converter.protocolConverter.convertNumToHxToBuf(dataLength, 2),
+    ]);
+    const fullData = [2200, 15, 302, 450, 800, 30, 352, 479, 80, 24, 10, 1];
+
+    const bufFullData = converter.protocolConverter.convertNumToHxToBuf([2200], 2);
+
+    // 1. addr: 0, length: 18 을 가진 가상 데이터 생성
+    const coverdBufFullData = converter.coverFrame(Buffer.concat([mbapHeader, bufFullData]));
+
+    // 수신 받은 데이터 생성
+    // 2. 가상 데이터 파싱 테스트
+    dcData.data = coverdBufFullData;
+    /** @type {BASE_MODEL} */
+    const res = converter.parsingUpdateData(dcData).data;
     // BU.CLI(moment(_.head(res.writeDate)).format('YYYY-MM-DD HH:mm:ss'));
 
     BU.CLI(res);
-    expect(_.head(res.lux)).to.be.eq(220);
+    expect(_.head(res.lux)).to.be.eq(2200);
     done();
   });
 });

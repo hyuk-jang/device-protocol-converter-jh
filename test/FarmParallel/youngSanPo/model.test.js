@@ -34,8 +34,10 @@ describe('encoding Test 1', () => {
     const cmdInfo = _.head(cmdList);
     expect(cmdList.length).to.eq(1);
     expect(cmdInfo.data.unitId).to.eq('1');
-    cmdList = converter.generationCommand({key: model.device.CO2.KEY, value: 2});
-    expect(cmdList.length).to.eq(0);
+    cmdList = converter.generationCommand({key: model.device.SOIL_TEMPERATURE.KEY, value: 2});
+    BU.CLI(cmdList);
+
+    expect(_.head(cmdList).data.dataLength).to.eq(1);
 
     done();
   });
@@ -61,7 +63,7 @@ describe('Decoding Test', () => {
     };
 
     // data 18개 전부
-    const fullData = [17, 5, 25, 14, 50, 51, 2200, 15, 302, 450, 800, 30, 352, 479, 80, 24, 10, 1];
+    const fullData = [2200, 15, 302, 450, 800, 30, 352, 479, 80, 24, 10, 1];
 
     // 수신 받은 데이터 생성
     /** @type {BASE_MODEL} */
@@ -71,7 +73,7 @@ describe('Decoding Test', () => {
     res = converter.parsingUpdateData(dcData).data;
     BU.CLI(res);
     // BU.CLI(moment(_.head(res.writeDate)).format('YYYY-MM-DD HH:mm:ss'));
-    expect(_.head(res.co2)).to.be.eq(80.0);
+    expect(_.head(res.outsideAirTemperature)).to.be.eq(-4.8);
 
     // 조도만 가져오고자 할 경우
     commandStorage = converter.generationCommand({key: model.device.LUX.KEY, value: 2});
@@ -81,7 +83,7 @@ describe('Decoding Test', () => {
     res = converter.parsingUpdateData(dcData).data;
     BU.CLI(res);
     // BU.CLI(moment(_.head(res.writeDate)).format('YYYY-MM-DD HH:mm:ss'));
-    expect(_.head(res.lux)).to.be.eq(3.8);
+    expect(_.head(res.lux)).to.be.eq(38);
 
     // BU.CLI(moment(_.head(res.writeDate)).format('YYYY-MM-DD HH:mm:ss'));
 

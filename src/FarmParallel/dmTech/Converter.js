@@ -49,31 +49,32 @@ class Converter extends AbstConverter {
 
   /**
    * 데이터 분석 요청
-   * @param {dcData} dcData 장치로 요청한 명령
+   * @param {Buffer} deviceData 장치로 요청한 명령
+   * @param {Buffer} currTransferCmd 현재 요청한 명령
    * @return {parsingResultFormat}
    */
-  concreteParsingData(dcData) {
+  concreteParsingData(deviceData, currTransferCmd) {
     try {
-      // BU.CLI(dcData);
+      BU.CLI(deviceData);
       // RTC 날짜 배열 길이
       const headerLength = 6;
       /**
        * 요청한 명령 추출
        * @type {Buffer}
        */
-      const requestData = this.getCurrTransferCmd(dcData);
+      const requestData = currTransferCmd;
       const slaveAddr = requestData.readIntBE(0, 1);
       const fnCode = requestData.readIntBE(1, 1);
       const registerAddr = requestData.readInt16BE(2);
       const dataLength = requestData.readInt16BE(4);
 
       /** @type {Buffer} */
-      const resBuffer = dcData.data;
+      const resBuffer = deviceData;
 
       // 수신받은 데이터 2 Byte Hi-Lo 형식으로 파싱
       const resSlaveAddr = resBuffer.readIntBE(0, 1);
       const resFnCode = resBuffer.readIntBE(1, 1);
-      const resDataLength = resBuffer.readInt16BE(2);
+      const resDataLength = resBuffer.slice(4).length;
 
       // 같은 slaveId가 아닐 경우
       if (!_.isEqual(slaveAddr, resSlaveAddr)) {
@@ -88,7 +89,7 @@ class Converter extends AbstConverter {
       }
 
       // 수신받은 데이터의 길이가 다를 경우
-      if (!_.isEqual(dataLength, resDataLength)) {
+      if (!_.isEqual(_.multiply(dataLength, 2), resDataLength)) {
         throw new Error(
           `The expected dataLength: ${dataLength}. but received dataLength: ${resDataLength}`,
         );
@@ -97,6 +98,7 @@ class Converter extends AbstConverter {
       // 실제 장치 데이터 배열화
       const resDataList = [];
       for (let index = 4; index < resBuffer.length; index += 2) {
+        BU.CLI(resDataList)
         resDataList.push(resBuffer.readInt16BE(index));
       }
 
@@ -118,7 +120,8 @@ class Converter extends AbstConverter {
           const indexValue = _.nth(resDataList, currIndex);
           switch (index) {
             case 0:
-              measureDate.year(_.sum([2000, indexValue]));
+              // measureDate.year(_.sum([2000, indexValue]));
+              measureDate.year(indexValue);
               break;
             case 1:
               measureDate.month(_.subtract(indexValue, 1));

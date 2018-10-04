@@ -32,13 +32,13 @@ class Converter extends AbstConverter {
 
   /**
    * 데이터 분석 요청
-   * @param {dcData} dcData 장치로 요청한 명령
+   * @param {Buffer} deviceData 장치로 요청한 명령
    * @return {parsingResultFormat}
    */
-  concreteParsingData(dcData) {
+  concreteParsingData(deviceData) {
     try {
       // const requestData = this.getCurrTransferCmd(dcData);
-      const responseData = dcData.data;
+      const responseData = deviceData;
 
       // if(_.includes(requestData, this.baseModel.device.DEFAULT.COMMAND.LOOP)){
       let bufferData =
