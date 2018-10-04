@@ -28,7 +28,7 @@ class Converter extends AbstConverter {
    * @return {commandInfo[]} 장치를 조회하기 위한 명령 리스트 반환
    */
   generationCommand(generationInfo) {
-    /** @type {fpSensorRequestFormat[]} */
+    /** @type {modbusReadFormat[]} */
     const cmdList = this.defaultGenCMD(generationInfo);
 
     return this.makeDefaultCommandInfo(cmdList, 1000);
@@ -41,12 +41,14 @@ class Converter extends AbstConverter {
    * @return {parsingResultFormat}
    */
   concreteParsingData(deviceData, currTransferCmd) {
+    BU.CLIS(deviceData, currTransferCmd);
     try {
       // RTC 날짜 배열 길이
       const headerLength = 6;
       /**
        * 요청한 명령 추출
-       * @type {{unitId: string, address: number, dataLength: number}}
+       * FIXME: Function Code 04 기준으로만 작성됨.  필요시 수정
+       * @type {modbusReadFormat}
        */
       const requestData = currTransferCmd;
 
@@ -186,7 +188,7 @@ if (require !== undefined && require.main === module) {
   const converter = new Converter({
     deviceId: '1',
     mainCategory: 'FarmParallel',
-    subCategory: 'youngSanPo',
+    subCategory: 'yungSanPo',
     protocolOptionInfo: {
       hasTrackingData: true,
     },

@@ -28,7 +28,7 @@ class Converter extends AbstConverter {
    * @return {commandInfo[]} 장치를 조회하기 위한 명령 리스트 반환
    */
   generationCommand(generationInfo) {
-    /** @type {fpSensorRequestFormat[]} */
+    /** @type {modbusReadFormat[]} */
     const cmdList = this.defaultGenCMD(generationInfo);
 
     // BU.CLI(cmdList);
@@ -98,7 +98,7 @@ class Converter extends AbstConverter {
       // 실제 장치 데이터 배열화
       const resDataList = [];
       for (let index = 4; index < resBuffer.length; index += 2) {
-        BU.CLI(resDataList)
+        BU.CLI(resDataList);
         resDataList.push(resBuffer.readInt16BE(index));
       }
 
@@ -235,7 +235,7 @@ if (require !== undefined && require.main === module) {
   const converter = new Converter({
     deviceId: '1',
     mainCategory: 'FarmParallel',
-    subCategory: 'youngSanPo',
+    subCategory: 'yungSanPo',
     protocolOptionInfo: {
       hasTrackingData: true,
     },
@@ -245,11 +245,3 @@ if (require !== undefined && require.main === module) {
   const cmdInfo = converter.generationCommand(converter.model.device.DEFAULT.COMMAND.STATUS);
   BU.CLI(cmdInfo);
 }
-
-/**
- * @typedef {Object} fpSensorRequestFormat modbusRTU 요청 데이터 포맷
- * @property {number} unitId ModbusRTU 장치 ID
- * @property {number} address 가져올 시작 주소
- * @property {number} dataLength 가져올 데이터 개수
- * @property {number} fnCode FunctionCode @default 4 (ReadInputRegister)
- */

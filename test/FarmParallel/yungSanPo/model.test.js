@@ -4,17 +4,17 @@ const moment = require('moment');
 const {expect} = require('chai');
 const {BU} = require('base-util-jh');
 
-const Converter = require('../../../src/FarmParallel/youngSanPo/Converter');
-const Model = require('../../../src/FarmParallel/youngSanPo/Model');
+const Converter = require('../../../src/FarmParallel/yungSanPo/Converter');
+const Model = require('../../../src/FarmParallel/yungSanPo/Model');
 
 const {BASE_MODEL} = Model;
 
-const {decodingProtocolTable} = require('../../../src/FarmParallel/youngSanPo/protocol');
+const {decodingProtocolTable} = require('../../../src/FarmParallel/yungSanPo/protocol');
 
 const model = new Model({
   deviceId: '1',
   mainCategory: 'FarmParallel',
-  subCategory: 'youngSanPo',
+  subCategory: 'yungSanPo',
 });
 
 // require('default-intelligence');
@@ -23,7 +23,7 @@ const model = new Model({
 const protocolInfo = {
   deviceId: '1',
   mainCategory: 'FarmParallel',
-  subCategory: 'youngSanPo',
+  subCategory: 'yungSanPo',
 };
 
 describe('encoding Test 1', () => {
