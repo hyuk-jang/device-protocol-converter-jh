@@ -50,7 +50,7 @@ const defaultWrapper = {
    * @param {Buffer} bufData
    */
   peelFrameMsg: (protocolInfo, bufData) => {
-    BU.CLIS(protocolInfo, bufData);
+    // BU.CLIS(protocolInfo, bufData);
     let peeledData;
     // 전송 명령 frame을 걷어냄
     switch (_.get(protocolInfo, 'wrapperCategory', undefined)) {

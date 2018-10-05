@@ -36,12 +36,12 @@ class Converter extends AbstConverter {
 
   /**
    * 데이터 분석 요청
-   * @param {Buffer} deviceData 장치로 요청한 명령
-   * @param {Buffer} currTransferCmd 현재 요청한 명령
+   * @param {number[]} deviceData 장치로 요청한 명령
+   * @param {modbusReadFormat} currTransferCmd 현재 요청한 명령
    * @return {parsingResultFormat}
    */
   concreteParsingData(deviceData, currTransferCmd) {
-    BU.CLIS(deviceData, currTransferCmd);
+    // BU.CLIS(deviceData, currTransferCmd);
     try {
       // RTC 날짜 배열 길이
       const headerLength = 6;
@@ -57,19 +57,31 @@ class Converter extends AbstConverter {
 
       const decodingTable = this.decodingTable.SITE;
       // 요청 시작 주소를 가져옴
-      const startAddr = requestData.address;
+      const registerAddr = requestData.address;
       // 실제 시작하는 주소 세팅
-      decodingTable.address = startAddr;
+      decodingTable.address = registerAddr;
+
+      // 수신받은 데이터의 길이가 다를 경우
+      if (!_.isEqual(requestData.dataLength, resDataList.length)) {
+        throw new Error(
+          `The expected dataLength: ${requestData.dataLength}. but received dataLength: ${
+            resDataList.length
+          }`,
+        );
+      }
 
       // 실제 파싱 데이터 추출
+      // BU.CLI(resDataList)
+      // BU.CLI(requestData.dataLength);
       const dataBody = resDataList.slice(0, requestData.dataLength);
+      // BU.CLI(dataBody)
       /** @type {BASE_MODEL} */
       const returnValue = this.automaticDecodingForArray(decodingTable, dataBody);
       // 계측 시간을 포함할 경우
-      if (startAddr < headerLength) {
+      if (registerAddr < headerLength) {
         const measureDate = moment();
         let currIndex = 0;
-        for (let index = startAddr; index < headerLength; index += 1) {
+        for (let index = registerAddr; index < headerLength; index += 1) {
           const indexValue = _.nth(resDataList, currIndex);
           switch (index) {
             case 0:
@@ -188,7 +200,7 @@ if (require !== undefined && require.main === module) {
   const converter = new Converter({
     deviceId: '1',
     mainCategory: 'FarmParallel',
-    subCategory: 'yungSanPo',
+    subCategory: 'YeongSanPo',
     protocolOptionInfo: {
       hasTrackingData: true,
     },

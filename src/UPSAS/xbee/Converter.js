@@ -60,7 +60,7 @@ class Converter extends AbstConverter {
    * @return {parsingResultFormat}
    */
   concreteParsingData(deviceData) {
-    BU.CLI(deviceData);
+    // BU.CLI(deviceData);
     try {
       /** @type {parsingResultFormat} */
       let result;
@@ -92,7 +92,7 @@ class Converter extends AbstConverter {
    * @param {xbeeApi_0x90} xbeeApi0x90
    */
   processDataReceivePacketZigBee(xbeeApi0x90) {
-    BU.CLI(xbeeApi0x90);
+    // BU.CLI(xbeeApi0x90);
     try {
       const {data} = xbeeApi0x90;
 

@@ -1,16 +1,14 @@
 const _ = require('lodash');
-const {parsingMethod} = require('../../format/moduleDefine');
-
 const Model = require('./Model');
 
 const onDeviceOperationStatus = {
-  /** @type {Object} 강수 여부 */
-  [Model.BASE_KEY.isRain]: {
-    /** @type {number} 비 감지 Off */
-    0: 'Off',
-    /** @type {string} 비 감지 On */
-    1: 'ON',
-  },
+  // /** @type {Object} 강수 여부 */
+  // [Model.BASE_KEY.isRain]: {
+  //   /** @type {number} 비 감지 Off */
+  //   0: 'Off',
+  //   /** @type {string} 비 감지 On */
+  //   1: 'ON',
+  // },
   [Model.BASE_KEY.outsideAirTemperature]: temp => _.subtract(temp, 40),
   [Model.BASE_KEY.soilTemperature]: temp => _.subtract(temp, 40),
 };

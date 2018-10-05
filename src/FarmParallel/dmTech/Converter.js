@@ -235,7 +235,7 @@ if (require !== undefined && require.main === module) {
   const converter = new Converter({
     deviceId: '1',
     mainCategory: 'FarmParallel',
-    subCategory: 'yungSanPo',
+    subCategory: 'YeongSanPo',
     protocolOptionInfo: {
       hasTrackingData: true,
     },
