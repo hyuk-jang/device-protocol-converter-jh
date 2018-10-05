@@ -6,8 +6,6 @@ const AbstConverter = require('../../Default/AbstConverter');
 const Model = require('./Model');
 const protocol = require('./protocol');
 
-const {requestDeviceControlType} = require('../../../../default-intelligence').dcmConfigModel;
-
 class Converter extends AbstConverter {
   /** @param {protocol_info} protocolInfo */
   constructor(protocolInfo) {
@@ -57,11 +55,21 @@ class Converter extends AbstConverter {
   /**
    * 데이터 분석 요청
    * @param {xbeeApi_0x8B|xbeeApi_0x90} deviceData 장치로 요청한 명령
+   * @param {xbeeApi_0x10} currTransferCmd 현재 요청한 명령
    * @return {parsingResultFormat}
    */
-  concreteParsingData(deviceData) {
+  concreteParsingData(deviceData, currTransferCmd) {
     // BU.CLI(deviceData);
     try {
+      // BU.CLIS(deviceData.remote64, currTransferCmd.destination64);
+      // 비교
+      if (!_.eq(_.toUpper(currTransferCmd.destination64), _.toUpper(deviceData.remote64))) {
+        throw new Error(
+          `Not Matching ReqAddr: ${_.toUpper(currTransferCmd.destination64)}, 
+          ResAddr: ${_.toUpper(deviceData.remote64)}`,
+        );
+      }
+
       /** @type {parsingResultFormat} */
       let result;
       // 해당 프로토콜에서 생성된 명령인지 체크
@@ -140,9 +148,8 @@ class Converter extends AbstConverter {
             .value();
           if (!hasValid) {
             throw new Error(
-              `The expected length(${
-                decodingDataList.bodyLength
-              }) of the data body is different from the length(${dataBody.length}) received.`,
+              `The expected length(${decodingDataList.bodyLength}) 
+              of the data body is different from the length(${dataBody.length}) received.`,
             );
           }
 
