@@ -1,4 +1,4 @@
-const {BU} = require('base-util-jh');
+const { BU } = require('base-util-jh');
 const _ = require('lodash');
 
 const BaseModel = require('../BaseModel');

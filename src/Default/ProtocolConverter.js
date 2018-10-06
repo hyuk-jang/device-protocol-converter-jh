@@ -1,9 +1,11 @@
 // const EventEmitter = require('events');
-const {BU} = require('base-util-jh');
+const { BU } = require('base-util-jh');
 const _ = require('lodash');
 
 // const {definedCommanderResponse} =  require('default-intelligence').dccFlagModel;
-const {definedCommanderResponse} = require('../../../../module/default-intelligence').dccFlagModel;
+const {
+  definedCommanderResponse,
+} = require('../../../../module/default-intelligence').dccFlagModel;
 
 class Converter {
   constructor() {

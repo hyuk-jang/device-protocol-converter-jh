@@ -1,5 +1,5 @@
-const {expect} = require('chai');
-const {BU} = require('base-util-jh');
+const { expect } = require('chai');
+const { BU } = require('base-util-jh');
 const _ = require('lodash');
 
 const Converter = require('../../../src/Inverter/das_1.3/Converter');
@@ -16,7 +16,7 @@ const model = new BaseModel({
 // require('../../../../default-intelligence');
 
 describe('encoding Test 1', () => {
-  const converter = new Converter({deviceId: '001', subCategory: 'das_1.3'});
+  const converter = new Converter({ deviceId: '001', subCategory: 'das_1.3' });
   it('encoding das', done => {
     BU.CLI(model.device.PV.COMMAND.STATUS);
     BU.CLI(model.device.GRID.COMMAND.STATUS);
@@ -36,7 +36,7 @@ describe('encoding Test 1', () => {
     BU.CLI(cmd);
 
     expect(cmd.length).to.eq(2);
-    cmd = converter.generationCommand({key: model.device.DEFAULT.KEY});
+    cmd = converter.generationCommand({ key: model.device.DEFAULT.KEY });
     BU.CLI(cmd);
     expect(cmd.length).to.eq(6);
 
@@ -44,7 +44,7 @@ describe('encoding Test 1', () => {
   });
 });
 
-const {decodingProtocolTable} = require('../../../src/Inverter/das_1.3/protocol');
+const { decodingProtocolTable } = require('../../../src/Inverter/das_1.3/protocol');
 
 describe('Decoding Test', () => {
   // const converter = new Converter({deviceId:'0013A20010215369'} );
@@ -86,11 +86,11 @@ describe('Decoding Test', () => {
       mainCategory: 'Inverter',
       subCategory: 'das_1.3',
       option: true,
-      protocolOptionInfo: {hasTrackingData: true},
+      protocolOptionInfo: { hasTrackingData: true },
       // wrapperCategory: 'default',
     });
     // 명령 생성
-    const commandStorage = converter.generationCommand({key: model.device.DEFAULT.KEY});
+    const commandStorage = converter.generationCommand({ key: model.device.DEFAULT.KEY });
     BU.CLI(commandStorage);
 
     // 명령 발송 객체 생성
@@ -205,11 +205,11 @@ describe('Decoding Test', () => {
       mainCategory: 'Inverter',
       subCategory: 'das_1.3',
       option: true,
-      protocolOptionInfo: {hasTrackingData: true},
+      protocolOptionInfo: { hasTrackingData: true },
       wrapperCategory: 'default',
     });
     // 명령 생성
-    const commandStorage = converter.generationCommand({key: model.device.DEFAULT.KEY});
+    const commandStorage = converter.generationCommand({ key: model.device.DEFAULT.KEY });
     BU.CLI(commandStorage);
 
     // 명령 발송 객체 생성

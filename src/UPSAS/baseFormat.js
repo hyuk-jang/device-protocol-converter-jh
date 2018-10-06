@@ -1,5 +1,3 @@
-
-
 /**
  * @module baseFormat 스마트 염전 장치 데이터 가이드라인
  */
@@ -25,7 +23,7 @@ module.exports = {
    */
   salinity: [],
   /**
-   * 수문용 밸브 
+   * 수문용 밸브
    * @description GV
    * @type {number[]=}
    * @example
@@ -47,27 +45,25 @@ module.exports = {
    * @example
    * ON, OFF
    */
-  pump: [],  
+  pump: [],
   /**
    * 배터리(Battery), 단위[V]
    * @type {number[]=}
    */
-  battery: [],  
+  battery: [],
   /**
    * 수온, 단위[℃]
    * @type {number[]=}
    */
-  brineTemperature: [],  
+  brineTemperature: [],
   /**
    * 모듈 전면 온도, 단위[℃]
    * @type {number[]=}
    */
-  moduleFrontTemperature: [],  
+  moduleFrontTemperature: [],
   /**
    * 모듈 뒷면 온도, 단위[℃]
    * @type {number[]=}
    */
-  moduleRearTemperature: [],  
-
-
+  moduleRearTemperature: [],
 };

@@ -1,15 +1,15 @@
 const _ = require('lodash');
 
 const moment = require('moment');
-const {expect} = require('chai');
-const {BU} = require('base-util-jh');
+const { expect } = require('chai');
+const { BU } = require('base-util-jh');
 
 const Converter = require('../../../src/FarmParallel/YeongSanPo/Converter');
 const Model = require('../../../src/FarmParallel/YeongSanPo/Model');
 
-const {BASE_MODEL} = Model;
+const { BASE_MODEL } = Model;
 
-const {decodingProtocolTable} = require('../../../src/FarmParallel/YeongSanPo/protocol');
+const { decodingProtocolTable } = require('../../../src/FarmParallel/YeongSanPo/protocol');
 
 const model = new Model({
   deviceId: '1',
@@ -29,12 +29,12 @@ const protocolInfo = {
 describe('encoding Test 1', () => {
   const converter = new Converter(protocolInfo);
   it('generate Msg', done => {
-    let cmdList = converter.generationCommand({key: model.device.DEFAULT.KEY, value: 2});
+    let cmdList = converter.generationCommand({ key: model.device.DEFAULT.KEY, value: 2 });
     BU.CLI(cmdList);
     const cmdInfo = _.head(cmdList);
     expect(cmdList.length).to.eq(1);
     expect(cmdInfo.data.unitId).to.eq('1');
-    cmdList = converter.generationCommand({key: model.device.SOIL_TEMPERATURE.KEY, value: 2});
+    cmdList = converter.generationCommand({ key: model.device.SOIL_TEMPERATURE.KEY, value: 2 });
     BU.CLI(cmdList);
 
     expect(_.head(cmdList).data.dataLength).to.eq(1);
@@ -50,7 +50,7 @@ describe('Decoding Test', () => {
 
     // console.dir(protocol);
     // 명령 생성
-    let commandStorage = converter.generationCommand({key: model.device.DEFAULT.KEY, value: 2});
+    let commandStorage = converter.generationCommand({ key: model.device.DEFAULT.KEY, value: 2 });
 
     // 명령 발송 객체 생성
     // /** @type {dcData} */
@@ -76,7 +76,7 @@ describe('Decoding Test', () => {
     expect(_.head(res.outsideAirTemperature)).to.be.eq(-4.8);
 
     // 조도만 가져오고자 할 경우
-    commandStorage = converter.generationCommand({key: model.device.LUX.KEY, value: 2});
+    commandStorage = converter.generationCommand({ key: model.device.LUX.KEY, value: 2 });
     BU.CLI(_.head(commandStorage));
     dcData.commandSet.cmdList = commandStorage;
     dcData.data = [38];

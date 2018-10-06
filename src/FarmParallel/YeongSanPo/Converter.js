@@ -1,11 +1,11 @@
 const _ = require('lodash');
 const moment = require('moment');
-const {BU} = require('base-util-jh');
+const { BU } = require('base-util-jh');
 const AbstConverter = require('../../Default/AbstConverter');
 const protocol = require('./protocol');
 
 const Model = require('./Model');
-const {BASE_MODEL} = require('./Model');
+const { BASE_MODEL } = require('./Model');
 
 class Converter extends AbstConverter {
   /**

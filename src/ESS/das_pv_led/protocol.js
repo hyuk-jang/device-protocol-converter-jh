@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const {parsingMethod} = require('../../format/moduleDefine');
+const { parsingMethod } = require('../../format/moduleDefine');
 
 const Model = require('./Model');
 

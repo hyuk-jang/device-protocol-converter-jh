@@ -1,5 +1,3 @@
-'use strict';
-
 const _ = require('lodash');
 const { parsingMethod } = require('../../format/moduleDefine');
 
@@ -12,9 +10,9 @@ const onDeviceOperationStatus = {
     1: {
       code: 'EARTH FAULT',
       msg: '누설 전류 검출 (일종의 누전상태)',
-      isError: 1
-    }
-  }
+      isError: 1,
+    },
+  },
 };
 exports.onDeviceOperationStatus = onDeviceOperationStatus;
 
@@ -30,7 +28,7 @@ const decodingProtocolTable = protocol_info => {
       decodingDataList: [
         {
           key: null,
-          byte: 2
+          byte: 2,
         },
         {
           key: Model.BASE_KEY.sysSn,
@@ -43,7 +41,7 @@ const decodingProtocolTable = protocol_info => {
           callMethod: parsingMethod.convertBufToHexToDec,
           hasReverse: true,
           scale: 0.1,
-          fixed: 1
+          fixed: 1,
         },
         {
           key: Model.BASE_KEY.pvAmp,
@@ -51,7 +49,7 @@ const decodingProtocolTable = protocol_info => {
           callMethod: parsingMethod.convertBufToHexToDec,
           hasReverse: true,
           scale: 0.01,
-          fixed: 2
+          fixed: 2,
         },
         {
           key: Model.BASE_KEY.pvKw,
@@ -59,7 +57,7 @@ const decodingProtocolTable = protocol_info => {
           callMethod: parsingMethod.convertBufToHexToDec,
           hasReverse: true,
           scale: 0.001,
-          fixed: 3
+          fixed: 3,
         },
         {
           key: Model.BASE_KEY.pvVol2,
@@ -67,7 +65,7 @@ const decodingProtocolTable = protocol_info => {
           callMethod: parsingMethod.convertBufToHexToDec,
           hasReverse: true,
           scale: 0.1,
-          fixed: 1
+          fixed: 1,
         },
         {
           key: Model.BASE_KEY.pvAmp2,
@@ -75,7 +73,7 @@ const decodingProtocolTable = protocol_info => {
           callMethod: parsingMethod.convertBufToHexToDec,
           hasReverse: true,
           scale: 0.01,
-          fixed: 2
+          fixed: 2,
         },
         {
           key: Model.BASE_KEY.pvKw2,
@@ -83,7 +81,7 @@ const decodingProtocolTable = protocol_info => {
           callMethod: parsingMethod.convertBufToHexToDec,
           hasReverse: true,
           scale: 0.001,
-          fixed: 3
+          fixed: 3,
         },
         {
           key: Model.BASE_KEY.gridRsVol,
@@ -91,7 +89,7 @@ const decodingProtocolTable = protocol_info => {
           callMethod: parsingMethod.convertBufToHexToDec,
           hasReverse: true,
           scale: 0.1,
-          fixed: 1
+          fixed: 1,
         },
         {
           key: Model.BASE_KEY.gridRAmp,
@@ -99,7 +97,7 @@ const decodingProtocolTable = protocol_info => {
           callMethod: parsingMethod.convertBufToHexToDec,
           hasReverse: true,
           scale: 0.01,
-          fixed: 2
+          fixed: 2,
         },
         {
           key: Model.BASE_KEY.powerGridKw,
@@ -107,7 +105,7 @@ const decodingProtocolTable = protocol_info => {
           callMethod: parsingMethod.convertBufToHexToDec,
           hasReverse: true,
           scale: 0.001,
-          fixed: 3
+          fixed: 3,
         },
         {
           key: Model.BASE_KEY.gridLf,
@@ -115,13 +113,13 @@ const decodingProtocolTable = protocol_info => {
           callMethod: parsingMethod.convertBufToHexToDec,
           hasReverse: true,
           scale: 0.1,
-          fixed: 1
+          fixed: 1,
         },
         {
           key: Model.BASE_KEY.powerCpKwh,
           byte: 3,
           callMethod: parsingMethod.convertBufToHexToDec,
-          hasReverse: true
+          hasReverse: true,
         },
         {
           key: Model.BASE_KEY.powerDailyKwh,
@@ -129,7 +127,7 @@ const decodingProtocolTable = protocol_info => {
           callMethod: parsingMethod.convertBufToHexToDec,
           hasReverse: true,
           scale: 0.01,
-          fixed: 2
+          fixed: 2,
         },
         {
           key: Model.BASE_KEY.operTemperature,
@@ -137,52 +135,52 @@ const decodingProtocolTable = protocol_info => {
           callMethod: parsingMethod.convertBufToHexToDec,
           hasReverse: true,
           scale: 0.1,
-          fixed: 1
+          fixed: 1,
         },
         {
           key: null,
           byte: 1,
-          callMethod: null
+          callMethod: null,
         },
         {
           key: Model.BASE_KEY.operTime,
           byte: 3,
           calcParsingKey: Model.CALC_KEY.Time,
           callMethod: parsingMethod.convertBufToHexToDec,
-          hasReverse: true
+          hasReverse: true,
         },
         {
           key: Model.BASE_KEY.operTroubleList,
           byte: 1,
           calcParsingKey: Model.CALC_KEY.INV_Status,
-          callMethod: parsingMethod.convertBufToHexToBin
+          callMethod: parsingMethod.convertBufToHexToBin,
         },
         {
           key: Model.BASE_KEY.operTroubleList,
           byte: 1,
           calcParsingKey: Model.CALC_KEY.Grid_Fault,
-          callMethod: parsingMethod.convertBufToHexToBin
+          callMethod: parsingMethod.convertBufToHexToBin,
         },
         {
           key: Model.BASE_KEY.operTroubleList,
           byte: 1,
           calcParsingKey: Model.CALC_KEY.Fault1,
-          callMethod: parsingMethod.convertBufToHexToBin
+          callMethod: parsingMethod.convertBufToHexToBin,
         },
         {
           key: Model.BASE_KEY.operTroubleList,
           byte: 1,
           calcParsingKey: Model.CALC_KEY.Fault2,
-          callMethod: parsingMethod.convertBufToHexToBin
+          callMethod: parsingMethod.convertBufToHexToBin,
         },
         {
           key: Model.BASE_KEY.operTroubleList,
           byte: 1,
           calcParsingKey: Model.CALC_KEY.Warring,
-          callMethod: parsingMethod.convertBufToHexToBin
-        }
-      ]
-    }
+          callMethod: parsingMethod.convertBufToHexToBin,
+        },
+      ],
+    },
   };
   return returnValue;
 };

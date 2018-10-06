@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const xbeeApi = require('xbee-api');
-const {BU} = require('base-util-jh');
+const { BU } = require('base-util-jh');
 
 const AbstConverter = require('../../Default/AbstConverter');
 const Model = require('./Model');
@@ -102,7 +102,7 @@ class Converter extends AbstConverter {
   processDataReceivePacketZigBee(xbeeApi0x90) {
     // BU.CLI(xbeeApi0x90);
     try {
-      const {data} = xbeeApi0x90;
+      const { data } = xbeeApi0x90;
 
       const STX = _.nth(data, 0);
       // STX 체크 (# 문자 동일 체크)

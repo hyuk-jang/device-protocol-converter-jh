@@ -1,15 +1,15 @@
-const {BU} = require('base-util-jh');
 const _ = require('lodash');
+const { BU } = require('base-util-jh');
 
 const ProtocolConverter = require('./ProtocolConverter');
 const AbstBaseModel = require('./AbstBaseModel');
 const defaultWrapper = require('./defaultWrapper');
 
 // const {definedCommanderResponse} =  require('default-intelligence').dccFlagModel;
-const {dccFlagModel, dcmConfigModel} = require('../../../../module/default-intelligence');
+const { dccFlagModel, dcmConfigModel } = require('../../../../module/default-intelligence');
 
-const {definedCommanderResponse} = dccFlagModel;
-const {requestDeviceControlType} = dcmConfigModel;
+const { definedCommanderResponse } = dccFlagModel;
+const { requestDeviceControlType } = dcmConfigModel;
 
 class AbstConverter {
   /**

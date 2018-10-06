@@ -1,13 +1,13 @@
 const _ = require('lodash');
 
 const moment = require('moment');
-const {expect} = require('chai');
-const {BU} = require('base-util-jh');
+const { expect } = require('chai');
+const { BU } = require('base-util-jh');
 
 const Converter = require('../../../src/FarmParallel/dmTech/Converter');
 const Model = require('../../../src/FarmParallel/dmTech/Model');
 
-const {BASE_MODEL} = Model;
+const { BASE_MODEL } = Model;
 
 /** @type {protocol_info} */
 const protocolInfo = {
@@ -31,7 +31,7 @@ describe('encoding Test 1', () => {
     const statusCmdList = model.device.DEFAULT.COMMAND.STATUS;
     const statusCmdInfo = _.head(statusCmdList);
 
-    let cmdList = converter.generationCommand({key: model.device.DEFAULT.KEY, value: 2});
+    let cmdList = converter.generationCommand({ key: model.device.DEFAULT.KEY, value: 2 });
 
     const cmdInfo = _.head(cmdList);
     /** @type {Buffer} */
@@ -80,7 +80,7 @@ describe('Decoding Test', () => {
     const statusCmdList = model.device.DEFAULT.COMMAND.STATUS;
     const statusCmdInfo = _.head(statusCmdList);
     // 명령 생성
-    const cmdList = converter.generationCommand({key: model.device.DEFAULT.KEY, value: 2});
+    const cmdList = converter.generationCommand({ key: model.device.DEFAULT.KEY, value: 2 });
     // const cmdList = converter.generationCommand(statusCmdList);
     // 명령 발송 객체 생성
     // /** @type {dcData} */
@@ -93,7 +93,7 @@ describe('Decoding Test', () => {
     };
 
     // data 18개 전부
-    const {unitId, fnCode, address, dataLength} = statusCmdInfo;
+    const { unitId, fnCode, address, dataLength } = statusCmdInfo;
     const mbapHeader = Buffer.concat([
       converter.protocolConverter.convertNumToHxToBuf(unitId, 1),
       converter.protocolConverter.convertNumToHxToBuf(fnCode, 1),
@@ -140,7 +140,7 @@ describe('Decoding Test', () => {
     };
 
     // data 12개 전부
-    const {unitId, fnCode, address, dataLength} = statusCmdInfo;
+    const { unitId, fnCode, address, dataLength } = statusCmdInfo;
     const mbapHeader = Buffer.concat([
       converter.protocolConverter.convertNumToHxToBuf(unitId, 1),
       converter.protocolConverter.convertNumToHxToBuf(fnCode, 1),

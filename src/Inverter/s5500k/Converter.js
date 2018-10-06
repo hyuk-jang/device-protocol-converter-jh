@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const {BU} = require('base-util-jh');
+const { BU } = require('base-util-jh');
 const AbstConverter = require('../../Default/AbstConverter');
 const protocol = require('./protocol');
 
@@ -10,17 +10,17 @@ const Model = require('./Model');
 class Converter extends AbstConverter {
   /**
    * protocol_info.option --> true: 3.3kW, any: 600W
-   * @param {protocol_info} protocol_info
+   * @param {protocol_info} protocolInfo
    */
-  constructor(protocol_info) {
-    super(protocol_info);
-    this.protocol_info = protocol_info;
-    this.decodingTable = protocol.decodingProtocolTable(protocol_info);
+  constructor(protocolInfo) {
+    super(protocolInfo);
+    this.protocol_info = protocolInfo;
+    this.decodingTable = protocol.decodingProtocolTable(protocolInfo);
     this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
 
     /** BaseModel */
     this.BaseModel = BaseModel;
-    this.baseModel = new BaseModel(protocol_info);
+    this.baseModel = new BaseModel(protocolInfo);
   }
 
   /**

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const {BU} = require('base-util-jh');
+const { BU } = require('base-util-jh');
 const AbstConverter = require('../../Default/AbstConverter');
 const protocol = require('./protocol');
 
@@ -197,7 +197,7 @@ if (require !== undefined && require.main === module) {
     const buf = Buffer.from(currentItem, 'hex');
 
     const res = con.parsingUpdateData({
-      commandSet: {currCmdIndex: 0, cmdList: [{data: 'LOOP\n'}]},
+      commandSet: { currCmdIndex: 0, cmdList: [{ data: 'LOOP\n' }] },
       data: buf,
     });
     console.dir(res.data[BaseModel.BASE_KEY.Min10AvgWindSpeed]);

@@ -5,13 +5,13 @@ const baseFormat = require('./baseFormat');
 const AbstBaseModel = require('../Default/AbstBaseModel');
 
 class BaseModel extends AbstBaseModel {
-  /** @param {protocol_info} protocol_info */
-  constructor(protocol_info) {
+  /** @param {protocol_info} protocolInfo */
+  constructor(protocolInfo) {
     super();
     this.baseFormat = _.clone(baseFormat);
 
-    if (protocol_info) {
-      this.protocol_info = protocol_info;
+    if (protocolInfo) {
+      this.protocol_info = protocolInfo;
     }
 
     this.device = {
@@ -74,8 +74,8 @@ class BaseModel extends AbstBaseModel {
     };
 
     /** Protocol 정보에 따라 자동으로 세부 Model Binding */
-    if (protocol_info) {
-      return this.bindingSubCategory(protocol_info);
+    if (protocolInfo) {
+      return this.bindingSubCategory(protocolInfo);
     }
   }
 

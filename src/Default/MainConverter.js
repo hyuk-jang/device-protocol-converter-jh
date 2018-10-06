@@ -1,6 +1,6 @@
-const {BU} = require('base-util-jh');
+const { BU } = require('base-util-jh');
 
-const {requestDeviceControlType} = require('default-intelligence').dcmConfigModel;
+const { requestDeviceControlType } = require('default-intelligence').dcmConfigModel;
 // require('../../../../module/default-intelligence');
 
 class MainConverter {

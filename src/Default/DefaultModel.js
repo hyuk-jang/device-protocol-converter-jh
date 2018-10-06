@@ -1,5 +1,5 @@
 const crc = require('crc');
-const {BU} = require('base-util-jh');
+const { BU } = require('base-util-jh');
 const ProtocolConverter = require('./ProtocolConverter');
 
 module.exports = {

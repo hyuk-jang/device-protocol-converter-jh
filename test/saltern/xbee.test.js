@@ -1,17 +1,17 @@
-const {expect} = require('chai');
-const {BU} = require('base-util-jh');
+const { expect } = require('chai');
+const { BU } = require('base-util-jh');
 const _ = require('lodash');
 
 const Converter = require('../../src/UPSAS/xbee/Converter');
 
 const Model = require('../../src/UPSAS/xbee/Model');
 
-const {requestDeviceControlType} = require('../../../default-intelligence').dcmConfigModel;
+const { requestDeviceControlType } = require('../../../default-intelligence').dcmConfigModel;
 
 const model = new Model();
 
 describe('encoding Test 1', () => {
-  const converter = new Converter({deviceId: '0013A20010215369'});
+  const converter = new Converter({ deviceId: '0013A20010215369' });
   it('encoding Xbee', done => {
     BU.CLI(model.device.WATER_DOOR.COMMAND.OPEN);
     let cmdInfo = converter.generationCommand({
@@ -112,7 +112,7 @@ describe('Decoding Test', function() {
     // data:{'type':'Buffer','data':[35,48,48,48,49,48,48,48,49,48,52,48,48,48,48,48,48,49,48,46,50,]}};
     responseData.data = Buffer.from(responseData.data);
 
-    const decodingObj = converter.parsingUpdateData({data: responseData});
+    const decodingObj = converter.parsingUpdateData({ data: responseData });
     BU.CLI(decodingObj);
 
     done();

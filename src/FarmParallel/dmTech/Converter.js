@@ -1,11 +1,11 @@
 const _ = require('lodash');
 const moment = require('moment');
-const {BU} = require('base-util-jh');
+const { BU } = require('base-util-jh');
 const AbstConverter = require('../../Default/AbstConverter');
 const protocol = require('./protocol');
 
 const Model = require('./Model');
-const {BASE_MODEL} = require('./Model');
+const { BASE_MODEL } = require('./Model');
 
 class Converter extends AbstConverter {
   /**
@@ -34,7 +34,7 @@ class Converter extends AbstConverter {
     // BU.CLI(cmdList);
     // FIXME: Function Code 04 기준으로만 작성됨.  필요시 수정
     const returnBufferList = cmdList.map(cmdInfo => {
-      const {unitId, fnCode, address, dataLength} = cmdInfo;
+      const { unitId, fnCode, address, dataLength } = cmdInfo;
       const returnBuffer = Buffer.concat([
         this.protocolConverter.convertNumToHxToBuf(unitId, 1),
         this.protocolConverter.convertNumToHxToBuf(fnCode, 1),

@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const {BU} = require('base-util-jh');
+const { BU } = require('base-util-jh');
 
 const defaultModel = require('./DefaultModel');
 const ProtocolConverter = require('./ProtocolConverter');

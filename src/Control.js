@@ -1,9 +1,4 @@
-
-
 class Control {
-  constructor() {
-    
-  }
-
+  constructor() {}
 }
 module.exports = Control;

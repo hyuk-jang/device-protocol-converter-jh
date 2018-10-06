@@ -1,5 +1,3 @@
-
-
 /**
  * @module baseFormat 센서류 데이터 가이드라인
  */
@@ -44,7 +42,7 @@ module.exports = {
    * @description VOL
    */
   vol: null,
-  
+
   /**
    * 전류(Ampare), 단위[A]
    * @description AMP
@@ -86,7 +84,5 @@ module.exports = {
    * @example
    * ON, OFF
    */
-  pump: null,  
-
-
+  pump: null,
 };
