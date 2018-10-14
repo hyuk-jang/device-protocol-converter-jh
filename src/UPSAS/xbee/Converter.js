@@ -54,20 +54,19 @@ class Converter extends AbstConverter {
 
   /**
    * 데이터 분석 요청
-   * @param {xbeeApi_0x8B|xbeeApi_0x90} deviceData 장치로 요청한 명령
+   * @param {xbeeApi_0x8B|xbeeApi_0x90} deviceData 응답받은 데이터
    * @param {xbeeApi_0x10} currTransferCmd 현재 요청한 명령
    * @return {parsingResultFormat}
    */
   concreteParsingData(deviceData, currTransferCmd) {
-    // BU.CLI(deviceData);
+    // BU.CLIS(deviceData, currTransferCmd);
     try {
-      // BU.CLIS(deviceData.remote64, currTransferCmd.destination64);
+      // string 형식이 다를 수 있으므로 대문자로 모두 변환
+      const reqId = _.toUpper(currTransferCmd.destination64);
+      const resId = _.toUpper(deviceData.remote64);
       // 비교
-      if (!_.eq(_.toUpper(currTransferCmd.destination64), _.toUpper(deviceData.remote64))) {
-        throw new Error(
-          `Not Matching ReqAddr: ${_.toUpper(currTransferCmd.destination64)}, 
-          ResAddr: ${_.toUpper(deviceData.remote64)}`,
-        );
+      if (!_.eq(reqId, resId)) {
+        throw new Error(`Not Matching ReqAddr: ${reqId}, ResAddr: ${resId}`);
       }
 
       /** @type {parsingResultFormat} */

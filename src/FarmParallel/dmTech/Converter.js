@@ -55,7 +55,7 @@ class Converter extends AbstConverter {
    */
   concreteParsingData(deviceData, currTransferCmd) {
     try {
-      BU.CLI(deviceData);
+      // BU.CLI(deviceData);
       // RTC 날짜 배열 길이
       const headerLength = 6;
       /**
@@ -98,7 +98,7 @@ class Converter extends AbstConverter {
       // 실제 장치 데이터 배열화
       const resDataList = [];
       for (let index = 4; index < resBuffer.length; index += 2) {
-        BU.CLI(resDataList);
+        // BU.CLI(resDataList);
         resDataList.push(resBuffer.readInt16BE(index));
       }
 
