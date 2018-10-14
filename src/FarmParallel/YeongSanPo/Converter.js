@@ -38,7 +38,6 @@ class Converter extends AbstConverter {
    * 데이터 분석 요청
    * @param {number[]} deviceData 장치로 요청한 명령
    * @param {modbusReadFormat} currTransferCmd 현재 요청한 명령
-   * @return {parsingResultFormat}
    */
   concreteParsingData(deviceData, currTransferCmd) {
     // BU.CLIS(deviceData, currTransferCmd);

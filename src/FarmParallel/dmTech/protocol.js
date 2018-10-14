@@ -11,6 +11,7 @@ const onDeviceOperationStatus = {
   // },
   [Model.BASE_KEY.outsideAirTemperature]: temp => _.subtract(temp, 40),
   [Model.BASE_KEY.soilTemperature]: temp => _.subtract(temp, 40),
+  [Model.BASE_KEY.pvRearTemperature]: temp => _.subtract(temp, 40),
 };
 exports.onDeviceOperationStatus = onDeviceOperationStatus;
 
@@ -24,7 +25,7 @@ exports.decodingProtocolTable = protocolInfo => {
   const SITE = {
     dialing,
     address: 0,
-    bodyLength: 18,
+    bodyLength: 19,
     decodingDataList: [
       {},
       {},
@@ -36,7 +37,7 @@ exports.decodingProtocolTable = protocolInfo => {
         key: Model.BASE_KEY.lux,
       },
       {
-        key: Model.BASE_KEY.solar,
+        key: Model.BASE_KEY.horizontalSolar,
       },
       {
         key: Model.BASE_KEY.soilTemperature,
@@ -81,6 +82,11 @@ exports.decodingProtocolTable = protocolInfo => {
       },
       {
         key: Model.BASE_KEY.isRain,
+      },
+      {
+        key: Model.BASE_KEY.pvRearTemperature,
+        scale: 0.1,
+        fixed: 1,
       },
     ],
   };

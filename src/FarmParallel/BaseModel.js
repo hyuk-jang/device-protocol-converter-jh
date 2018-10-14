@@ -51,6 +51,14 @@ class BaseModel extends AbstBaseModel {
           STATUS: [],
         },
       },
+      PV_REAR_TEMPERATURE: {
+        KEY: baseKey.pvRearTemperature,
+        NAME: '모듈 뒷면 온도',
+        STATUS: {},
+        COMMAND: {
+          STATUS: [],
+        },
+      },
       SOIL_REH: {
         KEY: baseKey.soilReh,
         NAME: '토양 습도',

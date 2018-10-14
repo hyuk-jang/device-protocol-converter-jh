@@ -39,15 +39,16 @@ class MainConverter {
    * @param {generationInfo} generationInfo 각 Protocol Converter에 맞는 데이터
    * @return {commandInfo[]} 장치를 조회하기 위한 명령 리스트 반환
    */
-  generationCommand(generationInfo = { value: requestDeviceControlType.MEASURE }) {
+  generationCommand(generationInfo) {
     // BU.CLI(generationInfo);
+    const { value = requestDeviceControlType.MEASURE } = generationInfo;
     if (!this.deviceCommandConverter) {
       throw new Error('protocolConverter가 설정되지 않았습니다.');
     }
     try {
       // controlValue가 문자 일 경우 숫자로 변환
-      BU.isNumberic(generationInfo.value) &&
-        _.set(generationInfo, 'value', Number(generationInfo.value));
+      BU.isNumberic(value) && _.set(generationInfo, 'value', Number(value));
+      // BU.CLI(generationInfo);
 
       return this.deviceCommandConverter.generationCommand(generationInfo);
     } catch (error) {

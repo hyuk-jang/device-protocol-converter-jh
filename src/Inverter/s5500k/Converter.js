@@ -36,7 +36,6 @@ class Converter extends AbstConverter {
   /**
    * 데이터 분석 요청
    * @param {dcData} dcData 장치로 요청한 명령
-   * @return {parsingResultFormat}
    */
   concreteParsingData(dcData) {
     try {

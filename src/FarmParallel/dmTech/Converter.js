@@ -51,13 +51,14 @@ class Converter extends AbstConverter {
    * 데이터 분석 요청
    * @param {Buffer} deviceData 장치로 요청한 명령
    * @param {Buffer} currTransferCmd 현재 요청한 명령
-   * @return {parsingResultFormat}
    */
   concreteParsingData(deviceData, currTransferCmd) {
     try {
-      // BU.CLI(deviceData);
+      // BU.CLIS(deviceData, currTransferCmd);
       // RTC 날짜 배열 길이
       const headerLength = 6;
+      // 0: SlaveAddr 1: FunctionCode, 2: DataLength, 3: Res Data (N*2)
+      const RES_DATA_START_POINT = 3;
       /**
        * 요청한 명령 추출
        * @type {Buffer}
@@ -68,13 +69,18 @@ class Converter extends AbstConverter {
       const registerAddr = requestData.readInt16BE(2);
       const dataLength = requestData.readInt16BE(4);
 
+      // BU.CLI(requestData);
+
       /** @type {Buffer} */
       const resBuffer = deviceData;
 
       // 수신받은 데이터 2 Byte Hi-Lo 형식으로 파싱
       const resSlaveAddr = resBuffer.readIntBE(0, 1);
       const resFnCode = resBuffer.readIntBE(1, 1);
-      const resDataLength = resBuffer.slice(4).length;
+      const resDataLength = resBuffer.slice(RES_DATA_START_POINT).length;
+
+      // BU.CLI(resBuffer);
+      // BU.CLIS(dataLength, resDataLength);
 
       // 같은 slaveId가 아닐 경우
       if (!_.isEqual(slaveAddr, resSlaveAddr)) {
@@ -88,7 +94,7 @@ class Converter extends AbstConverter {
         throw new Error(`The expected fnCode: ${fnCode}. but received fnCode: ${resFnCode}`);
       }
 
-      // 수신받은 데이터의 길이가 다를 경우
+      // 수신받은 데이터의 길이가 다를 경우 (수신데이터는 2 * N 이므로 기대 값의 길이에 2를 곱함)
       if (!_.isEqual(_.multiply(dataLength, 2), resDataLength)) {
         throw new Error(
           `The expected dataLength: ${dataLength}. but received dataLength: ${resDataLength}`,
@@ -97,8 +103,8 @@ class Converter extends AbstConverter {
 
       // 실제 장치 데이터 배열화
       const resDataList = [];
-      for (let index = 4; index < resBuffer.length; index += 2) {
-        // BU.CLI(resDataList);
+      for (let index = RES_DATA_START_POINT; index < resBuffer.length; index += 2) {
+        // BU.CLI(resBuffer.readInt16BE(index));
         resDataList.push(resBuffer.readInt16BE(index));
       }
 

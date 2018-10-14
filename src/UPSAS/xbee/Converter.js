@@ -23,7 +23,7 @@ class Converter extends AbstConverter {
   /**
    * 장치를 조회 및 제어하기 위한 명령 생성.
    * cmd가 있다면 cmd에 맞는 특정 명령을 생성하고 아니라면 기본 명령을 생성
-   * @param {{key: string, value: number}} generationInfo 각 Protocol Converter에 맞는 데이터
+   * @param {generationInfo} generationInfo 각 Protocol Converter에 맞는 데이터
    * @return {Array.<commandInfo>} 장치를 조회하기 위한 명령 리스트 반환
    */
   generationCommand(generationInfo) {
@@ -56,7 +56,6 @@ class Converter extends AbstConverter {
    * 데이터 분석 요청
    * @param {xbeeApi_0x8B|xbeeApi_0x90} deviceData 응답받은 데이터
    * @param {xbeeApi_0x10} currTransferCmd 현재 요청한 명령
-   * @return {parsingResultFormat}
    */
   concreteParsingData(deviceData, currTransferCmd) {
     // BU.CLIS(deviceData, currTransferCmd);
@@ -69,7 +68,6 @@ class Converter extends AbstConverter {
         throw new Error(`Not Matching ReqAddr: ${reqId}, ResAddr: ${resId}`);
       }
 
-      /** @type {parsingResultFormat} */
       let result;
       // 해당 프로토콜에서 생성된 명령인지 체크
       switch (deviceData.type) {

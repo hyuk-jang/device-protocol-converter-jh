@@ -20,6 +20,12 @@ module.exports = {
    */
   outsideAirTemperature: [],
   /**
+   * 모듈 뒷면 온도, 단위[℃]
+   * @description T_PR
+   * @type {number[]=} 섭씨: 1 atm에서의 물의 어는점을 0도, 끓는점을 100도로 정한 온도
+   */
+  pvRearTemperature: [],
+  /**
    * 토양 습도, 단위[%RH]
    * @description RH_S
    * @type {number[]=} 공기 중에 포함되어 있는 수증기의 양 또는 비율을 나타내는 단위
@@ -44,11 +50,17 @@ module.exports = {
    */
   windDirection: [],
   /**
-   * 일사량, 단위[W/m²]
-   * @description SL
+   * 수평 일사량, 단위[W/m²]
+   * @description S_H
    * @type {number[]=} 1평방 미터당 조사되는 일사에너지의 양이 1W
    */
-  solar: [],
+  horizontalSolar: [],
+  /**
+   * 수평 일사량, 단위[W/m²]
+   * @description S_I
+   * @type {number[]=} 1평방 미터당 조사되는 일사에너지의 양이 1W
+   */
+  inclinedSolar: [],
   /**
    * 시간당 강우량, 단위[mm/hr]
    * @description RF1

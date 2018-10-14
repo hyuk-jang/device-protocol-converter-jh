@@ -100,23 +100,22 @@ class AbstConverter {
   }
 
   /**
+   * @desc MainConverter.generationCommand 메소드에서 value 정제 선행 완료
    * 장치를 조회 및 제어하기 위한 명령 생성.
    * cmd가 있다면 cmd에 맞는 특정 명령을 생성하고 아니라면 기본 명령을 생성
    * @param {generationInfo} generationInfo 각 Protocol Converter에 맞는 데이터
    */
   defaultGenCMD(generationInfo) {
-    // value값이 없다면 기본 값 설정(MEASURE)
-    const genControlValue = _.isNil(generationInfo.value)
-      ? requestDeviceControlType.MEASURE
-      : Number(generationInfo.value);
+    const { TRUE, FALSE, MEASURE, SET } = requestDeviceControlType;
+    const { key, value, setValue } = generationInfo;
 
     /** @type {baseModelDeviceStructure} */
     const foundIt = _.find(this.model.device, deviceModel =>
-      _.isEqual(_.get(deviceModel, 'KEY'), generationInfo.key),
+      _.isEqual(_.get(deviceModel, 'KEY'), key),
     );
 
     if (_.isEmpty(foundIt)) {
-      throw new Error(`${generationInfo.key}는 존재하지 않습니다.`);
+      throw new Error(`${key}는 존재하지 않습니다.`);
     }
 
     // BU.CLI(generationInfo);
@@ -127,32 +126,32 @@ class AbstConverter {
     let cmdList;
 
     // 컨트롤 밸류가 0이나 False라면 장치 작동을 Close, Off
-    if (genControlValue === requestDeviceControlType.FALSE) {
+    if (value === FALSE) {
       if (_.keys(commandInfo).includes('CLOSE')) {
         cmdList = commandInfo.CLOSE;
       } else if (_.keys(commandInfo).includes('OFF')) {
         cmdList = commandInfo.OFF;
       }
-    } else if (genControlValue === requestDeviceControlType.TRUE) {
+    } else if (value === TRUE) {
       if (_.keys(commandInfo).includes('OPEN')) {
         cmdList = commandInfo.OPEN;
       } else if (_.keys(commandInfo).includes('ON')) {
         cmdList = commandInfo.ON;
       }
-    } else if (genControlValue === requestDeviceControlType.MEASURE) {
+    } else if (value === MEASURE) {
       if (_.keys(commandInfo).includes('STATUS')) {
         cmdList = commandInfo.STATUS;
       }
-    } else if (genControlValue === requestDeviceControlType.SET) {
+    } else if (value === SET) {
       // Set 은 메소드로 이루어져 있어야하며 set 값을 반영한 결과를 돌려줌
       if (_.keys(commandInfo).includes('SET')) {
-        cmdList = commandInfo.SET(generationInfo.setValue);
+        cmdList = commandInfo.SET(setValue);
       }
     } else {
-      throw new Error(`controlValue: ${genControlValue}는 유효한 값이 아닙니다.`);
+      throw new Error(`controlValue: ${value}는 유효한 값이 아닙니다.`);
     }
     if (cmdList === undefined || _.isEmpty(cmdList)) {
-      throw new Error(`${generationInfo.key}에는 Value: ${genControlValue} 존재하지 않습니다.`);
+      throw new Error(`${key}에는 Value: ${value} 존재하지 않습니다.`);
     }
     return cmdList;
   }
@@ -165,6 +164,7 @@ class AbstConverter {
   parsingUpdateData(dcData) {
     // BU.CLIN(dcData);
     const returnValue = {};
+    const { DONE, ERROR } = definedCommanderResponse;
     try {
       // 수신 데이터 추적을 하는 경우라면 dcData의 Data와 합산
       if (_.get(this, 'protocolOptionInfo.hasTrackingData') === true) {
@@ -182,14 +182,14 @@ class AbstConverter {
         throw error;
       }
       // BU.CLI('@@@@@@@@@@');
-      returnValue.eventCode = this.definedCommanderResponse.DONE;
+      returnValue.eventCode = DONE;
 
       // DONE 처리가 될 경우 Buffer 비움
       this.resetTrackingDataBuffer();
 
       return returnValue;
     } catch (error) {
-      returnValue.eventCode = this.definedCommanderResponse.ERROR;
+      returnValue.eventCode = ERROR;
       returnValue.data = error;
       return returnValue;
     }
@@ -244,6 +244,7 @@ class AbstConverter {
    */
   automaticDecodingForArray(decodingTable, receiveData) {
     try {
+      const { address, decodingDataList } = decodingTable;
       // BU.CLI(receiveData);
       // BU.CLI(decodingTable);
       // 데이터를 집어넣을 기본 자료형을 가져옴
@@ -252,11 +253,11 @@ class AbstConverter {
       let currIndex = 0;
 
       // 총 체크해야할 데이터 범위를 계산 (시작주소 + 수신 데이터 길이)
-      const remainedDataListLength = _.sum([receiveData.length, decodingTable.address]);
+      const remainedDataListLength = _.sum([receiveData.length, address]);
       // 시작주소부터 체크 시작
-      for (let index = decodingTable.address; index < remainedDataListLength; index += 1) {
+      for (let index = address; index < remainedDataListLength; index += 1) {
         // 해당 디코딩 정보 추출
-        const decodingInfo = decodingTable.decodingDataList[index];
+        const decodingInfo = decodingDataList[index];
         // BU.CLI(decodingInfo)
         // 파싱 의뢰
         this.automaticParsingData(decodingInfo, _.nth(receiveData, currIndex), returnModelInfo);
