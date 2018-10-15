@@ -108,7 +108,14 @@ class Converter extends AbstConverter {
         resDataList.push(resBuffer.readInt16BE(index));
       }
 
-      const decodingTable = this.decodingTable.SITE;
+      let decodingTable;
+      // NOTE: DL 001, 003, 005 번은 모듈 뒷면 온도를 재기 위한 테이블을 불러옴
+      const pvRearTempTableList = ['001', '003', '005'];
+      if (_.includes(pvRearTempTableList, this.protocolInfo.deviceId)) {
+        decodingTable = this.decodingTable.PRT_SITE;
+      } else {
+        decodingTable = this.decodingTable.SITE;
+      }
       // 요청 시작 주소를 가져옴
       const startAddr = registerAddr;
       // 실제 시작하는 주소 세팅

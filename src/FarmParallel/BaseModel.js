@@ -91,9 +91,17 @@ class BaseModel extends AbstBaseModel {
           STATUS: [],
         },
       },
-      SOLAR: {
-        KEY: baseKey.solar,
+      HORIZONTAL_SOLAR: {
+        KEY: baseKey.horizontalSolar,
         NAME: '일사량',
+        STATUS: {},
+        COMMAND: {
+          STATUS: [],
+        },
+      },
+      INCLINED_SOLAR: {
+        KEY: baseKey.inclinedSolar,
+        NAME: '경사 일사량',
         STATUS: {},
         COMMAND: {
           STATUS: [],

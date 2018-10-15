@@ -9,6 +9,16 @@ const onDeviceOperationStatus = {
   //   /** @type {string} 비 감지 On */
   //   1: 'ON',
   // },
+  [Model.BASE_KEY.windDirection]: wd => {
+    // 360도를 8등분
+    const anglePiece = 45;
+    const divideValue = wd / 8;
+    const remainValue = wd % 8;
+    const lowerNumber = _.multiply(anglePiece, divideValue);
+    const upperNumber = _.multiply(anglePiece, divideValue + 1);
+
+    return _.clamp(remainValue, lowerNumber, upperNumber);
+  },
   [Model.BASE_KEY.outsideAirTemperature]: temp => _.subtract(temp, 40),
   [Model.BASE_KEY.soilTemperature]: temp => _.subtract(temp, 40),
 };
