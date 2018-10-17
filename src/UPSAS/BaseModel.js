@@ -165,7 +165,7 @@ class BaseModel extends AbstBaseModel {
 
   /** BASE_MODEL Key와 같은 값을 가진 Value를 매칭 후 반환 */
   static get BASE_KEY() {
-    const baseKey = Object.assign({}, baseFormat);
+    const baseKey = _.clone(baseFormat);
     _.forEach(baseKey, (v, k) => _.set(baseKey, k, k));
     return baseKey;
   }

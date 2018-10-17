@@ -28,9 +28,9 @@ class Converter extends AbstConverter {
    * @return {commandInfo[]} 장치를 조회하기 위한 명령 리스트 반환
    */
   generationCommand(generationInfo) {
-    BU.CLI(generationInfo);
+    // BU.CLI(generationInfo);
     const cmdList = this.defaultGenCMD(generationInfo);
-    BU.CLI(cmdList);
+    // BU.CLI(cmdList);
     return this.makeDefaultCommandInfo(cmdList, 1000);
   }
 
