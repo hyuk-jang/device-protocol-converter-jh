@@ -110,11 +110,23 @@ class Converter extends AbstConverter {
 
       let decodingTable;
       // NOTE: DL 001, 003, 005 번은 모듈 뒷면 온도를 재기 위한 테이블을 불러옴
-      const pvRearTempTableList = ['001', '003', '005'];
-      if (_.includes(pvRearTempTableList, this.protocolInfo.deviceId)) {
+      const pvRearTempTableList = [1, 4];
+      // NOTE: 외기 환경 데이터 로거 번호
+      const horizontalSiteList = [7, 9, 11, 13, 16];
+      BU.CLI(this.protocolInfo.deviceId);
+      let numDeviceId = this.protocolInfo.deviceId;
+      if (Buffer.isBuffer(this.protocolInfo.deviceId)) {
+        numDeviceId = this.protocolInfo.deviceId.readDoubleBE();
+      } else if (_.isString(this.protocolInfo.deviceId)) {
+        numDeviceId = _.toNumber(this.protocolInfo.deviceId);
+      }
+
+      if (_.includes(pvRearTempTableList, numDeviceId)) {
         decodingTable = this.decodingTable.PRT_SITE;
+      } else if (_.includes(horizontalSiteList, numDeviceId)) {
+        decodingTable = this.decodingTable.HORIZONTAL_SITE;
       } else {
-        decodingTable = this.decodingTable.SITE;
+        decodingTable = this.decodingTable.INCLINED_SITE;
       }
       // 요청 시작 주소를 가져옴
       const startAddr = registerAddr;
