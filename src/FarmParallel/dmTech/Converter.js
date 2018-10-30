@@ -113,7 +113,6 @@ class Converter extends AbstConverter {
       const pvRearTempTableList = [1, 4];
       // NOTE: 외기 환경 데이터 로거 번호
       const horizontalSiteList = [7, 9, 11, 13, 16];
-      BU.CLI(this.protocolInfo.deviceId);
       let numDeviceId = this.protocolInfo.deviceId;
       if (Buffer.isBuffer(this.protocolInfo.deviceId)) {
         numDeviceId = this.protocolInfo.deviceId.readDoubleBE();

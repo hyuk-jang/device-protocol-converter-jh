@@ -50,7 +50,7 @@ const defaultWrapper = {
    * @param {Buffer} bufData
    */
   peelFrameMsg: (protocolInfo, bufData) => {
-    BU.CLIS(protocolInfo, bufData);
+    // BU.CLIS(protocolInfo, bufData);
     let peeledData;
     // 전송 명령 frame을 걷어냄
     switch (_.get(protocolInfo, 'wrapperCategory', undefined)) {
@@ -99,7 +99,7 @@ const defaultWrapper = {
    * @return {Buffer}
    */
   defaultPeelFrame: frameData => {
-    console.log('frameData', frameData);
+    // console.log('frameData', frameData);
     const indexSTX = frameData.indexOf(0x02);
     const indexETX = frameData.lastIndexOf(0x03);
     // STX, CMD 이후부터 마지막 ETX 전까지 자름
