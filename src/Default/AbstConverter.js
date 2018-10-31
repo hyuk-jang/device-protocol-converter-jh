@@ -52,13 +52,18 @@ class AbstConverter {
   /**
    * 명령을 보낼 배열을 생성
    * @param {Array.<*>} cmdDataList 실제 수행할 명령
-   * @param {number=} commandExecutionTimeoutMs 해당 명령을 수행하기전 대기 시간(ms)
-   * @param {number=} delayExecutionTimeoutMs 해당 명령을 수행할때까지의 timeout 유예시간(ms)
+   * @param {number=} commandExecutionTimeoutMs 해당 전송 후 명령 완료 처리될때까지 대기 시간 (ms)
+   * @param {number=} delayExecutionTimeoutMs 해당 명령을 수행하기 전 timeout 대기 시간(ms)
    * @return {Array.<commandInfo>}
    */
-  makeDefaultCommandInfo(cmdDataList, commandExecutionTimeoutMs, delayExecutionTimeoutMs) {
+  makeDefaultCommandInfo(cmdDataList, commandExecutionTimeoutMs = 1000, delayExecutionTimeoutMs) {
     /** @type {Array.<commandInfo>} */
     const returnValue = [];
+
+    // wrapCategory를 사용한다면 중계기를 거치므로 각 1초를 추가로 할애
+    if (this.protocolInfo.wrapperCategory.length) {
+      commandExecutionTimeoutMs = 2000;
+    }
 
     cmdDataList = Array.isArray(cmdDataList) ? cmdDataList : [cmdDataList];
 
@@ -66,13 +71,9 @@ class AbstConverter {
       /** @type {commandInfo} */
       const commandObj = {
         data: this.coverFrame(bufData),
-        commandExecutionTimeoutMs: _.isNumber(commandExecutionTimeoutMs)
-          ? commandExecutionTimeoutMs
-          : 1000,
+        commandExecutionTimeoutMs,
+        delayExecutionTimeoutMs,
       };
-      if (_.isNumber(delayExecutionTimeoutMs)) {
-        commandObj.delayExecutionTimeoutMs = delayExecutionTimeoutMs;
-      }
 
       returnValue.push(commandObj);
     });
