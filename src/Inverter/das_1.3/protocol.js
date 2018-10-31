@@ -262,8 +262,8 @@ exports.decodingProtocolTable = protocolInfo => {
         key: Model.BASE_KEY.pvKw,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
-        scale: _.get(protocolInfo, 'option') === true ? 0.1 : 0.001,
-        fixed: _.get(protocolInfo, 'option') === true ? 1 : 3,
+        scale: _.get(protocolInfo, 'option.isKwUnit', true) === true ? 0.1 : 0.001,
+        fixed: _.get(protocolInfo, 'option.isKwUnit', true) === true ? 1 : 3,
       },
     ],
   };
@@ -339,8 +339,8 @@ exports.decodingProtocolTable = protocolInfo => {
         key: Model.BASE_KEY.powerGridKw,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
-        scale: _.get(protocolInfo, 'option') === true ? 0.1 : 0.001,
-        fixed: _.get(protocolInfo, 'option') === true ? 1 : 3,
+        scale: _.get(protocolInfo, 'option.isKwUnit', true) === true ? 0.1 : 0.001,
+        fixed: _.get(protocolInfo, 'option.isKwUnit', true) === true ? 1 : 3,
       },
       {
         key: Model.BASE_KEY.powerCpKwh,
