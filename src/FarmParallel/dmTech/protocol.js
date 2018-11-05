@@ -44,12 +44,6 @@ exports.decodingProtocolTable = protocolInfo => {
     address: 0,
     bodyLength: 19,
     decodingDataList: [
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
       {
         key: Model.BASE_KEY.lux,
       },
@@ -114,12 +108,6 @@ exports.decodingProtocolTable = protocolInfo => {
     address: 0,
     bodyLength: 19,
     decodingDataList: [
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
       {
         key: Model.BASE_KEY.lux,
       },
@@ -184,12 +172,6 @@ exports.decodingProtocolTable = protocolInfo => {
     address: 0,
     bodyLength: 19,
     decodingDataList: [
-      {},
-      {},
-      {},
-      {},
-      {},
-      {},
       {
         key: Model.BASE_KEY.lux,
       },

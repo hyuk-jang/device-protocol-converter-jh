@@ -55,8 +55,6 @@ class Converter extends AbstConverter {
   concreteParsingData(deviceData, currTransferCmd) {
     try {
       // BU.CLIS(deviceData, currTransferCmd);
-      // RTC 날짜 배열 길이
-      const headerLength = 6;
       // 0: SlaveAddr 1: FunctionCode, 2: DataLength, 3: Res Data (N*2)
       const RES_DATA_START_POINT = 3;
       /**
@@ -137,38 +135,6 @@ class Converter extends AbstConverter {
       /** @type {BASE_MODEL} */
       const returnValue = this.automaticDecodingForArray(decodingTable, dataBody);
       // 계측 시간을 포함할 경우
-      if (startAddr < headerLength) {
-        const measureDate = moment();
-        let currIndex = 0;
-        for (let index = startAddr; index < headerLength; index += 1) {
-          const indexValue = _.nth(resDataList, currIndex);
-          switch (index) {
-            case 0:
-              // measureDate.year(_.sum([2000, indexValue]));
-              measureDate.year(indexValue);
-              break;
-            case 1:
-              measureDate.month(_.subtract(indexValue, 1));
-              break;
-            case 2:
-              measureDate.date(indexValue);
-              break;
-            case 3:
-              measureDate.hour(indexValue);
-              break;
-            case 4:
-              measureDate.minute(indexValue);
-              break;
-            case 5:
-              measureDate.second(indexValue);
-              break;
-            default:
-              break;
-          }
-          currIndex += 1;
-        }
-        returnValue.writeDate.push(measureDate.toDate());
-      }
 
       return returnValue;
     } catch (error) {
