@@ -30,7 +30,7 @@
     "prettier": "^1.14.3"
   },
   "dependencies": {
-    "base-util-jh": "^1.1.18",
+    "base-util-jh": "^1.1.19",
     "crc": "^3.8.0",
     "default-intelligence": "^0.1.5",
     "lodash": "^4.17.11",
