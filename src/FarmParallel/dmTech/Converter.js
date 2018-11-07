@@ -107,8 +107,10 @@ class Converter extends AbstConverter {
       }
 
       let decodingTable;
-      // NOTE: 모듈 후면 온도, 모듈 하부 일사량이 붙어 있는 로거
-      const pvRearTempTableList = [2, 5];
+      // NOTE: 모듈 후면 온도, 경사 일사량이 붙어 있는 로거
+      const pvRearTempTableList = [1, 4];
+      // NOTE: 모듈 하부 일사량이 붙어 있는 로거
+      const pvUnderyingSolarTableList = [2, 5];
       // NOTE: 외기 환경 데이터 로거 번호
       const horizontalSiteList = [7, 9, 11, 13, 16];
       let numDeviceId = this.protocolInfo.deviceId;
@@ -120,6 +122,8 @@ class Converter extends AbstConverter {
 
       if (_.includes(pvRearTempTableList, numDeviceId)) {
         decodingTable = this.decodingTable.PRT_SITE;
+      } else if (_.includes(pvUnderyingSolarTableList, numDeviceId)) {
+        decodingTable = this.decodingTable.PUS_SITE;
       } else if (_.includes(horizontalSiteList, numDeviceId)) {
         decodingTable = this.decodingTable.HORIZONTAL_SITE;
       } else {
@@ -132,6 +136,12 @@ class Converter extends AbstConverter {
 
       // 실제 파싱 데이터 추출
       const dataBody = resDataList.slice(0, requestData.dataLength);
+
+      // FIXME: 실제 현장에서의 간헐적인 00000000000000 데이터 처리를 위함. 해당 데이터는 사용하지 않음
+      if (dataBody.every(v => v === 0)) {
+        return BASE_MODEL;
+      }
+
       /** @type {BASE_MODEL} */
       const returnValue = this.automaticDecodingForArray(decodingTable, dataBody);
       // 계측 시간을 포함할 경우
