@@ -62,6 +62,12 @@ module.exports = {
    */
   inclinedSolar: [],
   /**
+   * 모듈 하부 일사량, 단위[W/m²]
+   * @description S_PU
+   * @type {number[]=} 1평방 미터당 조사되는 일사에너지의 양이 1W
+   */
+  pvUnderlyingSolar: [],
+  /**
    * 시간당 강우량, 단위[mm/hr]
    * @description RF1
    * @type {number[]=} 시간당 일정한 곳에 내린 비의 분량. 단위는 mm

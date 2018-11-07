@@ -166,7 +166,11 @@ exports.decodingProtocolTable = protocolInfo => {
     ],
   };
 
-  /** @type {decodingProtocolInfo} */
+  /**
+   * @desc PV
+   * 경사 일사량이 붙어 있는 로거
+   * @type {decodingProtocolInfo}
+   */
   const PRT_SITE = {
     dialing,
     address: 0,
@@ -176,7 +180,7 @@ exports.decodingProtocolTable = protocolInfo => {
         key: Model.BASE_KEY.lux,
       },
       {
-        key: Model.BASE_KEY.inclinedSolar,
+        key: Model.BASE_KEY.pvUnderlyingSolar,
       },
       {
         key: Model.BASE_KEY.soilTemperature,

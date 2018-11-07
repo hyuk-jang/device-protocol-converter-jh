@@ -107,8 +107,8 @@ class Converter extends AbstConverter {
       }
 
       let decodingTable;
-      // NOTE: DL 001, 003, 005 번은 모듈 뒷면 온도를 재기 위한 테이블을 불러옴
-      const pvRearTempTableList = [1, 4];
+      // NOTE: 모듈 후면 온도, 모듈 하부 일사량이 붙어 있는 로거
+      const pvRearTempTableList = [2, 5];
       // NOTE: 외기 환경 데이터 로거 번호
       const horizontalSiteList = [7, 9, 11, 13, 16];
       let numDeviceId = this.protocolInfo.deviceId;
