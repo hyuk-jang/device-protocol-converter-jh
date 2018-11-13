@@ -12,14 +12,16 @@ const onDeviceOperationStatus = {
   // },
   [Model.BASE_KEY.windDirection]: wd => {
     // BU.CLI(wd);
+    // 0 ~ 360 을 벗어나는 데이터는 임계치로 묶음
+    wd = _.clamp(wd, 0, 360);
     // 360도를 8등분
     const anglePiece = 45;
     let divideValue = wd / anglePiece;
     const remainValue = wd % anglePiece;
 
-    const addPiece = _.clamp(remainValue, 0, anglePiece);
-
-    divideValue += addPiece === 0 ? 0 : 1;
+    // 남은 각도가 다음 각도에 가깝다면 1을 더함
+    divideValue += _.divide(anglePiece, 2) > remainValue ? 1 : 0;
+    // index 8 --> 360도 각도라면 0으로 교체
     if (divideValue >= 8) {
       divideValue = 0;
     }
