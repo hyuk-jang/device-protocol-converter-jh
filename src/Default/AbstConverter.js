@@ -259,7 +259,7 @@ class AbstConverter {
       for (let index = address; index < remainedDataListLength; index += 1) {
         // 해당 디코딩 정보 추출
         const decodingInfo = decodingDataList[index];
-        // BU.CLI(decodingInfo)
+        // BU.CLI(decodingInfo, receiveData);
         // 파싱 의뢰
         this.automaticParsingData(decodingInfo, _.nth(receiveData, currIndex), returnModelInfo);
         currIndex += _.get(decodingInfo, 'byte', 1);
@@ -278,6 +278,7 @@ class AbstConverter {
    * @param {Object} modelInfo
    */
   automaticParsingData(decodingInfo, parsingData, modelInfo) {
+    // BU.CLI(parsingData, decodingInfo);
     let returnValue = null;
     if (!_.isEmpty(decodingInfo)) {
       // 사용하는 메소드를 호출
