@@ -3,13 +3,8 @@ const { BU } = require('base-util-jh');
 const Model = require('./Model');
 
 const onDeviceOperationStatus = {
-  /** @type {Object} 강수 여부 */
-  // [Model.BASE_KEY.isRain]: {
-  //   /** @type {number} 비 감지 Off */
-  //   0: 'Off',
-  //   /** @type {string} 비 감지 On */
-  //   1: 'ON',
-  // },
+  /** @type {number} ws 풍속(MPH)이므로 환산하여 반환 */
+  [Model.BASE_KEY.windSpeed]: ws => _.round(_.divide(ws, 2.237), 1),
   [Model.BASE_KEY.windDirection]: wd => {
     // BU.CLI(wd);
     // 0 ~ 360 을 벗어나는 데이터는 임계치로 묶음
