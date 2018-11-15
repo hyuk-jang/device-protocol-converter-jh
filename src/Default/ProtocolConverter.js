@@ -327,7 +327,7 @@ class Converter {
       } else if (typeof arg === 'object') {
         if (Buffer.isBuffer(arg)) {
           this.resultMakeMsg2Buffer.push(arg);
-        } else if (arg.type === 'Buffer') {
+        } else if (_.get(arg, 'type') === 'Buffer') {
           this.resultMakeMsg2Buffer.push(Buffer.from(arg.data));
         } else {
           const strMsg = JSON.stringify(arg);
