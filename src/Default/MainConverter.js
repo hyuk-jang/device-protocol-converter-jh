@@ -57,6 +57,18 @@ class MainConverter {
   }
 
   /**
+   * 해당 Category에 존재하는 Model Command를 직접 호출하였을 경우 사용
+   * @param {Buffer[]} commandBuffer
+   */
+  designationCommand(commandBuffer) {
+    try {
+      return this.deviceCommandConverter.generationCommand(commandBuffer);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
    * 데이터 분석 요청
    * @param {dcData} dcData 장치로 요청한 명령
    * @return {parsingResultFormat}

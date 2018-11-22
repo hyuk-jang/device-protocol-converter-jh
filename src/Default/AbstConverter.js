@@ -61,7 +61,7 @@ class AbstConverter {
     const returnValue = [];
 
     // wrapCategory를 사용한다면 중계기를 거치므로 각 1초를 추가로 할애
-    if (this.protocolInfo.wrapperCategory.length) {
+    if (_.get(this.protocolInfo, 'wrapperCategory', '').length) {
       commandExecutionTimeoutMs = 2000;
     }
 
