@@ -7,6 +7,7 @@ const FarmParallel = require('./src/FarmParallel/BaseModel');
 const Inverter = require('./src/Inverter/BaseModel');
 const Weathercast = require('./src/Weathercast/BaseModel');
 const UPSAS = require('./src/UPSAS/BaseModel');
+const Sensor = require('./src/Sensor/BaseModel');
 
 const MainConverter = require('./src/Default/MainConverter');
 
@@ -19,6 +20,7 @@ const BaseModel = {
   Inverter,
   Weathercast,
   UPSAS,
+  Sensor,
 };
 
 module.exports = {

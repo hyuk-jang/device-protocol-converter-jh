@@ -69,13 +69,13 @@ class Converter extends AbstConverter {
             dataStorage.pvVol.push(receiveNumData);
             break;
           case 2:
-            dataStorage.pvWatt.push(receiveNumData);
+            dataStorage.pvW.push(receiveNumData);
             break;
           default:
             break;
         }
       } else if (_.findIndex(STATUS_POWER, buf => _.isEqual(buf, requestData)) >= 0) {
-        dataStorage.pvIsOperation.push(receiveNumData);
+        dataStorage.operIsRun.push(receiveNumData);
       }
 
       return dataStorage;
@@ -88,8 +88,8 @@ module.exports = Converter;
 
 if (require !== undefined && require.main === module) {
   const converter = new Converter({
-    mainCategory: 'Ean',
-    subCategory: 'PV',
+    mainCategory: 'Sensor',
+    subCategory: 'EanPV',
   });
 
   const cmdStatusPower = converter.generationCommand(

@@ -85,8 +85,8 @@ module.exports = Converter;
 
 if (require !== undefined && require.main === module) {
   const converter = new Converter({
-    mainCategory: 'Ean',
-    subCategory: 'Env',
+    mainCategory: 'Sensor',
+    subCategory: 'EanEnv',
     protocolOptionInfo: {
       hasTrackingData: true,
     },
