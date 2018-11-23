@@ -13,7 +13,7 @@ class Model extends BaseModel {
     }
     this.dialing = _.get(this, 'protocolInfo.deviceId');
 
-    this.device.DEFAULT.COMMAND.STATUS = [Buffer.from('21 get rtd\n')];
+    this.device.DEFAULT.COMMAND.STATUS = [Buffer.from('21 get rtd\r')];
   }
 }
 

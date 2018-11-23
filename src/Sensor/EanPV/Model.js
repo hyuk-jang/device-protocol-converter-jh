@@ -15,20 +15,20 @@ class Model extends BaseModel {
 
     // 현재 전압, 전류, 전력 측정값을 Read한다.
     this.device.DEFAULT.COMMAND.STATUS = [
-      Buffer.from(':MEASure:VOLTage?'),
-      Buffer.from(':MEASure:CURRent?'),
-      Buffer.from(':MEASure:POWer?'),
+      Buffer.from(':MEASure:VOLTage?\n'),
+      Buffer.from(':MEASure:CURRent?\n'),
+      Buffer.from(':MEASure:POWer?\n'),
     ];
 
     this.device.DEFAULT.COMMAND.STATUS_POWER = [
-      Buffer.from(':SOUR:INP:STAT?'), // 현재 전원 상태 확인
+      Buffer.from(':SOUR:INP:STAT?\n'), // 현재 전원 상태 확인
     ];
 
     /** @type {commandInfo[]} */
     this.device.DEFAULT.COMMAND.WAKEUP = [
-      Buffer.from(':SOUR:INP:STAT ON'), // 싱크 상태를 ON/OFF 시키기 위해 사용 (전원이 처음 인가된 후 싱크상태는 OFF)
-      Buffer.from(':SOUR:FUNC RES'), // CR 모드로 진입한다.(정저항 모드)
-      Buffer.from(':SOUR:RES:LEV:IMM 2'), // CR 모드에서 저항값을 2옴으로 설정한다.
+      Buffer.from(':SOUR:INP:STAT ON\n'), // 싱크 상태를 ON/OFF 시키기 위해 사용 (전원이 처음 인가된 후 싱크상태는 OFF)
+      Buffer.from(':SOUR:FUNC RES\n'), // CR 모드로 진입한다.(정저항 모드)
+      Buffer.from(':SOUR:RES:LEV:IMM 2\n'), // CR 모드에서 저항값을 2옴으로 설정한다.
     ];
   }
 }

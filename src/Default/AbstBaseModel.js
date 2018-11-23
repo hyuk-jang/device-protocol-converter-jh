@@ -109,8 +109,17 @@ class AbstBaseModel {
     return baseKey;
   }
 
+  /** 현재 카테고리에 있는 장치 데이터를 저장하기 위한 모델 */
+  get BASE_MODEL() {
+    return _.cloneDeep(this.baseFormat);
+  }
+
   /** BASE_MODEL Key와 같은 값을 가진 Value를 매칭 후 반환 */
-  static get BASE_KEY() {}
+  get BASE_KEY() {
+    const baseKey = _.clone(this.baseFormat);
+    _.forEach(baseKey, (v, k) => _.set(baseKey, k, k));
+    return baseKey;
+  }
 }
 module.exports = AbstBaseModel;
 

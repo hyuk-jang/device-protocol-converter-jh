@@ -33,6 +33,16 @@ class MainConverter {
     }
   }
 
+  /** 해당 Converter DeepClone Base Model */
+  get BaseModel() {
+    return _.get(this, 'deviceCommandConverter.model.BASE_MODEL', {});
+  }
+
+  /** 해당 Converter DeepClone Base Model */
+  get BaseKey() {
+    return _.get(this, 'deviceCommandConverter.model.BASE_KEY', {});
+  }
+
   /**
    * 장치를 조회 및 제어하기 위한 명령 생성.
    * cmd가 있다면 cmd에 맞는 특정 명령을 생성하고 아니라면 기본 명령을 생성
@@ -62,7 +72,7 @@ class MainConverter {
    */
   designationCommand(commandBuffer) {
     try {
-      return this.deviceCommandConverter.generationCommand(commandBuffer);
+      return this.deviceCommandConverter.designationCommand(commandBuffer);
     } catch (error) {
       throw error;
     }

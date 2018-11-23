@@ -23,14 +23,27 @@ class Converter extends AbstConverter {
   /**
    * 장치를 조회 및 제어하기 위한 명령 생성.
    * cmd가 있다면 cmd에 맞는 특정 명령을 생성하고 아니라면 기본 명령을 생성
+   * @param {generationInfo} generationInfo 각 Protocol Converter에 맞는 데이터
+   * @return {commandInfo[]} 장치를 조회하기 위한 명령 리스트 반환
+   */
+  generationCommand(generationInfo) {
+    // BU.CLI(generationInfo);
+    const cmdList = this.defaultGenCMD(generationInfo);
+    // BU.CLI(cmdList);
+    return this.makeDefaultCommandInfo(cmdList);
+  }
+
+  /**
+   * 장치를 조회 및 제어하기 위한 명령 생성.
+   * cmd가 있다면 cmd에 맞는 특정 명령을 생성하고 아니라면 기본 명령을 생성
    * @param {Buffer[]} cmdBufferList 각 Protocol Converter에 맞는 데이터
    * @return {commandInfo[]} 장치를 조회하기 위한 명령 리스트 반환
    */
-  generationCommand(cmdBufferList) {
+  designationCommand(cmdBufferList) {
     return cmdBufferList.map(cmdBuffer => {
       /** @type {commandInfo} */
       const command = {
-        data: Buffer.concat([cmdBuffer, Buffer.from('\r\n')]),
+        data: cmdBuffer,
         commandExecutionTimeoutMs: 100,
       };
       return command;
@@ -92,15 +105,16 @@ if (require !== undefined && require.main === module) {
     subCategory: 'EanPV',
   });
 
-  const cmdStatusPower = converter.generationCommand(
+  const cmdStatusPower = converter.designationCommand(
     converter.model.device.DEFAULT.COMMAND.STATUS_POWER,
   );
 
-  // BU.CLI(cmdStatusPower.map(info => _.toString(info.data)));
-  const cmdWakeUp = converter.generationCommand(converter.model.device.DEFAULT.COMMAND.WAKEUP);
-  // BU.CLI(cmdWakeUp.map(info => _.toString(info.data)));
-  const cmdStatus = converter.generationCommand(converter.model.device.DEFAULT.COMMAND.STATUS);
-  // BU.CLI(cmdStatus.map(info => _.toString(info.data)));
+  BU.CLI(cmdStatusPower.map(info => _.toString(info.data)));
+  const cmdWakeUp = converter.designationCommand(converter.model.device.DEFAULT.COMMAND.WAKEUP);
+  BU.CLI(cmdWakeUp.map(info => _.toString(info.data)));
+  const cmdStatus = converter.generationCommand({ key: 'DEFAULT', value: 2 });
+  BU.CLI(cmdStatus);
+  BU.CLI(cmdStatus.map(info => _.toString(info.data)));
 
   // BU.CLIN(converter.model);
 
@@ -115,11 +129,11 @@ if (require !== undefined && require.main === module) {
   //   BU.CLI(result);
   // });
 
-  statusDataList.forEach((data, index) => {
-    const result = converter.concreteParsingData(
-      data,
-      converter.model.device.DEFAULT.COMMAND.STATUS[index],
-    );
-    BU.CLI(result);
-  });
+  // statusDataList.forEach((data, index) => {
+  //   const result = converter.concreteParsingData(
+  //     data,
+  //     converter.model.device.DEFAULT.COMMAND.STATUS[index],
+  //   );
+  //   BU.CLI(result);
+  // });
 }
