@@ -39,7 +39,7 @@ class Converter extends AbstConverter {
    */
   concreteParsingData(deviceData) {
     try {
-      BU.CLI(deviceData.toString());
+      // BU.CLI(deviceData.toString());
       const decodingTable = this.decodingTable.MAIN_SITE;
       const strData = deviceData.toString();
 
