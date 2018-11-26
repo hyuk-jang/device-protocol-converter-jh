@@ -30,7 +30,7 @@ class Converter extends AbstConverter {
     // BU.CLI(generationInfo);
     const cmdList = this.defaultGenCMD(generationInfo);
     // BU.CLI(cmdList);
-    return this.makeDefaultCommandInfo(cmdList, 100);
+    return this.makeDefaultCommandInfo(cmdList);
   }
 
   /**
