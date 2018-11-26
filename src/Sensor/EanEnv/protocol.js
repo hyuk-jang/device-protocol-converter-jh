@@ -24,15 +24,31 @@ exports.decodingProtocolTable = protocolInfo => {
         key: Model.BASE_KEY.pvRearTemperature,
       },
       {
-        key: Model.BASE_KEY.waterTemperature,
+        key: Model.BASE_KEY.outsideAirTemperature,
+      },
+    ],
+  };
+
+  /** @type {decodingProtocolInfo} */
+  const PV_SITE = {
+    dialing,
+    address: 0,
+    bodyLength: 10,
+    decodingDataList: [
+      {
+        key: Model.BASE_KEY.pvRearTemperature,
       },
       {
-        key: Model.BASE_KEY.outsideAirTemperature,
+        key: Model.BASE_KEY.waterTemperature, // 냉각형 모듈
+      },
+      {
+        key: Model.BASE_KEY.waterTemperature, // 일반 모듈
       },
     ],
   };
 
   return {
     MAIN_SITE,
+    PV_SITE,
   };
 };

@@ -40,7 +40,15 @@ class Converter extends AbstConverter {
   concreteParsingData(deviceData) {
     try {
       // BU.CLI(deviceData.toString());
-      const decodingTable = this.decodingTable.MAIN_SITE;
+
+      let decodingTable = this.decodingTable.MAIN_SITE;
+
+      if (_.get(this.protocolInfo, 'option.isNormal')) {
+        decodingTable = this.decodingTable.MAIN_SITE;
+      } else {
+        decodingTable = this.decodingTable.PV_SITE;
+      }
+
       const strData = deviceData.toString();
 
       const splitedStrData = _.split(strData, ' ');
