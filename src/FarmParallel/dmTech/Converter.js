@@ -306,7 +306,10 @@ if (require !== undefined && require.main === module) {
 
   // BU.CLIN(converter.model);
 
-  const dataList = ['0253070418cccc020b0002ffd8017a000001da03e7008d00000000000003'];
+  const dataList = [
+    '025307041803aa001a0000000002770261019003e7009600000000000003',
+    '0253070418037400170000000002730262819103e7009600000000000003',
+  ];
 
   dataList.forEach(data => {
     const result = converter.testParsingData(Buffer.from(data.slice(4, data.length - 2), 'hex'));

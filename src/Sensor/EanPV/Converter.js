@@ -76,15 +76,16 @@ class Converter extends AbstConverter {
         const foundIndex = _.findIndex(STATUS, buf => _.isEqual(buf, requestData));
         switch (foundIndex) {
           case 0:
-            dataStorage.pvAmp.push(receiveNumData);
+            dataStorage.pvVol.push(receiveNumData);
             break;
           case 1:
-            dataStorage.pvVol.push(receiveNumData);
+            dataStorage.pvAmp.push(receiveNumData);
             break;
           case 2:
             dataStorage.pvW.push(receiveNumData);
             break;
           default:
+            dataStorage.operIsRun.push(receiveNumData);
             break;
         }
       } else if (_.findIndex(STATUS_POWER, buf => _.isEqual(buf, requestData)) >= 0) {

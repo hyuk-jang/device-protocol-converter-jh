@@ -18,6 +18,7 @@ class Model extends BaseModel {
       Buffer.from(':MEASure:VOLTage?\n'),
       Buffer.from(':MEASure:CURRent?\n'),
       Buffer.from(':MEASure:POWer?\n'),
+      Buffer.from(':SOUR:INP:STAT?\n'),
     ];
 
     this.device.DEFAULT.COMMAND.STATUS_POWER = [
