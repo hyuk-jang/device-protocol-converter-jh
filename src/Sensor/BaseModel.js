@@ -27,6 +27,7 @@ class BaseModel extends AbstBaseModel {
           STATUS: [],
           WAKEUP: [],
           STATUS_POWER: [],
+          RESTART: [],
         },
       },
       WRITE_DATE: {

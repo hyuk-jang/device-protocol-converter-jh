@@ -25,11 +25,14 @@ class Model extends BaseModel {
       Buffer.from(':SOUR:INP:STAT?\n'), // 현재 전원 상태 확인
     ];
 
-    /** @type {commandInfo[]} */
     this.device.DEFAULT.COMMAND.WAKEUP = [
       Buffer.from(':SOUR:INP:STAT ON\n'), // 싱크 상태를 ON/OFF 시키기 위해 사용 (전원이 처음 인가된 후 싱크상태는 OFF)
       Buffer.from(':SOUR:FUNC RES\n'), // CR 모드로 진입한다.(정저항 모드)
       Buffer.from(':SOUR:RES:LEV:IMM 2\n'), // CR 모드에서 저항값을 2옴으로 설정한다.
+    ];
+
+    this.device.DEFAULT.COMMAND.RESTART = [
+      Buffer.from('LXI:RESTart\n'), // Applies the currently set parameters.
     ];
   }
 }
