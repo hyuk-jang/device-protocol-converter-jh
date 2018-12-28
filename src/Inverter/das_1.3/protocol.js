@@ -207,12 +207,7 @@ const onDeviceOperationStatus = {
 };
 exports.onDeviceOperationStatus = onDeviceOperationStatus;
 
-/**
- *
- * @param {protocol_info} protocolInfo
- */
-exports.decodingProtocolTable = protocolInfo => {
-  const dialing = _.get(protocolInfo, 'deviceId');
+exports.decodingProtocolTable = dialing => {
   /** @type {decodingProtocolInfo} */
   const SYSTEM = {
     dialing,
@@ -241,7 +236,7 @@ exports.decodingProtocolTable = protocolInfo => {
   };
   /** @type {decodingProtocolInfo} */
   const PV = {
-    dialing: _.get(protocolInfo, 'deviceId'),
+    dialing,
     code: 'D',
     address: 1,
     bodyLength: 20, // 수신할 데이터 Byte,
@@ -262,14 +257,14 @@ exports.decodingProtocolTable = protocolInfo => {
         key: Model.BASE_KEY.pvKw,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
-        scale: _.get(protocolInfo, 'option.isKwUnit', true) === true ? 0.1 : 0.001,
-        fixed: _.get(protocolInfo, 'option.isKwUnit', true) === true ? 1 : 3,
+        scale: _.get(dialing, 'option.isKwUnit', true) === true ? 0.1 : 0.001,
+        fixed: _.get(dialing, 'option.isKwUnit', true) === true ? 1 : 3,
       },
     ],
   };
   /** @type {decodingProtocolInfo} */
   const GRID_VOL = {
-    dialing: _.get(protocolInfo, 'deviceId'),
+    dialing,
     code: 'D',
     address: 2,
     bodyLength: 22, // 수신할 데이터 Byte,
@@ -300,7 +295,7 @@ exports.decodingProtocolTable = protocolInfo => {
   };
   /** @type {decodingProtocolInfo} */
   const GRID_AMP = {
-    dialing: _.get(protocolInfo, 'deviceId'),
+    dialing,
     code: 'D',
     address: 3,
     bodyLength: 21, // 수신할 데이터 Byte,
@@ -330,7 +325,7 @@ exports.decodingProtocolTable = protocolInfo => {
   };
   /** @type {decodingProtocolInfo} */
   const POWER = {
-    dialing: _.get(protocolInfo, 'deviceId'),
+    dialing,
     code: 'D',
     address: 4,
     bodyLength: 19, // 수신할 데이터 Byte,
@@ -339,8 +334,8 @@ exports.decodingProtocolTable = protocolInfo => {
         key: Model.BASE_KEY.powerGridKw,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
-        scale: _.get(protocolInfo, 'option.isKwUnit', true) === true ? 0.1 : 0.001,
-        fixed: _.get(protocolInfo, 'option.isKwUnit', true) === true ? 1 : 3,
+        scale: _.get(dialing, 'option.isKwUnit', true) === true ? 0.1 : 0.001,
+        fixed: _.get(dialing, 'option.isKwUnit', true) === true ? 1 : 3,
       },
       {
         key: Model.BASE_KEY.powerCpKwh,
@@ -351,7 +346,7 @@ exports.decodingProtocolTable = protocolInfo => {
   };
   /** @type {decodingProtocolInfo} */
   const OPERATION = {
-    dialing: _.get(protocolInfo, 'deviceId'),
+    dialing,
     code: 'D',
     address: 6,
     bodyLength: 12, // 수신할 데이터 Byte,

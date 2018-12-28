@@ -14,7 +14,7 @@ class Converter extends AbstConverter {
   constructor(protocolInfo) {
     super(protocolInfo);
     this.protocolInfo = protocolInfo;
-    this.decodingTable = protocol.decodingProtocolTable(protocolInfo);
+    this.decodingTable = protocol.decodingProtocolTable(this.protocolInfo.deviceId);
     this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
 
     /** BaseModel */
