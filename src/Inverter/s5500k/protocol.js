@@ -1,45 +1,139 @@
 const _ = require('lodash');
 const { parsingMethod } = require('../../format/moduleDefine');
 
+const { makeTroubleList } = require('../../utils/troubleConverter');
+
 const Model = require('./Model');
 
 const onDeviceOperationStatus = {
-  /** @type {Object} 오류 */
-  [Model.CALC_KEY.INV_Status]: {
-    0: {},
-    1: {
-      code: 'EARTH FAULT',
-      msg: '누설 전류 검출 (일종의 누전상태)',
-      isError: 1,
-    },
+  /** @type {Object} MSB -> LSB 로 비트 index 계산 */
+  [Model.CALC_KEY.Grid_Fault]: binary => {
+    /** @type {troubleInfo[]} */
+    const troubleStorage = {
+      1: {
+        code: '31:High AC Volt',
+        msg: '출력 전압 상승',
+      },
+      2: {
+        code: '18:Active AI',
+        msg: '-',
+      },
+      3: {
+        code: '17:Passive AI',
+        msg: '-',
+      },
+      4: {
+        code: '11:AC Under Freq',
+        msg: '출력 저주파수',
+      },
+      5: {
+        code: '10:AC Over Freq',
+        msg: '출력 과주파수',
+      },
+      6: {
+        code: '08:AC Under V',
+        msg: '출력 전압 부족',
+      },
+      7: {
+        code: '07:AC Over V',
+        msg: '출력 과전압',
+      },
+    };
+
+    return makeTroubleList(binary, troubleStorage);
+  },
+  /** @type {Object} MSB -> LSB 로 비트 index 계산 */
+  [Model.CALC_KEY.Fault1]: binary => {
+    /** @type {troubleInfo[]} */
+    const troubleStorage = {
+      0: {
+        code: '09:INV Over Temp',
+        msg: '인버터 내부 과열',
+      },
+      1: {
+        code: '14:Ground Fault',
+        msg: '누설 전류 검출',
+      },
+      2: {
+        code: '13:OUT DC I',
+        msg: '직류 성분 검출',
+      },
+      3: {
+        code: '04:DC Link Over V',
+        msg: '부스터 과전압',
+      },
+      4: {
+        code: '06: INV Over I',
+        msg: '출력 과전류',
+      },
+      5: {
+        code: '출력 순시 과전압',
+        msg: '출력 순시 과전압',
+      },
+      6: {
+        code: '01:Solar Under V',
+        msg: '입력 저전압',
+      },
+      7: {
+        code: '02:Solar Over V',
+        msg: '입력 과전압',
+      },
+    };
+
+    return makeTroubleList(binary, troubleStorage);
+  },
+  /** @type {Object} MSB -> LSB 로 비트 index 계산 */
+  [Model.CALC_KEY.Fault2]: binary => {
+    /** @type {troubleInfo[]} */
+    const troubleStorage = {
+      5: {
+        code: '12:Solar Over P',
+        msg: '입력 과전력',
+      },
+    };
+
+    return makeTroubleList(binary, troubleStorage);
+  },
+  /** @type {Object} MSB -> LSB 로 비트 index 계산 */
+  [Model.CALC_KEY.Warring]: binary => {
+    /** @type {troubleInfo[]} */
+    const troubleStorage = {
+      4: {
+        code: '33:Curr Derating',
+        msg: '전류 출력 제한',
+        isError: 0,
+      },
+      5: {
+        code: '31:Temp Derating',
+        msg: '고온 출력 제한',
+        isError: 0,
+      },
+      7: {
+        code: '출력전력제한',
+        msg: '출력 전력 제한',
+        isError: 0,
+      },
+    };
+
+    return makeTroubleList(binary, troubleStorage);
   },
 };
 exports.onDeviceOperationStatus = onDeviceOperationStatus;
 
 /**
  *
- * @param {protocol_info} protocol_info
+ * @param {protocol_info} dialing
  */
-const decodingProtocolTable = protocol_info => {
+const decodingProtocolTable = dialing => {
   const returnValue = {
     DEFAULT: {
-      dialing: _.get(protocol_info, 'deviceId'),
-      length: 39, // 수신할 데이터 Byte,
+      dialing,
+      length: 36, // 수신할 데이터 Byte,
       decodingDataList: [
-        {
-          key: null,
-          byte: 2,
-        },
-        {
-          key: Model.BASE_KEY.sysSn,
-          byte: 1,
-          callMethod: parsingMethod.convertBufToHexToDec,
-        },
         {
           key: Model.BASE_KEY.pvVol,
           byte: 2,
           callMethod: parsingMethod.convertBufToHexToDec,
-          hasReverse: true,
           scale: 0.1,
           fixed: 1,
         },
@@ -47,7 +141,6 @@ const decodingProtocolTable = protocol_info => {
           key: Model.BASE_KEY.pvAmp,
           byte: 2,
           callMethod: parsingMethod.convertBufToHexToDec,
-          hasReverse: true,
           scale: 0.01,
           fixed: 2,
         },
@@ -55,31 +148,27 @@ const decodingProtocolTable = protocol_info => {
           key: Model.BASE_KEY.pvKw,
           byte: 2,
           callMethod: parsingMethod.convertBufToHexToDec,
-          hasReverse: true,
           scale: 0.001,
           fixed: 3,
         },
         {
-          key: Model.BASE_KEY.pvVol2,
+          key: Model.BASE_KEY.pvVol,
           byte: 2,
           callMethod: parsingMethod.convertBufToHexToDec,
-          hasReverse: true,
           scale: 0.1,
           fixed: 1,
         },
         {
-          key: Model.BASE_KEY.pvAmp2,
+          key: Model.BASE_KEY.pvAmp,
           byte: 2,
           callMethod: parsingMethod.convertBufToHexToDec,
-          hasReverse: true,
           scale: 0.01,
           fixed: 2,
         },
         {
-          key: Model.BASE_KEY.pvKw2,
+          key: Model.BASE_KEY.pvKw,
           byte: 2,
           callMethod: parsingMethod.convertBufToHexToDec,
-          hasReverse: true,
           scale: 0.001,
           fixed: 3,
         },
@@ -87,7 +176,6 @@ const decodingProtocolTable = protocol_info => {
           key: Model.BASE_KEY.gridRsVol,
           byte: 2,
           callMethod: parsingMethod.convertBufToHexToDec,
-          hasReverse: true,
           scale: 0.1,
           fixed: 1,
         },
@@ -95,7 +183,6 @@ const decodingProtocolTable = protocol_info => {
           key: Model.BASE_KEY.gridRAmp,
           byte: 2,
           callMethod: parsingMethod.convertBufToHexToDec,
-          hasReverse: true,
           scale: 0.01,
           fixed: 2,
         },
@@ -103,7 +190,6 @@ const decodingProtocolTable = protocol_info => {
           key: Model.BASE_KEY.powerGridKw,
           byte: 2,
           callMethod: parsingMethod.convertBufToHexToDec,
-          hasReverse: true,
           scale: 0.001,
           fixed: 3,
         },
@@ -111,7 +197,6 @@ const decodingProtocolTable = protocol_info => {
           key: Model.BASE_KEY.gridLf,
           byte: 2,
           callMethod: parsingMethod.convertBufToHexToDec,
-          hasReverse: true,
           scale: 0.1,
           fixed: 1,
         },
@@ -119,13 +204,11 @@ const decodingProtocolTable = protocol_info => {
           key: Model.BASE_KEY.powerCpKwh,
           byte: 3,
           callMethod: parsingMethod.convertBufToHexToDec,
-          hasReverse: true,
         },
         {
           key: Model.BASE_KEY.powerDailyKwh,
           byte: 2,
           callMethod: parsingMethod.convertBufToHexToDec,
-          hasReverse: true,
           scale: 0.01,
           fixed: 2,
         },
@@ -133,50 +216,38 @@ const decodingProtocolTable = protocol_info => {
           key: Model.BASE_KEY.operTemperature,
           byte: 2,
           callMethod: parsingMethod.convertBufToHexToDec,
-          hasReverse: true,
           scale: 0.1,
           fixed: 1,
         },
         {
           key: null,
-          byte: 1,
-          callMethod: null,
         },
         {
-          key: Model.BASE_KEY.operTime,
+          key: null,
           byte: 3,
-          calcParsingKey: Model.CALC_KEY.Time,
-          callMethod: parsingMethod.convertBufToHexToDec,
-          hasReverse: true,
+        },
+        {
+          key: null,
+          decodingKey: Model.CALC_KEY.INV_Status,
         },
         {
           key: Model.BASE_KEY.operTroubleList,
-          byte: 1,
-          calcParsingKey: Model.CALC_KEY.INV_Status,
+          decodingKey: Model.CALC_KEY.Grid_Fault,
           callMethod: parsingMethod.convertBufToHexToBin,
         },
         {
           key: Model.BASE_KEY.operTroubleList,
-          byte: 1,
-          calcParsingKey: Model.CALC_KEY.Grid_Fault,
+          decodingKey: Model.CALC_KEY.Fault1,
           callMethod: parsingMethod.convertBufToHexToBin,
         },
         {
           key: Model.BASE_KEY.operTroubleList,
-          byte: 1,
-          calcParsingKey: Model.CALC_KEY.Fault1,
+          decodingKey: Model.CALC_KEY.Fault2,
           callMethod: parsingMethod.convertBufToHexToBin,
         },
         {
           key: Model.BASE_KEY.operTroubleList,
-          byte: 1,
-          calcParsingKey: Model.CALC_KEY.Fault2,
-          callMethod: parsingMethod.convertBufToHexToBin,
-        },
-        {
-          key: Model.BASE_KEY.operTroubleList,
-          byte: 1,
-          calcParsingKey: Model.CALC_KEY.Warring,
+          decodingKey: Model.CALC_KEY.Warring,
           callMethod: parsingMethod.convertBufToHexToBin,
         },
       ],

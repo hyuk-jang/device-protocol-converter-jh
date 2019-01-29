@@ -106,9 +106,9 @@ class AbstConverter {
    * cmd가 있다면 cmd에 맞는 특정 명령을 생성하고 아니라면 기본 명령을 생성
    * @param {generationInfo} generationInfo 각 Protocol Converter에 맞는 데이터
    */
-  defaultGenCMD(generationInfo) {
+  defaultGenCMD(generationInfo = {}) {
     const { TRUE, FALSE, MEASURE, SET } = requestDeviceControlType;
-    const { key, value, setValue } = generationInfo;
+    const { key = 'DEFAULT', value = MEASURE, setValue } = generationInfo;
 
     /** @type {baseModelDeviceStructure} */
     const foundIt = _.find(this.model.device, deviceModel =>
@@ -221,11 +221,12 @@ class AbstConverter {
       // 수신받은 데이터에서 현재 체크 중인 값을 가져올 인덱스
       let currIndex = 0;
       decodingTable.forEach(decodingInfo => {
+        const { byte = 1 } = decodingInfo;
         // 조회할 데이터를 가져옴
-        const thisData = receiveData.slice(currIndex, currIndex + decodingInfo.byte);
+        const thisData = receiveData.slice(currIndex, currIndex + byte);
         this.automaticParsingData(decodingInfo, thisData, returnModelInfo);
         // index 증가
-        currIndex += decodingInfo.byte;
+        currIndex += byte;
       });
       return returnModelInfo;
     } catch (error) {
@@ -245,9 +246,7 @@ class AbstConverter {
    */
   automaticDecodingForArray(decodingTable, receiveData) {
     try {
-      const { address, decodingDataList } = decodingTable;
-      // BU.CLI(receiveData);
-      // BU.CLI(decodingTable);
+      const { address = 0, decodingDataList } = decodingTable;
       // 데이터를 집어넣을 기본 자료형을 가져옴
       const returnModelInfo = AbstBaseModel.GET_BASE_MODEL(this.protocolInfo);
       // 수신받은 데이터에서 현재 체크 중인 값을 가져올 인덱스
@@ -258,11 +257,16 @@ class AbstConverter {
       // 시작주소부터 체크 시작
       for (let index = address; index < remainedDataListLength; index += 1) {
         // 해당 디코딩 정보 추출
-        const decodingInfo = decodingDataList[index];
+        // const decodingInfo = decodingDataList[index];
+        /** @type {decodingInfo} */
+        const decoding = decodingDataList[index];
+        BU.CLI(decoding);
+        const { byte = 1 } = decoding;
+
         // BU.CLI(decodingInfo, receiveData);
         // 파싱 의뢰
-        this.automaticParsingData(decodingInfo, _.nth(receiveData, currIndex), returnModelInfo);
-        currIndex += _.get(decodingInfo, 'byte', 1);
+        this.automaticParsingData(decoding, _.nth(receiveData, currIndex), returnModelInfo);
+        currIndex += byte;
       }
       // BU.CLI(returnModelInfo);
       return returnModelInfo;
@@ -281,40 +285,51 @@ class AbstConverter {
     // BU.CLI(parsingData, decodingInfo);
     let returnValue = null;
     if (!_.isEmpty(decodingInfo)) {
+      const {
+        callMethod,
+        key,
+        decodingKey = key,
+        isLE = true,
+        isUnsigned = true,
+        fixed = 0,
+        scale,
+      } = decodingInfo;
+
       // 사용하는 메소드를 호출
-      if (_.isNil(decodingInfo.callMethod)) {
+      if (_.isNil(callMethod)) {
         returnValue = parsingData;
+      } else if (_.eq(callMethod, 'convertBufToHexToDec')) {
+        const option = {
+          isLE,
+          isUnsigned,
+        };
+        returnValue = this.protocolConverter.convertBufToHexToDec(parsingData, option);
       } else {
-        returnValue = this.protocolConverter[decodingInfo.callMethod](parsingData);
+        returnValue = this.protocolConverter[callMethod](parsingData);
       }
 
       // 배율 및 소수점 처리를 사용한다면 적용
-      returnValue =
-        _.isNumber(decodingInfo.scale) && _.isNumber(decodingInfo.fixed)
-          ? _.round(returnValue * decodingInfo.scale, decodingInfo.fixed)
-          : returnValue;
+      if (_.isNumber(scale)) {
+        returnValue = _.round(returnValue * scale, fixed);
+      }
 
-      // decodingKey가 있다면 해당 key로. 기본값은 key로 변환 키 정의
-      const decodingKey = _.get(decodingInfo, 'decodingKey')
-        ? _.get(decodingInfo, 'decodingKey')
-        : _.get(decodingInfo, 'key');
       // 변환키가 정의되어있는지 확인
       if (_.includes(_.keys(this.onDeviceOperationStatus), decodingKey)) {
         const operationStauts = this.onDeviceOperationStatus[decodingKey];
         // 찾은 Decoding이 Function 이라면 값을 넘겨줌
         if (operationStauts instanceof Function) {
           const tempValue = operationStauts(returnValue);
-          returnValue = _.isNumber(tempValue) ? _.round(tempValue, decodingInfo.fixed) : tempValue;
+          returnValue = _.isNumber(tempValue) ? _.round(tempValue, fixed) : tempValue;
         } else {
           returnValue = _.get(operationStauts, returnValue);
         }
       }
 
       // 데이터 단위가 배열일 경우
-      if (Array.isArray(modelInfo[_.get(decodingInfo, 'key')])) {
-        modelInfo[_.get(decodingInfo, 'key')].push(returnValue);
-      } else {
-        modelInfo[_.get(decodingInfo, 'key')] = returnValue;
+      if (Array.isArray(modelInfo[key])) {
+        modelInfo[key].push(returnValue);
+      } else if (_.isString(key)) {
+        modelInfo[key] = returnValue;
       }
     }
 

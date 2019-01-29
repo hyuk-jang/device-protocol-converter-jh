@@ -6,40 +6,28 @@ const BaseModel = require('../BaseModel');
 class Model extends BaseModel {
   /**
    *
-   * @param {BaseModel} baseModel
+   * @param {protocol_info} protocolInfo
    */
-  constructor(baseModel) {
+  constructor(protocolInfo) {
     super();
-    this.dialing = this.protocolConverter.makeMsg2Buffer(
-      _.get(baseModel, 'protocol_info.deviceId'),
-    );
-    // BU.CLI(this.dialing);
+    this.dialing = this.protocolConverter.makeMsg2Buffer(_.get(protocolInfo, 'deviceId'));
 
     this.SOP = Buffer.from([0x0a, 0x96]);
-    this.DELIMETER = Buffer.from(',');
-    this.REQ_CODE = Buffer.from('P');
-    this.RES_CODE = Buffer.from('D');
+    this.EOP = Buffer.from([0x54, 0x18]);
 
-    this.HEADER_INFO = {
-      BYTE: {
-        SOP: 1,
-        CODE: 1,
-        ADDR: 1,
-        LENGTH: 2,
-        ID: 3,
-        CHECKSUM: 2,
-      },
-    };
+    this.device.DEFAULT.COMMAND.STATUS = this.makeMsg();
+  }
 
-    this.device.DEFAULT.COMMAND.STATUS = _.flatten(
-      _.concat([
-        this.device.SYSTEM.COMMAND.STATUS,
-        this.device.PV.COMMAND.STATUS,
-        this.device.GRID.COMMAND.STATUS,
-        this.device.POWER.COMMAND.STATUS,
-        this.device.OPERATION_INFO.COMMAND.STATUS,
-      ]),
-    );
+  /**
+   * @return {Buffer}
+   */
+  makeMsg() {
+    const fixedData = Buffer.from([0x05]);
+    const msgBodyBuffer = Buffer.concat([this.dialing, this.EOP]);
+
+    const chkSum = this.protocolConverter.getSumBuffer(msgBodyBuffer);
+
+    return Buffer.concat([this.SOP, this.dialing, this.EOP, fixedData, chkSum]);
   }
 
   static get CALC_KEY() {
@@ -187,14 +175,6 @@ class Model extends BaseModel {
       BU.CLI('Error');
       throw error;
     }
-  }
-
-  /**
-   * @param {string} cmd 명령 CODE
-   * @return {Buffer}
-   */
-  makeMsg(cmd) {
-    return Buffer.concat([this.SOP, this.REQ_CODE, this.dialing, Buffer.from(cmd)]);
   }
 }
 

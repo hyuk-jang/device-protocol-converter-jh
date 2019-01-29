@@ -11,7 +11,7 @@ class Converter extends AbstConverter {
   constructor(protocolInfo) {
     super(protocolInfo);
 
-    this.decodingTable = protocol.decodingProtocolTable(this.protocolInfo.deviceId);
+    this.decodingTable = protocol.decodingProtocolTable(protocolInfo.deviceId);
     this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
     this.xbeeAPI = new xbeeApi.XBeeAPI();
     this.frameIdList = [];

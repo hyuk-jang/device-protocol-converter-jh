@@ -98,5 +98,11 @@ class BaseModel extends AbstBaseModel {
    * @return {number}
    */
   getResponseAddr(responseData) {}
+
+  /**
+   * @param {string=} cmd 명령 CODE
+   * @return {Buffer}
+   */
+  makeMsg(cmd) {}
 }
 module.exports = BaseModel;
