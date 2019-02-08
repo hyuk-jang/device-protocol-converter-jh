@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const moment = require('moment');
 const { BU } = require('base-util-jh');
 const AbstConverter = require('../../Default/AbstConverter');
 const protocol = require('./protocol');
@@ -13,11 +12,22 @@ class Converter extends AbstConverter {
    */
   constructor(protocolInfo) {
     super(protocolInfo);
-    this.decodingTable = protocol.decodingProtocolTable(protocolInfo);
+
+    // 국번은 숫자로 변환하여 저장함.
+    const { deviceId } = this.protocolInfo;
+    if (Buffer.isBuffer(deviceId)) {
+      this.protocolInfo.deviceId = deviceId.readInt8();
+    } else if (BU.isNumberic(deviceId)) {
+      this.protocolInfo.deviceId = _.toNumber(deviceId);
+    } else if (_.isString(deviceId)) {
+      this.protocolInfo.deviceId = Buffer.from(deviceId).readInt8();
+    }
+
+    this.decodingTable = protocol.decodingProtocolTable(this.protocolInfo);
     this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
 
     /** BaseModel */
-    this.model = new Model(protocolInfo);
+    this.model = new Model(this.protocolInfo);
   }
 
   /**
@@ -113,12 +123,8 @@ class Converter extends AbstConverter {
       const pvUnderyingSolarTableList = [2, 5];
       // NOTE: 외기 환경 데이터 로거 번호
       const horizontalSiteList = [7, 9, 11, 13, 16];
-      let numDeviceId = this.protocolInfo.deviceId;
-      if (Buffer.isBuffer(this.protocolInfo.deviceId)) {
-        numDeviceId = this.protocolInfo.deviceId.readDoubleBE();
-      } else if (_.isString(this.protocolInfo.deviceId)) {
-        numDeviceId = _.toNumber(this.protocolInfo.deviceId);
-      }
+      // 장치 addr
+      const numDeviceId = this.protocolInfo.deviceId;
 
       if (_.includes(pvRearTempTableList, numDeviceId)) {
         decodingTable = this.decodingTable.PRT_SITE;
@@ -179,12 +185,7 @@ class Converter extends AbstConverter {
     const pvUnderyingSolarTableList = [2, 5];
     // NOTE: 외기 환경 데이터 로거 번호
     const horizontalSiteList = [7, 9, 11, 13, 16];
-    let numDeviceId = this.protocolInfo.deviceId;
-    if (Buffer.isBuffer(this.protocolInfo.deviceId)) {
-      numDeviceId = this.protocolInfo.deviceId.readDoubleBE();
-    } else if (_.isString(this.protocolInfo.deviceId)) {
-      numDeviceId = _.toNumber(this.protocolInfo.deviceId);
-    }
+    const numDeviceId = this.protocolInfo.deviceId;
 
     if (_.includes(pvRearTempTableList, numDeviceId)) {
       decodingTable = this.decodingTable.PRT_SITE;

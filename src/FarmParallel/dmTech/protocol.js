@@ -34,7 +34,8 @@ exports.onDeviceOperationStatus = onDeviceOperationStatus;
  * @param {protocol_info} protocolInfo
  */
 exports.decodingProtocolTable = protocolInfo => {
-  const dialing = _.get(protocolInfo, 'deviceId');
+  // 국번은 숫자
+  const dialing = protocolInfo.deviceId;
   /** @type {decodingProtocolInfo} */
   const INCLINED_SITE = {
     dialing,

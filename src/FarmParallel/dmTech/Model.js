@@ -11,7 +11,9 @@ class Model extends BaseModel {
     if (protocolInfo) {
       this.protocolInfo = protocolInfo;
     }
-    this.dialing = _.get(this, 'protocolInfo.deviceId');
+
+    // 국번은 숫자
+    this.dialing = this.protocolInfo.deviceId;
 
     this.device.DEFAULT.COMMAND.STATUS = [
       {
