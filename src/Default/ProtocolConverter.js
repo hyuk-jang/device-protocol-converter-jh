@@ -92,12 +92,13 @@ class Converter {
   /**
    * 10진수를 Hex로 변환한 후 Buffer로 반환
    * @param {number|number[]} dec 10진수 number, Hx로 바꿀 값
-   * @param {number} byteLength Hex to Hex 후 Byte Length. Buffer의 길이가 적을 경우 앞에서부터 0x00 채움
+   * @param {number=} byteLength 반환하는 Buffer Size
+   * @param {number=} scale 배율
    * @return {Buffer}
    * @example
    * (Dec) 555 -> (Hex)'02 2B' -> <Buffer 02 2B>
    */
-  convertNumToHxToBuf(dec, byteLength) {
+  convertNumToHxToBuf(dec, byteLength = 2, scale = 1) {
     // 배열형태라면 재귀호출로 처리
     if (Array.isArray(dec)) {
       return Buffer.concat(dec.map(d => this.convertNumToHxToBuf(d, byteLength)));
@@ -107,30 +108,72 @@ class Converter {
       dec = Number(dec);
     }
     if (!_.isNumber(dec)) return Buffer.from('');
-    // hex: 22b
-    let hex = dec.toString(16);
-    const charLength = 2;
-    // 만약 Hex가 홀수 문자라면 0을 붙임
-    if (hex.length % charLength) {
-      // hex: 022b
-      hex = _.padStart(hex, _.sum([hex.length, 1]), '0');
+
+    const buf = Buffer.alloc(byteLength);
+
+    // 배율이 존재할 경우 곱셈
+    if (scale !== 1) {
+      dec = _.round(_.multiply(dec, scale));
+    } else {
+      dec = _.round(dec);
     }
 
-    // 정해진 갯수를 채우고 싶을 경우
-    if (_.isNumber(byteLength)) {
-      // Hex 코드는 2 Char로 이루어져 있으므로 2를 곱함
-      const calcByteLength = _.multiply(byteLength, charLength);
-      hex = _.padStart(hex, calcByteLength, '0');
+    switch (byteLength) {
+      case 1:
+        buf.writeUInt8(dec);
+        break;
+      case 2:
+        // BE 형식으로 반환
+        buf.writeUInt16BE(dec);
+        break;
+
+      default:
+        break;
     }
 
-    // 반환할 Buffer 정의
-    let returnBuffer = Buffer.from('');
-    // hex 값을 2자리씩 끊어서 순회
-    for (let index = 0; index < hex.length; index += charLength) {
-      // 문자열 파싱. 1번째: 02, 2번째 2B
-      const value = hex.slice(index, _.sum([index, charLength]));
-      // 버퍼로 변환한 후 기존 버퍼와 합침
-      returnBuffer = Buffer.concat([returnBuffer, Buffer.from(value, 'hex')]);
+    return buf;
+  }
+
+  /**
+   * Buffer 본연의 API를 이용하여 데이터를 Int or UInt 형으로 읽음.
+   * option 에 따라 BE or LE 읽을지 여부, Int or UInt 로 읽을지가 결정됨.
+   * @param {number} dec 변환할 Buffer ex <Buffer 30 30 34 34>
+   * @param {Object} option
+   * @param {number} option.allocSize
+   * @param {number=} option.scale
+   * @param {boolean} option.isLE
+   * @param {boolean} option.isUnsigned
+   * @returns {Buffer} Dec
+   * @example
+   * (Dec) 65 -> <Buffer 34 31>
+   */
+  convertDecToHexToBuf(dec, option = {}) {
+    // 문자형 숫자라면 치환
+    if (BU.isNumberic(dec)) {
+      dec = Number(dec);
+    }
+
+    if (!_.isNumber(dec)) return null;
+
+    const { allocSize = 2, scale = 1, isLE = true, isUnsigned = true } = option;
+
+    // 배율이 존재할 경우 곱셈
+    if (scale !== 1) {
+      dec = _.round(_.multiply(dec, scale));
+    } else {
+      dec = _.round(dec);
+    }
+
+    let returnBuffer = Buffer.alloc(allocSize);
+
+    if (isLE && isUnsigned) {
+      // returnBuffer.writeu
+    } else if (isLE && !isUnsigned) {
+      returnBuffer = dec.readIntLE(0, dec.length);
+    } else if (isLE && isUnsigned) {
+      returnBuffer = dec.readUIntBE(0, dec.length);
+    } else if (isLE && isUnsigned) {
+      returnBuffer = dec.readIntBE(0, dec.length);
     }
 
     return returnBuffer;
@@ -174,7 +217,7 @@ class Converter {
    * @param {boolean} option.isUnsigned
    * @returns {number} Dec
    * @example
-   * <Buffer 30 30 34 31> -> (Hex)'0041' -> (Dec) 65
+   * <Buffer 30 30 34 31> -> (Dec) 65
    */
   convertBufToHexToDec(buffer, option = {}) {
     if (!Buffer.isBuffer(buffer)) return null;
@@ -302,7 +345,7 @@ class Converter {
    * @param {Buffer} buffer 계산하고자 하는 Buffer
    */
   getXorBuffer(buffer) {
-    return Buffer.from([buffer.reduce((prev, next) => prev ^ next)])
+    return Buffer.from([buffer.reduce((prev, next) => prev ^ next)]);
   }
 
   /**

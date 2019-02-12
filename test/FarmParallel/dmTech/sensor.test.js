@@ -97,7 +97,7 @@ describe('Decoding Test', () => {
     const mbapHeader = Buffer.concat([
       converter.protocolConverter.convertNumToHxToBuf(unitId, 1),
       converter.protocolConverter.convertNumToHxToBuf(fnCode, 1),
-      converter.protocolConverter.convertNumToHxToBuf(dataLength, 2),
+      converter.protocolConverter.convertNumToHxToBuf(dataLength, 1),
     ]);
     const fullData = [2200, 15, 302, 450, 800, 30, 352, 479, 80, 24, 10, 1];
 
@@ -144,7 +144,7 @@ describe('Decoding Test', () => {
     const mbapHeader = Buffer.concat([
       converter.protocolConverter.convertNumToHxToBuf(unitId, 1),
       converter.protocolConverter.convertNumToHxToBuf(fnCode, 1),
-      converter.protocolConverter.convertNumToHxToBuf(dataLength, 2),
+      converter.protocolConverter.convertNumToHxToBuf(dataLength, 1),
     ]);
     const fullData = [2200, 15, 302, 450, 800, 30, 352, 479, 80, 24, 10, 1];
 

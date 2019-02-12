@@ -260,7 +260,7 @@ class AbstConverter {
         // const decodingInfo = decodingDataList[index];
         /** @type {decodingInfo} */
         const decoding = decodingDataList[index];
-        BU.CLI(decoding);
+        // BU.CLI(decoding);
         const { byte = 1 } = decoding;
 
         // BU.CLI(decodingInfo, receiveData);
