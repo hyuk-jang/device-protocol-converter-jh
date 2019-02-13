@@ -18,6 +18,20 @@ const parsingMethod = {
    */
   convertNumToHexToBuf: 'convertNumToHexToBuf',
   /**
+   * Buffer 본연의 API를 숫자를 Buffer로 변환
+   * option 에 따라 반환 Buffer Size, BE or LE , Int or UInt 형태 결정됨.
+   * @param {number} dec 변환할 수 (10진수)
+   * @param {Object} option
+   * @param {number} option.allocSize
+   * @param {number=} option.scale
+   * @param {boolean} option.isLE
+   * @param {boolean} option.isUnsigned
+   * @returns {Buffer} Dec
+   * @example
+   * (Dec) 65 -> <Buffer 34 31>
+   */
+  convertIntWriteBuf: 'convertIntWriteBuf',
+  /**
    * Buffer 본연의 API를 이용하여 데이터를 Int or UInt 형으로 읽음.
    * option 에 따라 BE or LE 읽을지 여부, Int or UInt 로 읽을지가 결정됨.
    * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
@@ -28,7 +42,7 @@ const parsingMethod = {
    * @example
    * <Buffer 30 30 34 31> -> (Dec) 65
    */
-  convertBufToHexToDec: 'convertBufToHexToDec',
+  convertReadBuf: 'convertReadBuf',
   /**
    * Buffer를 Ascii Char로 변환 후 반환
    * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>

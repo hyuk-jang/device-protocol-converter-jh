@@ -116,12 +116,12 @@ class Converter extends AbstConverter {
 
       // 사용하는 메소드를 호출
       if (_.isString(callMethod)) {
-        if (_.eq(callMethod, 'convertBufToHexToDec')) {
+        if (_.eq(callMethod, 'convertReadBuf')) {
           const option = {
             isLE,
             isUnsigned,
           };
-          convertValue = this.protocolConverter.convertBufToHexToDec(thisBuf, option);
+          convertValue = this.protocolConverter.convertReadBuf(thisBuf, option);
         } else {
           convertValue = this.protocolConverter[callMethod](thisBuf);
         }

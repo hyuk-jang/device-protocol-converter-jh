@@ -90,7 +90,7 @@ class Converter {
   }
 
   /**
-   * 10진수를 Hex로 변환한 후 Buffer로 반환
+   * 10진수를 Unsined BE 형태로 Buffer 변환 후 반환
    * @param {number|number[]} dec 10진수 number, Hx로 바꿀 값
    * @param {number=} byteLength 반환하는 Buffer Size
    * @param {number=} scale 배율
@@ -103,41 +103,39 @@ class Converter {
     if (Array.isArray(dec)) {
       return Buffer.concat(dec.map(d => this.convertNumToHxToBuf(d, byteLength)));
     }
+
     // 문자형 숫자라면 치환
-    if (BU.isNumberic(dec)) {
-      dec = Number(dec);
-    }
+    BU.isNumberic(dec) && (dec = Number(dec));
+
+    // 숫자가 아니라면 즉시 빈 버퍼 반환
     if (!_.isNumber(dec)) return Buffer.from('');
 
-    const buf = Buffer.alloc(byteLength);
+    const returnBuffer = Buffer.alloc(byteLength);
 
     // 배율이 존재할 경우 곱셈
-    if (scale !== 1) {
-      dec = _.round(_.multiply(dec, scale));
-    } else {
-      dec = _.round(dec);
-    }
+    dec = scale !== 1 ? _.round(_.multiply(dec, scale)) : _.round(dec);
 
     switch (byteLength) {
       case 1:
-        buf.writeUInt8(dec);
+        returnBuffer.writeUInt8(dec);
         break;
       case 2:
-        // BE 형식으로 반환
-        buf.writeUInt16BE(dec);
+        returnBuffer.writeUInt16BE(dec);
         break;
-
+      case 4:
+        returnBuffer.writeUInt32BE(dec);
+        break;
       default:
         break;
     }
 
-    return buf;
+    return returnBuffer;
   }
 
   /**
-   * Buffer 본연의 API를 이용하여 데이터를 Int or UInt 형으로 읽음.
-   * option 에 따라 BE or LE 읽을지 여부, Int or UInt 로 읽을지가 결정됨.
-   * @param {number} dec 변환할 Buffer ex <Buffer 30 30 34 34>
+   * Buffer 본연의 API를 숫자를 Buffer로 변환
+   * option 에 따라 반환 Buffer Size, BE or LE , Int or UInt 형태 결정됨.
+   * @param {number} dec 변환할 수 (10진수)
    * @param {Object} option
    * @param {number} option.allocSize
    * @param {number=} option.scale
@@ -147,33 +145,76 @@ class Converter {
    * @example
    * (Dec) 65 -> <Buffer 34 31>
    */
-  convertDecToHexToBuf(dec, option = {}) {
+  convertIntWriteBuf(dec, option = {}) {
     // 문자형 숫자라면 치환
-    if (BU.isNumberic(dec)) {
-      dec = Number(dec);
-    }
+    BU.isNumberic(dec) && (dec = Number(dec));
 
+    // 숫자가 아니라면 즉시 빈 버퍼 반환
     if (!_.isNumber(dec)) return null;
 
     const { allocSize = 2, scale = 1, isLE = true, isUnsigned = true } = option;
 
     // 배율이 존재할 경우 곱셈
-    if (scale !== 1) {
-      dec = _.round(_.multiply(dec, scale));
-    } else {
-      dec = _.round(dec);
-    }
+    dec = scale !== 1 ? _.round(_.multiply(dec, scale)) : _.round(dec);
 
-    let returnBuffer = Buffer.alloc(allocSize);
+    const returnBuffer = Buffer.alloc(allocSize);
 
     if (isLE && isUnsigned) {
-      // returnBuffer.writeu
+      switch (allocSize) {
+        case 1:
+          returnBuffer.writeUInt8(dec);
+          break;
+        case 2:
+          returnBuffer.writeUInt16LE(dec);
+          break;
+        case 4:
+          returnBuffer.writeUInt32LE(dec);
+          break;
+        default:
+          break;
+      }
     } else if (isLE && !isUnsigned) {
-      returnBuffer = dec.readIntLE(0, dec.length);
-    } else if (isLE && isUnsigned) {
-      returnBuffer = dec.readUIntBE(0, dec.length);
-    } else if (isLE && isUnsigned) {
-      returnBuffer = dec.readIntBE(0, dec.length);
+      switch (allocSize) {
+        case 1:
+          returnBuffer.writeInt8(dec);
+          break;
+        case 2:
+          returnBuffer.writeInt16LE(dec);
+          break;
+        case 4:
+          returnBuffer.writeInt32LE(dec);
+          break;
+        default:
+          break;
+      }
+    } else if (!isLE && isUnsigned) {
+      switch (allocSize) {
+        case 1:
+          returnBuffer.writeUIntBE8(dec);
+          break;
+        case 2:
+          returnBuffer.writeUInt16BE(dec);
+          break;
+        case 4:
+          returnBuffer.writeUInt32BE(dec);
+          break;
+        default:
+          break;
+      }
+    } else if (!isLE && !isUnsigned) {
+      switch (allocSize) {
+        case 1:
+          returnBuffer.writeIntBE8(dec);
+          break;
+        case 2:
+          returnBuffer.writeInt16BE(dec);
+          break;
+        case 4:
+          returnBuffer.writeInt32BE(dec);
+          break;
+        default:
+          break;
+      }
     }
 
     return returnBuffer;
@@ -219,7 +260,7 @@ class Converter {
    * @example
    * <Buffer 30 30 34 31> -> (Dec) 65
    */
-  convertBufToHexToDec(buffer, option = {}) {
+  convertReadBuf(buffer, option = {}) {
     if (!Buffer.isBuffer(buffer)) return null;
 
     const { isLE = true, isUnsigned = true } = option;
@@ -229,9 +270,9 @@ class Converter {
       returnNumber = buffer.readUIntLE(0, buffer.length);
     } else if (isLE && !isUnsigned) {
       returnNumber = buffer.readIntLE(0, buffer.length);
-    } else if (isLE && isUnsigned) {
+    } else if (!isLE && isUnsigned) {
       returnNumber = buffer.readUIntBE(0, buffer.length);
-    } else if (isLE && isUnsigned) {
+    } else if (!isLE && !isUnsigned) {
       returnNumber = buffer.readIntBE(0, buffer.length);
     }
 

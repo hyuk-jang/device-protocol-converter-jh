@@ -17,8 +17,8 @@ class Converter extends AbstConverter {
     const { deviceId } = this.protocolInfo;
     if (Buffer.isBuffer(deviceId)) {
       this.protocolInfo.deviceId = deviceId.readInt8();
-    } else if (BU.isNumberic(deviceId)) {
-      this.protocolInfo.deviceId = _.toNumber(deviceId);
+    } else if (_.isNumber(deviceId)) {
+      this.protocolInfo.deviceId = deviceId;
     } else if (_.isString(deviceId)) {
       this.protocolInfo.deviceId = Buffer.from(deviceId).readInt8();
     }
@@ -308,8 +308,8 @@ if (require !== undefined && require.main === module) {
   // BU.CLIN(converter.model);
 
   const dataList = [
-    '025307041803aa001a0000000002770261019003e7009600000000000003',
-    '0253070418037400170000000002730262819103e7009600000000000003',
+    '025307041802e1031e0316020a016e01de02a702eb00a500fa000a000103',
+    // '0253070418037400170000000002730262819103e7009600000000000003',
   ];
 
   dataList.forEach(data => {

@@ -298,12 +298,12 @@ class AbstConverter {
       // 사용하는 메소드를 호출
       if (_.isNil(callMethod)) {
         returnValue = parsingData;
-      } else if (_.eq(callMethod, 'convertBufToHexToDec')) {
+      } else if (_.eq(callMethod, 'convertReadBuf')) {
         const option = {
           isLE,
           isUnsigned,
         };
-        returnValue = this.protocolConverter.convertBufToHexToDec(parsingData, option);
+        returnValue = this.protocolConverter.convertReadBuf(parsingData, option);
       } else {
         returnValue = this.protocolConverter[callMethod](parsingData);
       }
