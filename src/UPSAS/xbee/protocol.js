@@ -249,8 +249,11 @@ exports.decodingProtocolTable = dialing => {
   const connectorGroundRelay = {
     dialing,
     address: '0006',
-    bodyLength: 15,
+    bodyLength: 7,
     decodingDataList: [
+      {
+        byte: 1,
+      },
       {
         key: model.device.CONNECTOR_GROUND_RELAY.KEY,
         byte: 1,
