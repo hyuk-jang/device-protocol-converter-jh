@@ -66,4 +66,9 @@ module.exports = {
    * @type {number[]=}
    */
   moduleRearTemperature: [],
+  /**
+   * 접속반 지락 계전기, 지락 발생 1, 정상 0
+   * @type {number[]=}
+   */
+  isConnectorGroundRelay: [],
 };

@@ -134,6 +134,9 @@ class Converter extends AbstConverter {
             case 5:
               decodingDataList = this.decodingTable.earthModule;
               break;
+            case 6:
+              decodingDataList = this.decodingTable.connectorGroundRelay;
+              break;
             default:
               throw new Error(`productType: ${productType}은 Parsing 대상이 아닙니다.`);
           }
@@ -150,7 +153,15 @@ class Converter extends AbstConverter {
             );
           }
 
-          return this.automaticDecoding(decodingDataList.decodingDataList, dataBody);
+          const resultAutomaticDecoding = this.automaticDecoding(
+            decodingDataList.decodingDataList,
+            dataBody,
+          );
+          if (productType === 6) {
+            BU.CLI(dataBody);
+            BU.CLI(resultAutomaticDecoding);
+          }
+          return resultAutomaticDecoding;
         }
         throw new Error(`productType: ${productType}이 이상합니다.`);
       } else {

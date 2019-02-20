@@ -141,6 +141,15 @@ class BaseModel extends AbstBaseModel {
           STATUS: [],
         },
       },
+      CONNECTOR_GROUND_RELAY: {
+        /** @type {string} 접속반 지락 계전기 */
+        KEY: baseKey.isConnectorGroundRelay,
+        NAME: '지락 계전기',
+        STATUS: {},
+        COMMAND: {
+          STATUS: [],
+        },
+      },
       BATTERY: {
         /** @type {string} 배터리 전압 */
         KEY: baseKey.battery,

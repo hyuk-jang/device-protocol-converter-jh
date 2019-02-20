@@ -47,6 +47,13 @@ const onDeviceOperationStatus = {
     // BU.CLI(waterLevel)
     // 20cm에서 해당 수위(cm)를 뺌
     20 - waterLevel,
+  /** @type {Object} 접속반 지락 계전기 */
+  [model.device.CONNECTOR_GROUND_RELAY.KEY]: {
+    /** 지락 발생 */
+    0: 1,
+    /** 정상 */
+    1: 0,
+  },
 };
 exports.onDeviceOperationStatus = onDeviceOperationStatus;
 
@@ -238,6 +245,29 @@ exports.decodingProtocolTable = dialing => {
       },
     ],
   };
+  /** @type {decodingProtocolInfo} */
+  const connectorGroundRelay = {
+    dialing,
+    address: '0006',
+    bodyLength: 15,
+    decodingDataList: [
+      {
+        key: model.device.CONNECTOR_GROUND_RELAY.KEY,
+        byte: 1,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: model.device.CONNECTOR_GROUND_RELAY.KEY,
+        byte: 1,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: model.device.BATTERY.KEY,
+        byte: 4,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+    ],
+  };
 
   return {
     gateLevelSalinity,
@@ -246,5 +276,6 @@ exports.decodingProtocolTable = dialing => {
     salternBlockValve,
     pump,
     earthModule,
+    connectorGroundRelay,
   };
 };

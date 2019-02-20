@@ -321,6 +321,7 @@ class AbstConverter {
           const tempValue = operationStauts(returnValue);
           returnValue = _.isNumber(tempValue) ? _.round(tempValue, fixed) : tempValue;
         } else {
+          BU.CLI(returnValue)
           returnValue = _.get(operationStauts, returnValue);
         }
       }
