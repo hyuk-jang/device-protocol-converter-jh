@@ -127,9 +127,9 @@ class Converter extends AbstConverter {
       if (_.includes(outsideTableList, numDeviceId)) {
         decodingTable = this.decodingTable.OUTSIDE_SITE;
       } else if (_.includes(insideTableList, numDeviceId)) {
-        decodingTable = this.decodingTable.OUTSIDE_SITE;
+        decodingTable = this.decodingTable.INSIDE_SITE;
       } else {
-        decodingTable = this.decodingTable.OUTSIDE_SITE;
+        decodingTable = this.decodingTable.INSIDE_SITE;
       }
       // 요청 시작 주소를 가져옴
       const startAddr = registerAddr;
@@ -175,22 +175,18 @@ class Converter extends AbstConverter {
     BU.CLI(resDataList);
 
     let decodingTable;
-    // NOTE: 모듈 후면 온도, 경사 일사량이 붙어 있는 로거
-    const pvRearTempTableList = [1, 4];
+    const outsideTableList = [5];
     // NOTE: 모듈 하부 일사량이 붙어 있는 로거
-    const pvUnderyingSolarTableList = [2, 5];
-    // NOTE: 외기 환경 데이터 로거 번호
-    const horizontalSiteList = [7, 9, 11, 13, 16];
+    const insideTableList = [1, 2, 3, 4];
+    // 장치 addr
     const numDeviceId = this.protocolInfo.deviceId;
 
-    if (_.includes(pvRearTempTableList, numDeviceId)) {
-      decodingTable = this.decodingTable.PRT_SITE;
-    } else if (_.includes(pvUnderyingSolarTableList, numDeviceId)) {
-      decodingTable = this.decodingTable.PUS_SITE;
-    } else if (_.includes(horizontalSiteList, numDeviceId)) {
-      decodingTable = this.decodingTable.HORIZONTAL_SITE;
+    if (_.includes(outsideTableList, numDeviceId)) {
+      decodingTable = this.decodingTable.OUTSIDE_SITE;
+    } else if (_.includes(insideTableList, numDeviceId)) {
+      decodingTable = this.decodingTable.INSIDE_SITE;
     } else {
-      decodingTable = this.decodingTable.INCLINED_SITE;
+      decodingTable = this.decodingTable.INSIDE_SITE;
     }
     // 요청 시작 주소를 가져옴
     // const startAddr = registerAddr;
@@ -293,8 +289,8 @@ module.exports = Converter;
 
 if (require !== undefined && require.main === module) {
   const converter = new Converter({
-    deviceId: 7,
-    mainCategory: 'FarmParallel',
+    deviceId: 1,
+    mainCategory: 'S2W',
     subCategory: 'dmTech',
     protocolOptionInfo: {
       hasTrackingData: true,
@@ -304,12 +300,16 @@ if (require !== undefined && require.main === module) {
   // BU.CLIN(converter.model);
 
   const dataList = [
-    // '025307041802e1031e0316020a016e01de02a702eb00a500fa000a000103',
-    '02530104180bdf004d01e100fb00000245020d022100e7004b0000000003',
+    '0253010418006400070028001e00c800460023002d00cd00690055000103',
+    '0253020418006400070028001e00c800460023002d00cd00690055000203',
+    '0253030418006400070028001e00c800460023002d00cd00690055000303',
+    '0253040418006400070028001e00c800460023002d00cd00690055000403',
+    '0253050418006400070028001e00c800460023002d00cd00690055000503',
     // '0253070418037400170000000002730262819103e7009600000000000003',
   ];
 
   dataList.forEach(data => {
+    // const result = converter.testParsingData(Buffer.from(data.slice(4, data.length - 2), 'hex'));
     const result = converter.testParsingData(Buffer.from(data.slice(4, data.length - 2), 'hex'));
     BU.CLI(result);
   });
