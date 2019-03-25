@@ -118,22 +118,18 @@ class Converter extends AbstConverter {
 
       let decodingTable;
       // NOTE: 모듈 후면 온도, 경사 일사량이 붙어 있는 로거
-      const pvRearTempTableList = [1, 4];
+      const outsideTableList = [5];
       // NOTE: 모듈 하부 일사량이 붙어 있는 로거
-      const pvUnderyingSolarTableList = [2, 5];
-      // NOTE: 외기 환경 데이터 로거 번호
-      const horizontalSiteList = [7, 9, 11, 13, 16];
+      const insideTableList = [1, 2, 3, 4];
       // 장치 addr
       const numDeviceId = this.protocolInfo.deviceId;
 
-      if (_.includes(pvRearTempTableList, numDeviceId)) {
-        decodingTable = this.decodingTable.PRT_SITE;
-      } else if (_.includes(pvUnderyingSolarTableList, numDeviceId)) {
-        decodingTable = this.decodingTable.PUS_SITE;
-      } else if (_.includes(horizontalSiteList, numDeviceId)) {
-        decodingTable = this.decodingTable.HORIZONTAL_SITE;
+      if (_.includes(outsideTableList, numDeviceId)) {
+        decodingTable = this.decodingTable.OUTSIDE_SITE;
+      } else if (_.includes(insideTableList, numDeviceId)) {
+        decodingTable = this.decodingTable.OUTSIDE_SITE;
       } else {
-        decodingTable = this.decodingTable.INCLINED_SITE;
+        decodingTable = this.decodingTable.OUTSIDE_SITE;
       }
       // 요청 시작 주소를 가져옴
       const startAddr = registerAddr;

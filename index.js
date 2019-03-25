@@ -4,6 +4,7 @@ const defaultModule = require('./src/Default/DefaultModel');
 const defaultWrapper = require('./src/Default/defaultWrapper');
 const ESS = require('./src/ESS/BaseModel');
 const FarmParallel = require('./src/FarmParallel/BaseModel');
+const S2W = require('./src/S2W/BaseModel');
 const Inverter = require('./src/Inverter/BaseModel');
 const Weathercast = require('./src/Weathercast/BaseModel');
 const UPSAS = require('./src/UPSAS/BaseModel');
@@ -17,6 +18,7 @@ const BaseModel = {
   defaultWrapper,
   ESS,
   FarmParallel,
+  S2W,
   Inverter,
   Weathercast,
   UPSAS,

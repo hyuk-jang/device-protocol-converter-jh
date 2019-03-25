@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { BU } = require('base-util-jh');
 const { parsingMethod } = require('../../format/moduleDefine');
 
 const { makeTroubleList } = require('../../utils/troubleConverter');
@@ -6,127 +7,93 @@ const { makeTroubleList } = require('../../utils/troubleConverter');
 const Model = require('./Model');
 
 const onDeviceOperationStatus = {
-  /** @type {Object} MSB -> LSB 로 비트 index 계산 */
-  [Model.CALC_KEY.Grid_Fault]: binary => {
+  /** @param {Buffer} buf -> LSB 로 비트 index 계산 */
+  [Model.BASE_KEY.operTroubleList]: buf => {
+    const hexBuf = buf.reverse().toString('hex');
+
     /** @type {troubleInfo[]} */
     const troubleStorage = {
-      1: {
-        code: '31:High AC Volt',
-        msg: '출력 전압 상승',
-      },
-      2: {
-        code: '18:Active AI',
+      '00000001': {
+        code: '태양전지과전류',
         msg: '-',
       },
-      3: {
-        code: '17:Passive AI',
+      '00000002': {
+        code: '태양전지과전압',
         msg: '-',
       },
-      4: {
-        code: '11:AC Under Freq',
-        msg: '출력 저주파수',
+      '00000004': {
+        code: '태양전지저전압',
+        msg: '-',
       },
-      5: {
-        code: '10:AC Over Freq',
-        msg: '출력 과주파수',
+      '00000008': {
+        code: 'DCLink과전압',
+        msg: '-',
       },
-      6: {
-        code: '08:AC Under V',
-        msg: '출력 전압 부족',
+      '00000010': {
+        code: 'DCLink저전압',
+        msg: '-',
       },
-      7: {
-        code: '07:AC Over V',
-        msg: '출력 과전압',
+      '00000020': {
+        code: '인버터과전류',
+        msg: '-',
       },
-    };
-
-    return makeTroubleList(binary, troubleStorage);
-  },
-  /** @type {Object} MSB -> LSB 로 비트 index 계산 */
-  [Model.CALC_KEY.Fault1]: binary => {
-    /** @type {troubleInfo[]} */
-    const troubleStorage = {
-      0: {
-        code: '09:INV Over Temp',
-        msg: '인버터 내부 과열',
+      '00000040': {
+        code: '계통과전압',
+        msg: '-',
       },
-      1: {
-        code: '14:Ground Fault',
-        msg: '누설 전류 검출',
+      '00000080': {
+        code: '계통저전압',
+        msg: '-',
       },
-      2: {
-        code: '13:OUT DC I',
-        msg: '직류 성분 검출',
+      '00000100': {
+        code: '내부온도초과',
+        msg: '-',
       },
-      3: {
-        code: '04:DC Link Over V',
-        msg: '부스터 과전압',
+      '00000200': {
+        code: '계통과주파수',
+        msg: '-',
       },
-      4: {
-        code: '06: INV Over I',
-        msg: '출력 과전류',
+      '00000400': {
+        code: '계통저주파수',
+        msg: '-',
       },
-      5: {
-        code: '출력 순시 과전압',
-        msg: '출력 순시 과전압',
+      '00000800': {
+        code: '태양전지과전력',
+        msg: '-',
       },
-      6: {
-        code: '01:Solar Under V',
-        msg: '입력 저전압',
+      '00001000': {
+        code: 'DC성분규정치초과',
+        msg: '-',
       },
-      7: {
-        code: '02:Solar Over V',
-        msg: '입력 과전압',
+      '00002000': {
+        code: 'DC배선누전',
+        msg: '-',
       },
-    };
-
-    return makeTroubleList(binary, troubleStorage);
-  },
-  /** @type {Object} MSB -> LSB 로 비트 index 계산 */
-  [Model.CALC_KEY.Fault2]: binary => {
-    /** @type {troubleInfo[]} */
-    const troubleStorage = {
-      5: {
-        code: '12:Solar Over P',
-        msg: '입력 과전력',
+      '00010000': {
+        code: '단독운전',
+        msg: '-',
+      },
+      '00020000': {
+        code: '인버터과전류HW',
+        msg: '-',
       },
     };
 
-    return makeTroubleList(binary, troubleStorage);
-  },
-  /** @type {Object} MSB -> LSB 로 비트 index 계산 */
-  [Model.CALC_KEY.Warring]: binary => {
-    /** @type {troubleInfo[]} */
-    const troubleStorage = {
-      4: {
-        code: '33:Curr Derating',
-        msg: '전류 출력 제한',
-        isError: 0,
-      },
-      5: {
-        code: '31:Temp Derating',
-        msg: '고온 출력 제한',
-        isError: 0,
-      },
-      7: {
-        code: '출력전력제한',
-        msg: '출력 전력 제한',
-        isError: 0,
-      },
-    };
+    // BU.CLI(troubleStorage);
 
-    return makeTroubleList(binary, troubleStorage);
+    BU.CLI(hexBuf);
+    return _.get(troubleStorage, hexBuf, []);
   },
 };
 exports.onDeviceOperationStatus = onDeviceOperationStatus;
 
 /**
  *
- * @param {protocol_info} dialing
+ * @param {} dialing
  */
 const decodingProtocolTable = dialing => {
   /** @type {decodingProtocolInfo} */
-  const base = {
+  const DEFAULT = {
     dialing,
     length: 28, // 수신할 데이터 Byte,
     decodingDataList: [
@@ -166,6 +133,13 @@ const decodingProtocolTable = dialing => {
         fixed: 1,
       },
       {
+        key: Model.BASE_KEY.operTemperature,
+        byte: 2,
+        callMethod: parsingMethod.convertReadBuf,
+        scale: 0.1,
+        fixed: 1,
+      },
+      {
         key: Model.BASE_KEY.powerDailyKwh,
         byte: 2,
         callMethod: parsingMethod.convertReadBuf,
@@ -180,6 +154,7 @@ const decodingProtocolTable = dialing => {
       {
         key: Model.BASE_KEY.operTroubleList,
         byte: 4,
+        // callMethod: parsingMethod.convertReadBuf,
         // callMethod: parsingMethod.,
         // scale: 0.1,
         // fixed: 1,
@@ -187,7 +162,7 @@ const decodingProtocolTable = dialing => {
       {
         key: Model.BASE_KEY.operIsRun,
         byte: 1,
-        // callMethod: parsingMethod.,
+        callMethod: parsingMethod.convertReadBuf,
       },
       {
         key: Model.BASE_KEY.gridLf,
@@ -212,7 +187,7 @@ const decodingProtocolTable = dialing => {
     ],
   };
   return {
-    base,
+    DEFAULT,
   };
 };
 exports.decodingProtocolTable = decodingProtocolTable;

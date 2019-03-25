@@ -89,9 +89,7 @@ class BaseModel extends AbstBaseModel {
    * @param {Buffer} requestData 인버터에 요청한 데이터
    * @return {number}
    */
-  getRequestAddr(requestData) {
-    console.trace('wfk');
-  }
+  getRequestAddr(requestData) {}
 
   /**
    * @param {Buffer} responseData 인버터에서 수신받은 데이터

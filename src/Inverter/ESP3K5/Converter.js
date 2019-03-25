@@ -47,8 +47,8 @@ class Converter extends AbstConverter {
       const resChkSum = deviceData.slice(deviceData.length - 1);
 
       // 전송 데이터 유효성 체크
-      if (deviceData.length !== 40) {
-        throw new Error(`The expected length(40) 
+      if (deviceData.length !== 32) {
+        throw new Error(`The expected length(32) 
         of the data body is different from the length(${deviceData.length}) received.`);
       }
 
@@ -90,14 +90,15 @@ class Converter extends AbstConverter {
    */
   testParsingData(deviceData) {
     BU.CLI(deviceData);
-
+    const RES_DATA_START_POINT = 3;
     const returnValue = this.model.BASE_MODEL;
     const decodingTable = this.decodingTable.DEFAULT;
+    // BU.CLI(decodingTable);
     const { decodingDataList } = decodingTable;
 
     // 시작주소부터 체크 시작
     const dataList = [];
-    let currIndex = 0;
+    let currIndex = RES_DATA_START_POINT;
     for (let index = 0; index < decodingDataList.length; index += 1) {
       // 해당 디코딩 정보 추출
       const decodingInfo = decodingDataList[index];
@@ -113,6 +114,8 @@ class Converter extends AbstConverter {
       } = decodingInfo;
       const thisBuf = deviceData.slice(currIndex, currIndex + byte);
       let convertValue;
+
+      BU.CLI(thisBuf);
 
       // 사용하는 메소드를 호출
       if (_.isString(callMethod)) {
@@ -186,7 +189,7 @@ if (require !== undefined && require.main === module) {
     0x9f,
     0x86,
     0x01,
-    0x00,
+    0x01,
     0x00,
     0x00,
     0x00,
@@ -197,15 +200,15 @@ if (require !== undefined && require.main === module) {
     0x01,
     0x63,
     0x6e,
-    0x9d,
+    0x9c,
   ]);
 
-  converter.testParsingData(data);
-  // const requestMsg = converter.generationCommand({
-  //   key: converter.baseModel.device.DEFAULT.KEY,
-  // });
-  // const dataMap = converter.concreteParsingData(data, _.head(converter.generationCommand()).data);
-  // BU.CLI(dataMap);
+  // converter.testParsingData(data);
+  const requestMsg = converter.generationCommand({
+    key: converter.model.device.DEFAULT.KEY,
+  });
+  const dataMap = converter.concreteParsingData(data, _.head(converter.generationCommand()).data);
+  BU.CLI(dataMap);
 
   // BU.CLIN(converter.model);
 

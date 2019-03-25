@@ -312,7 +312,7 @@ class Converter {
    * @param {number=} binaryLength binary 단위
    * @return {string}
    * @example
-   * <Buffer 30 30 34 31> -> (Hex)'3 0 3 0 3 4 3 1' -> (string) '‭0011 0000 0011 0000 0011 0100 0011 0001‬'
+   * <Buffer 30 30 34 31> -> (Hex)'30303431' -> (string) '‭0011 0000 0011 0000 0011 0100 0011 0001‬'
    */
   convertBufToHexToBin(buffer, binaryLength = 8) {
     if (!Buffer.isBuffer(buffer)) return '';
@@ -332,7 +332,7 @@ class Converter {
    * @param {Buffer} buffer Buffer
    * @return {string}
    * @example
-   * <Buffer 30 30 34 31> -> (Hex)'0 0 4 1' -> (string) '0000 0000 0100 0001'
+   * <Buffer 30 30 34 31> -> (Ascii)'0041' -> (string) '0000 0000 0100 0001'
    */
   convertBufToStrToBin(buffer, binaryLength = 4) {
     if (!Buffer.isBuffer(buffer)) return '';
