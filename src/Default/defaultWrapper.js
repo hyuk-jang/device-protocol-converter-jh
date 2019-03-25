@@ -79,6 +79,7 @@ const defaultWrapper = {
         break;
       case 'Sensor':
       case 'FarmParallel':
+      case 'S2W':
         cmd = 'S';
         break;
       default:
