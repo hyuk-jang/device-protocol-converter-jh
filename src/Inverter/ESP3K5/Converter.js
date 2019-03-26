@@ -6,6 +6,8 @@ const protocol = require('./protocol');
 
 const Model = require('./Model');
 
+const { BASE_KEY } = Model;
+
 class Converter extends AbstConverter {
   /**
    * protocol_info.option --> true: 3.3kW, any: 600W
@@ -64,7 +66,7 @@ class Converter extends AbstConverter {
 
       // 체크섬 비교
       if (!_.isEqual(calcChkSum, resChkSum)) {
-        throw new Error(`Not Matching Check Sum: ${calcChkSum}, Res Check Sum: ${resChkSum}`);
+        // throw new Error(`Not Matching Check Sum: ${calcChkSum}, Res Check Sum: ${resChkSum}`);
       }
 
       // 헤더와 체크섬을 제외한 데이터 계산
@@ -72,8 +74,43 @@ class Converter extends AbstConverter {
       // BU.CLI(dataBody);
 
       // 데이터 자동 산정
-      // /** @type {Model.BASE_KEY} */
+      /** @type {BASE_KEY} */
       const dataMap = this.automaticDecoding(this.decodingTable.DEFAULT.decodingDataList, dataBody);
+
+      // 인버터에서 PV출력 및 GRID 출력을 주지 않으므로 계산하여 집어넣음
+      // PV 전압
+      const pvVol = _.chain(dataMap)
+        .get('pvVol')
+        .head()
+        .value();
+
+      // PV 전류
+      const pvAmp = _.chain(dataMap)
+        .get('pvAmp')
+        .head()
+        .value();
+
+      // PV 전력
+      if (_.isNumber(pvVol) && _.isNumber(pvAmp)) {
+        dataMap.pvKw.push(_.round(pvVol * pvAmp, 2));
+      }
+
+      // GRID 전압
+      const gridRsVol = _.chain(dataMap)
+        .get('gridRsVol')
+        .head()
+        .value();
+
+      // GRID 전류
+      const gridRAmp = _.chain(dataMap)
+        .get('gridRAmp')
+        .head()
+        .value();
+
+      // GRID 전력
+      if (_.isNumber(gridRsVol) && _.isNumber(gridRAmp)) {
+        dataMap.powerGridKw.push(_.round(gridRsVol * gridRAmp, 2));
+      }
 
       // Trobule 목록을 하나로 합침
       dataMap.operTroubleList = [_.flatten(dataMap.operTroubleList)];
@@ -115,7 +152,7 @@ class Converter extends AbstConverter {
       const thisBuf = deviceData.slice(currIndex, currIndex + byte);
       let convertValue;
 
-      BU.CLI(thisBuf);
+      // BU.CLI(thisBuf);
 
       // 사용하는 메소드를 호출
       if (_.isString(callMethod)) {
@@ -161,7 +198,7 @@ module.exports = Converter;
 
 if (require !== undefined && require.main === module) {
   const converter = new Converter({
-    deviceId: '\u0001',
+    deviceId: '\u002e',
     mainCategory: 'Inverter',
     subCategory: 'ESP3K5',
   });
@@ -203,12 +240,23 @@ if (require !== undefined && require.main === module) {
     0x9c,
   ]);
 
-  // converter.testParsingData(data);
   const requestMsg = converter.generationCommand({
     key: converter.model.device.DEFAULT.KEY,
   });
-  const dataMap = converter.concreteParsingData(data, _.head(converter.generationCommand()).data);
-  BU.CLI(dataMap);
+
+  const dataList = ['0249b1b72e22070001220701111100e10001000010001000000000000000006313b803'];
+
+  dataList.forEach(d => {
+    const realBuffer = Buffer.from(d.slice(4, d.length - 2), 'hex');
+
+    // const result = converter.testParsingData(realBuffer);
+    // BU.CLI(result);
+    const dataMap = converter.concreteParsingData(
+      realBuffer,
+      _.head(converter.generationCommand()).data,
+    );
+    BU.CLI(dataMap);
+  });
 
   // BU.CLIN(converter.model);
 

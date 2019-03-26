@@ -81,7 +81,7 @@ const onDeviceOperationStatus = {
 
     // BU.CLI(troubleStorage);
 
-    BU.CLI(hexBuf);
+    // BU.CLI(hexBuf);
     return _.get(troubleStorage, hexBuf, []);
   },
 };
