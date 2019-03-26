@@ -31,7 +31,7 @@ class Converter extends AbstConverter {
   generationCommand(generationInfo) {
     // BU.CLI(generationInfo);
     const cmdList = this.defaultGenCMD(generationInfo);
-    return this.makeDefaultCommandInfo(cmdList);
+    return this.makeDefaultCommandInfo(cmdList, 3000);
   }
 
   /**
@@ -92,7 +92,7 @@ class Converter extends AbstConverter {
 
       // PV 전력
       if (_.isNumber(pvVol) && _.isNumber(pvAmp)) {
-        dataMap.pvKw.push(_.round(pvVol * pvAmp, 2));
+        dataMap.pvKw.push(_.round(pvVol * pvAmp * 0.001, 4));
       }
 
       // GRID 전압
@@ -109,7 +109,7 @@ class Converter extends AbstConverter {
 
       // GRID 전력
       if (_.isNumber(gridRsVol) && _.isNumber(gridRAmp)) {
-        dataMap.powerGridKw.push(_.round(gridRsVol * gridRAmp, 2));
+        dataMap.powerGridKw.push(_.round(gridRsVol * gridRAmp * 0.001, 4));
       }
 
       // Trobule 목록을 하나로 합침
