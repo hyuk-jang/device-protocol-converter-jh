@@ -62,20 +62,47 @@ class AbstConverter {
 
     // wrapCategory를 사용한다면 중계기를 거치므로 각 1초를 추가로 할애
     if (_.get(this.protocolInfo, 'wrapperCategory', '').length) {
-      commandExecutionTimeoutMs = 2000;
+      commandExecutionTimeoutMs += 1000;
     }
 
     cmdDataList = Array.isArray(cmdDataList) ? cmdDataList : [cmdDataList];
 
     cmdDataList.forEach(bufData => {
       /** @type {commandInfo} */
-      const commandObj = {
+      const command = {
         data: this.coverFrame(bufData),
         commandExecutionTimeoutMs,
         delayExecutionTimeoutMs,
       };
 
-      returnValue.push(commandObj);
+      returnValue.push(command);
+    });
+
+    return returnValue;
+  }
+
+  /**
+   * 명령을 보낼 배열을 생성. generationInfo 기반
+   * @param {Array.<*>} cmdDataList 실제 수행할 명령
+   * @param {generationInfo} generationInfo 해당 전송 후 명령 완료 처리될때까지 대기 시간 (ms)
+   */
+  makeAutoGenerationCommand(cmdDataList, generationInfo) {
+    const { cmdExecTimeoutMs = 1000, delayExecTimeoutMs } = generationInfo;
+
+    /** @type {commandInfo[]} */
+    const returnValue = [];
+
+    cmdDataList = Array.isArray(cmdDataList) ? cmdDataList : [cmdDataList];
+
+    cmdDataList.forEach(bufData => {
+      /** @type {commandInfo} */
+      const command = {
+        data: this.coverFrame(bufData),
+        commandExecutionTimeoutMs: cmdExecTimeoutMs,
+        delayExecutionTimeoutMs: delayExecTimeoutMs,
+      };
+
+      returnValue.push(command);
     });
 
     return returnValue;
