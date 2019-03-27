@@ -29,7 +29,7 @@ class Converter extends AbstConverter {
   generationCommand(generationInfo) {
     // BU.CLI(generationInfo);
     const cmdList = this.defaultGenCMD(generationInfo);
-    return this.makeDefaultCommandInfo(cmdList);
+    return this.makeAutoGenerationCommand(cmdList);
   }
 
   /**
@@ -74,6 +74,11 @@ class Converter extends AbstConverter {
       // 데이터 자동 산정
       // /** @type {Model.BASE_KEY} */
       const dataMap = this.automaticDecoding(this.decodingTable.DEFAULT.decodingDataList, dataBody);
+
+      // PV 2가닥 데이터를 합산 처리
+      _.set(dataMap, 'pvAmp', [_.sum(dataMap.pvAmp)]);
+      _.set(dataMap, 'pvVol', [_.sum(dataMap.pvVol)]);
+      _.set(dataMap, 'pvKw', [_.sum(dataMap.pvKw)]);
 
       // Trobule 목록을 하나로 합침
       dataMap.operTroubleList = [_.flatten(dataMap.operTroubleList)];

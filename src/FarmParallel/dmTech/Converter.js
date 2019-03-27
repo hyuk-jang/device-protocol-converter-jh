@@ -54,7 +54,7 @@ class Converter extends AbstConverter {
       return returnBuffer;
     });
 
-    return this.makeDefaultCommandInfo(returnBufferList);
+    return this.makeAutoGenerationCommand(returnBufferList);
   }
 
   /**

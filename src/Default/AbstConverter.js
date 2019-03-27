@@ -84,10 +84,9 @@ class AbstConverter {
   /**
    * 명령을 보낼 배열을 생성. generationInfo 기반
    * @param {Array.<*>} cmdDataList 실제 수행할 명령
-   * @param {generationInfo} generationInfo 해당 전송 후 명령 완료 처리될때까지 대기 시간 (ms)
    */
-  makeAutoGenerationCommand(cmdDataList, generationInfo) {
-    const { cmdExecTimeoutMs = 1000, delayExecTimeoutMs } = generationInfo;
+  makeAutoGenerationCommand(cmdDataList) {
+    const { cmdExecTimeoutMs = 1000, delayExecTimeoutMs } = this.protocolInfo;
 
     /** @type {commandInfo[]} */
     const returnValue = [];
