@@ -75,7 +75,7 @@ class Converter extends AbstConverter {
 
       // 데이터 자동 산정
       /** @type {BASE_KEY} */
-      const dataMap = this.automaticDecoding(this.decodingTable.DEFAULT.decodingDataList, dataBody);
+      let dataMap = this.automaticDecoding(this.decodingTable.DEFAULT.decodingDataList, dataBody);
 
       // 인버터에서 PV출력 및 GRID 출력을 주지 않으므로 계산하여 집어넣음
       // PV 전압
@@ -115,6 +115,11 @@ class Converter extends AbstConverter {
       // Trobule 목록을 하나로 합침
       dataMap.operTroubleList = [_.flatten(dataMap.operTroubleList)];
 
+      // 만약 인버터가 운영중인 데이터가 아니라면 현재 데이터를 무시한다.
+      if (_.eq(_.head(dataMap.operIsRun), 0)) {
+        dataMap = this.model.BASE_MODEL;
+      }
+
       return dataMap;
     } catch (error) {
       throw error;
@@ -128,7 +133,7 @@ class Converter extends AbstConverter {
   testParsingData(deviceData) {
     BU.CLI(deviceData);
     const RES_DATA_START_POINT = 3;
-    const returnValue = this.model.BASE_MODEL;
+    let returnValue = this.model.BASE_MODEL;
     const decodingTable = this.decodingTable.DEFAULT;
     // BU.CLI(decodingTable);
     const { decodingDataList } = decodingTable;
@@ -190,6 +195,11 @@ class Converter extends AbstConverter {
       currIndex += byte;
     }
 
+    // 만약 인버터가 운영중인 데이터가 아니라면 현재 데이터를 무시한다.
+    if (_.eq(_.head(returnValue.operIsRun), 0)) {
+      returnValue = this.model.BASE_MODEL;
+    }
+
     // BU.CLI(dataList);
     BU.CLI(returnValue);
   }
@@ -244,18 +254,23 @@ if (require !== undefined && require.main === module) {
     key: converter.model.device.DEFAULT.KEY,
   });
 
-  const dataList = ['0249b1b72e22070001220701111100e10001000010001000000000000000006313b803'];
+  const dataList = [
+    '0249b1b72f5f0771005f073209570019018b001a000000000000015802810063131703',
+    '0249b1b72f410771004107330955001a0101001800000000000015802000063131e03',
+    '0249b1b72f620800006208fb0800001a0100001800000000000000580200006313f303',
+    '0249b1b72f730800007308000900001b01000018000000000000005802000063130803'
+  ];
 
   dataList.forEach(d => {
     const realBuffer = Buffer.from(d.slice(4, d.length - 2), 'hex');
 
-    // const result = converter.testParsingData(realBuffer);
+    const result = converter.testParsingData(realBuffer);
     // BU.CLI(result);
-    const dataMap = converter.concreteParsingData(
-      realBuffer,
-      _.head(converter.generationCommand()).data,
-    );
-    BU.CLI(dataMap);
+    // const dataMap = converter.concreteParsingData(
+    //   realBuffer,
+    //   _.head(converter.generationCommand()).data,
+    // );
+    // BU.CLI(dataMap);
   });
 
   // BU.CLIN(converter.model);
