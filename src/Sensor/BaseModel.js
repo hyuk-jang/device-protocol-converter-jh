@@ -152,7 +152,7 @@ class BaseModel extends AbstBaseModel {
       },
       SOIL_WATER_VALUE: {
         KEY: baseKey.soilWaterValue,
-        NAME: '토양 수분 값',
+        NAME: '토양 EC 값',
         STATUS: {},
         COMMAND: {
           STATUS: [],

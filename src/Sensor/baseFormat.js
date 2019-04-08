@@ -98,7 +98,7 @@ module.exports = {
    */
   lux: [],
   /**
-   * 토양 수분 값, 단위[%]
+   * 토양 EC 값, 단위[%]
    * @description WV_S
    * @type {number[]=}
    */
