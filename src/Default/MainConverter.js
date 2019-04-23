@@ -56,7 +56,7 @@ class MainConverter {
       throw new Error('protocolConverter가 설정되지 않았습니다.');
     }
     try {
-      // controlValue가 문자 일 경우 숫자로 변환
+      // singleControlType가 문자 일 경우 숫자로 변환
       BU.isNumberic(value) && _.set(generationInfo, 'value', Number(value));
       // BU.CLI(generationInfo);
 

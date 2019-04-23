@@ -47,6 +47,8 @@ class Converter extends AbstConverter {
       // 응답 받은 데이터 추출
       const responseData = deviceData;
 
+      // BU.CLIS(deviceData, currTransferCmd);
+
       // 요청한 주소 추출
       const reqAddr = this.model.getRequestAddr(requestData);
       // 응답받은 주소 추출
@@ -92,3 +94,38 @@ class Converter extends AbstConverter {
   }
 }
 module.exports = Converter;
+
+if (require !== undefined && require.main === module) {
+  const converter = new Converter({
+    deviceId: '002',
+    mainCategory: 'Inverter',
+    subCategory: 'das_1.3',
+  });
+
+  // const requestData = Buffer.from([0x0a, 0x96, 0x01, 0x54, 0x18, 0x05, 0x6d]);
+
+  const requestMsg = converter.generationCommand({
+    key: converter.model.device.DEFAULT.KEY,
+  });
+
+  const testReqMsg = '02495e5030303253543603';
+  const realTestReqMsg = Buffer.from(testReqMsg.slice(4, testReqMsg.length - 2), 'hex');
+
+  const dataList = [
+    '02495e443631323030322c302c312c4d2c333403',
+    '02495e443631323030322c302c312c4d2c343103',
+  ];
+
+  dataList.forEach(d => {
+    const realBuffer = Buffer.from(d.slice(4, d.length - 2), 'hex');
+
+    // const result = converter.testParsingData(realBuffer);
+    // BU.CLI(result);
+    const dataMap = converter.concreteParsingData(realBuffer, realTestReqMsg);
+    BU.CLI(dataMap);
+  });
+
+  // BU.CLIN(converter.model);
+
+  // converter.testParsingData(Buffer.from(dataList, 'ascii'));
+}

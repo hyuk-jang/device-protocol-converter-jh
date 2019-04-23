@@ -175,7 +175,7 @@ class AbstConverter {
         cmdList = commandInfo.SET(setValue);
       }
     } else {
-      throw new Error(`controlValue: ${value}는 유효한 값이 아닙니다.`);
+      throw new Error(`singleControlType: ${value}는 유효한 값이 아닙니다.`);
     }
     if (cmdList === undefined || _.isEmpty(cmdList)) {
       throw new Error(`${key}에는 Value: ${value} 존재하지 않습니다.`);
