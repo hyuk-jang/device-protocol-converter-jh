@@ -15,7 +15,7 @@ module.exports = {
    */
   pvVol: [],
   /**
-   * 전압(voltage), 단위[V]
+   * 전력(power), 단위[kW]
    * @description PV
    * @type {number[]=}
    */
@@ -50,6 +50,12 @@ module.exports = {
    * @type {number[]=}
    */
   powerPf: [],
+  /**
+   * 인버터 최대 출력, 단위[kW]
+   * @description Power
+   * @type {number[]=}
+   */
+  powerMaxKw: [],
   /**
    * RS 선간 전압, 단위[V]
    * @description Grid
@@ -146,6 +152,30 @@ module.exports = {
    * @type {number[]=}
    */
   operTime: [],
+  /**
+   * 경사면 일사량, 단위[W/㎡]
+   * @description Measure Time
+   * @type {number[]=}
+   */
+  envInclinedSolar: [],
+  /**
+   * 수평면 일사량, 단위[W/㎡]
+   * @description Measure Time
+   * @type {number[]=}
+   */
+  envHorizontalSolar: [],
+  /**
+   * 외부 주위 온도, 단위[°C]
+   * @description Measure Time
+   * @type {number[]=}
+   */
+  envOutSideAirTemp: [],
+  /**
+   * 태양 전지 모듈 온도, 단위[°C]
+   * @description Measure Time
+   * @type {number[]=}
+   */
+  envModuleTemp: [],
   /**
    * 경고 리스트
    * @description troubleList

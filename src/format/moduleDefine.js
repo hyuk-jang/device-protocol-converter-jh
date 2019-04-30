@@ -52,6 +52,14 @@ const parsingMethod = {
    */
   convertBufToHex: 'convertBufToHex',
   /**
+   * Buffer를 Ascii Char로 변환 후 해당 값을 Hex Number를 Dec로 계산
+   * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
+   * @return {number} Dec
+   * @example
+   * <Buffer 30 31 30 61> -> (Hex)'010a' -> (Dec) 266
+   */
+  convertBufToHexToDec: 'convertBufToHexToDec',
+  /**
    * Buffer를 Ascii Char로 변환 후 해당 값을 Hex Number로 인식하고 Dec Number로 변환
    * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
    * @param {string} encoding
@@ -79,6 +87,15 @@ const parsingMethod = {
    * <Buffer 30 30 34 31> -> (Hex)'0 0 4 1' -> (string) '0000 0000 0100 0001'
    */
   convertBufToStrToBin: 'convertBufToStrToBin',
+  /**
+   * @desc 1 Byte Buffer -> 4 Bit. Buffer DEC 값 범위: 0~F
+   * Buffer를  String으로 변환 후 각 String 값을 Hex로 보고 BIN 바꾼 후 0->1 , 1->0 으로 바꿈
+   * @param {Buffer} buffer Buffer
+   * @return {string}
+   * @example
+   * <Buffer 30 30 34 31> -> (Ascii)'0041' -> (string) '0000 0000 0100 0001' -> (string) '1111 1111 1011 1110'
+   */
+  convertBufToStrToBinConverse: 'convertBufToStrToBinConverse',
   /**
    * 각 String 값을 Hex로 보고 BIN 바꿈
    * @param {string} asciiString ascii char를 2진 바이너리로 변환하여 반환

@@ -158,6 +158,13 @@ class BaseModel extends AbstBaseModel {
           STATUS: [],
         },
       },
+      PV: {
+        KEY: 'PV',
+        NAME: 'PV',
+        COMMAND: {
+          STATUS: [Buffer.from('')],
+        },
+      },
     };
 
     /** Protocol 정보에 따라 자동으로 세부 Model Binding */

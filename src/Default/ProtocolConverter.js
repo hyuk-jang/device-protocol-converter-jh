@@ -10,7 +10,6 @@ const {
 class Converter {
   constructor() {
     this.resultMakeMsg2Buffer = [];
-
     this.definedCommanderResponse = definedCommanderResponse;
   }
 
@@ -292,6 +291,19 @@ class Converter {
   }
 
   /**
+   * Buffer를 Ascii Char로 변환 후 해당 값을 Hex Number를 Dec로 계산
+   * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
+   * @returns {number} Dec
+   * @example
+   * <Buffer 30 31 30 61> -> (Hex)'010a' -> (Dec) 266
+   */
+  convertBufToHexToDec(buffer, encoding) {
+    if (!Buffer.isBuffer(buffer)) return null;
+    const strValue = encoding ? buffer.toString(encoding) : buffer.toString();
+    return _.isNaN(strValue) ? strValue : parseInt(strValue, 16);
+  }
+
+  /**
    * Buffer를 Ascii Char로 변환 후 해당 값을 Hex Number로 인식하고 Dec Number로 변환
    * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
    * @param {string} encoding
@@ -338,6 +350,23 @@ class Converter {
     if (!Buffer.isBuffer(buffer)) return '';
 
     return this.convertStrToBin(buffer.toString(), binaryLength);
+  }
+
+  /**
+   * FIXME:
+   * @desc 1 Byte Buffer -> 4 Bit. Buffer DEC 값 범위: 0~F
+   * Buffer를  String으로 변환 후 각 String 값을 Hex로 보고 BIN  바꾼 후 0->1 , 1->0 으로 바꿈
+   * @param {Buffer} buffer Buffer
+   * @return {string}
+   * @example
+   * <Buffer 30 30 34 31> -> (Ascii)'0041' -> (string) '0000 0000 0100 0001' -> (string) '1111 1111 1011 1110'
+   */
+  convertBufToStrToBinConverse(buffer, binaryLength = 4) {
+    if (!Buffer.isBuffer(buffer)) return '';
+
+    return _.map(this.convertStrToBin(buffer, binaryLength), strSingleBinary =>
+      _.eq(strSingleBinary, '0') ? '1' : '0',
+    ).join('');
   }
 
   /**

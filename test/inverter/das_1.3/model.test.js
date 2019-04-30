@@ -57,7 +57,7 @@ describe('Decoding Test', () => {
 
     const dummySystem = Buffer.from('^D017001,3,0100,380,24');
     const bodySystem = model.getValidateData(dummySystem, protocol.SYSTEM);
-    // BU.CLI('bodySystem', bodySystem);
+    // BU.CLI('bodySystem', protocol.SYSTEM);
 
     const dummyPv = Buffer.from('^D120001,400,0200,0080,18');
     const bodyPv = model.getValidateData(dummyPv, protocol.PV);

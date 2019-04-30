@@ -58,6 +58,14 @@ class BaseModel extends AbstBaseModel {
           STATUS: [Buffer.from('')],
         },
       },
+      // TODO: 태양전지 환경 계측 명령 Solar Cell Environment / current ( 16byte )
+      ENV: {
+        KEY: 'ENV',
+        NAME: '환경 계측 정보',
+        COMMAND: {
+          STATUS: [Buffer.from('')],
+        },
+      },
     };
 
     /** Protocol 정보에 따라 자동으로 세부 Model Binding */
