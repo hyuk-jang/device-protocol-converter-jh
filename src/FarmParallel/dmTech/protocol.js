@@ -92,11 +92,12 @@ exports.decodingProtocolTable = protocolInfo => {
       {
         key: Model.BASE_KEY.isRain,
       },
-      // {
-      //   key: Model.BASE_KEY.pvRearTemperature,
-      //   scale: 0.1,
-      //   fixed: 1,
-      // },
+      {
+        key: Model.BASE_KEY.pvUnderlyingSolar,
+      },
+      {
+        key: Model.BASE_KEY.pvUnderlyingSolar,
+      },
     ],
   };
 
@@ -156,11 +157,12 @@ exports.decodingProtocolTable = protocolInfo => {
       {
         key: Model.BASE_KEY.isRain,
       },
-      // {
-      //   key: Model.BASE_KEY.pvRearTemperature,
-      //   scale: 0.1,
-      //   fixed: 1,
-      // },
+      {
+        key: Model.BASE_KEY.pvUnderlyingSolar,
+      },
+      {
+        key: Model.BASE_KEY.pvUnderlyingSolar,
+      },
     ],
   };
 
@@ -224,6 +226,12 @@ exports.decodingProtocolTable = protocolInfo => {
       {
         key: Model.BASE_KEY.isRain,
       },
+      {
+        key: Model.BASE_KEY.pvUnderlyingSolar,
+      },
+      {
+        key: Model.BASE_KEY.pvUnderlyingSolar,
+      },
     ],
   };
   /**
@@ -285,6 +293,12 @@ exports.decodingProtocolTable = protocolInfo => {
       },
       {
         key: Model.BASE_KEY.isRain,
+      },
+      {
+        key: Model.BASE_KEY.pvUnderlyingSolar,
+      },
+      {
+        key: Model.BASE_KEY.pvUnderlyingSolar,
       },
     ],
   };
