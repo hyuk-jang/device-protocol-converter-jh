@@ -157,10 +157,10 @@ class Converter extends AbstConverter {
             decodingDataList.decodingDataList,
             dataBody,
           );
-          if (productType === 6) {
-            BU.CLI(dataBody);
-            BU.CLI(resultAutomaticDecoding);
-          }
+          // if (productType === 6) {
+          //   BU.CLI(dataBody);
+          //   BU.CLI(resultAutomaticDecoding);
+          // }
           return resultAutomaticDecoding;
         }
         throw new Error(`productType: ${productType}이 이상합니다.`);

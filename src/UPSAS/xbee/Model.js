@@ -16,7 +16,7 @@ class Model extends BaseModel {
       },
       {
         cmd: '@sts',
-        timeout: 1000 * 10,
+        timeout: 100 * 10,
       },
     ];
 
@@ -26,7 +26,7 @@ class Model extends BaseModel {
       },
       {
         cmd: '@sts',
-        timeout: 1000 * 10,
+        timeout: 100 * 10,
       },
     ];
 
@@ -43,7 +43,7 @@ class Model extends BaseModel {
       },
       {
         cmd: '@sts',
-        timeout: 1000 * 15,
+        timeout: 100 * 15,
       },
     ];
 
@@ -53,7 +53,7 @@ class Model extends BaseModel {
       },
       {
         cmd: '@sts',
-        timeout: 1000 * 15,
+        timeout: 100 * 15,
       },
     ];
 
@@ -70,7 +70,7 @@ class Model extends BaseModel {
       },
       {
         cmd: '@sts',
-        timeout: 1000 * 15,
+        timeout: 100 * 15,
       },
     ];
 
@@ -80,7 +80,7 @@ class Model extends BaseModel {
       },
       {
         cmd: '@sts',
-        timeout: 1000 * 15,
+        timeout: 100 * 15,
       },
     ];
 
@@ -94,12 +94,12 @@ class Model extends BaseModel {
     this.device.PUMP.COMMAND.ON = [
       {
         // 펌프 킬때는 명령을 내리고 10초 후에 킴
-        timeout: 1000 * 10,
+        // timeout: 100 * 10,
         cmd: '@cpo',
       },
       {
         cmd: '@sts',
-        timeout: 1000 * 5,
+        timeout: 100 * 5,
       },
     ];
 
@@ -109,7 +109,7 @@ class Model extends BaseModel {
       },
       {
         cmd: '@sts',
-        timeout: 1000 * 5,
+        timeout: 100 * 5,
       },
     ];
 
@@ -126,7 +126,7 @@ class Model extends BaseModel {
       },
       {
         cmd: '@sts',
-        timeout: 1000,
+        timeout: 100,
       },
     ];
 
