@@ -1,5 +1,7 @@
 const BaseModel = require('../BaseModel');
 
+const mainSecTime = 10;
+
 class Model extends BaseModel {
   constructor() {
     super();
@@ -16,7 +18,7 @@ class Model extends BaseModel {
       },
       {
         cmd: '@sts',
-        timeout: 100 * 10,
+        timeout: mainSecTime * 10,
       },
     ];
 
@@ -26,7 +28,7 @@ class Model extends BaseModel {
       },
       {
         cmd: '@sts',
-        timeout: 100 * 10,
+        timeout: mainSecTime * 10,
       },
     ];
 
@@ -43,7 +45,7 @@ class Model extends BaseModel {
       },
       {
         cmd: '@sts',
-        timeout: 100 * 15,
+        timeout: mainSecTime * 15,
       },
     ];
 
@@ -53,7 +55,7 @@ class Model extends BaseModel {
       },
       {
         cmd: '@sts',
-        timeout: 100 * 15,
+        timeout: mainSecTime * 15,
       },
     ];
 
@@ -70,7 +72,7 @@ class Model extends BaseModel {
       },
       {
         cmd: '@sts',
-        timeout: 100 * 15,
+        timeout: mainSecTime * 15,
       },
     ];
 
@@ -80,7 +82,7 @@ class Model extends BaseModel {
       },
       {
         cmd: '@sts',
-        timeout: 100 * 15,
+        timeout: mainSecTime * 15,
       },
     ];
 
@@ -94,12 +96,12 @@ class Model extends BaseModel {
     this.device.PUMP.COMMAND.ON = [
       {
         // 펌프 킬때는 명령을 내리고 10초 후에 킴
-        // timeout: 100 * 10,
+        // timeout: mainSecTime * 10,
         cmd: '@cpo',
       },
       {
         cmd: '@sts',
-        timeout: 100 * 5,
+        timeout: mainSecTime * 5,
       },
     ];
 
@@ -109,7 +111,7 @@ class Model extends BaseModel {
       },
       {
         cmd: '@sts',
-        timeout: 100 * 5,
+        timeout: mainSecTime * 5,
       },
     ];
 
@@ -126,7 +128,7 @@ class Model extends BaseModel {
       },
       {
         cmd: '@sts',
-        timeout: 100,
+        timeout: mainSecTime,
       },
     ];
 
