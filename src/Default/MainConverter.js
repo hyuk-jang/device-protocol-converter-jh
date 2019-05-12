@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { BU } = require('base-util-jh');
 
-const { requestDeviceControlType } = require('../../../default-intelligence').dcmConfigModel;
+const { reqDeviceControlType } = require('../../../default-intelligence').dcmConfigModel;
 // require('../../../../module/default-intelligence');
 
 class MainConverter {
@@ -14,7 +14,7 @@ class MainConverter {
     this.protocol_info = protocolInfo;
     /** @type {MainConverter} */
     this.deviceCommandConverter = null;
-    this.requestDeviceControlType = requestDeviceControlType;
+    this.reqDeviceControlType = reqDeviceControlType;
   }
 
   /** protocolConverter 설정함 */
@@ -51,7 +51,7 @@ class MainConverter {
    */
   generationCommand(generationInfo) {
     // BU.CLI(generationInfo);
-    const { value = this.requestDeviceControlType.MEASURE } = generationInfo;
+    const { value = this.reqDeviceControlType.MEASURE } = generationInfo;
     if (!this.deviceCommandConverter) {
       throw new Error('protocolConverter가 설정되지 않았습니다.');
     }

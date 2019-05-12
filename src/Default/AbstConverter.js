@@ -9,7 +9,7 @@ const defaultWrapper = require('./defaultWrapper');
 const { dccFlagModel, dcmConfigModel } = require('../../../../module/default-intelligence');
 
 const { definedCommanderResponse } = dccFlagModel;
-const { requestDeviceControlType } = dcmConfigModel;
+const { reqDeviceControlType } = dcmConfigModel;
 
 class AbstConverter {
   /**
@@ -133,7 +133,7 @@ class AbstConverter {
    * @param {generationInfo} generationInfo 각 Protocol Converter에 맞는 데이터
    */
   defaultGenCMD(generationInfo = {}) {
-    const { TRUE, FALSE, MEASURE, SET } = requestDeviceControlType;
+    const { TRUE, FALSE, MEASURE, SET } = reqDeviceControlType;
     const { key = 'DEFAULT', value = MEASURE, setValue } = generationInfo;
 
     /** @type {baseModelDeviceStructure} */
