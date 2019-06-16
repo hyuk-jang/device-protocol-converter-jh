@@ -71,7 +71,7 @@ exports.decodingProtocolTable = dialing => {
       },
       {
         key: model.device.WATER_LEVEL.KEY,
-        byte: 3,
+        byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
         fixed: 1,
@@ -102,7 +102,7 @@ exports.decodingProtocolTable = dialing => {
       },
       {
         key: model.device.WATER_LEVEL.KEY,
-        byte: 3,
+        byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
@@ -142,7 +142,7 @@ exports.decodingProtocolTable = dialing => {
       },
       {
         key: model.device.WATER_LEVEL.KEY,
-        byte: 3,
+        byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
         fixed: 1,
@@ -202,7 +202,7 @@ exports.decodingProtocolTable = dialing => {
       },
       {
         key: model.device.WATER_LEVEL.KEY,
-        byte: 3,
+        byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
         fixed: 1,
@@ -259,7 +259,7 @@ exports.decodingProtocolTable = dialing => {
     decodingDataList: [
       {
         key: model.device.WATER_LEVEL.KEY,
-        byte: 3,
+        byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
         fixed: 1,
