@@ -41,11 +41,11 @@ class Model extends BaseModel {
 
     this.device.DEFAULT.COMMAND.STATUS = _.flatten(
       _.concat([
-        this.device.SYSTEM.COMMAND.STATUS,
+        // this.device.SYSTEM.COMMAND.STATUS,
         this.device.PV.COMMAND.STATUS,
         this.device.GRID.COMMAND.STATUS,
         this.device.POWER.COMMAND.STATUS,
-        this.device.OPERATION_INFO.COMMAND.STATUS,
+        // this.device.OPERATION_INFO.COMMAND.STATUS,
       ]),
     );
   }

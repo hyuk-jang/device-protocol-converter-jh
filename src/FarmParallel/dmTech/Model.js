@@ -15,12 +15,42 @@ class Model extends BaseModel {
     // 국번은 숫자
     this.dialing = this.protocolInfo.deviceId;
 
+    const extendsSolarSite = [
+      // 나주
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      // 보성
+      10,
+      11,
+      61,
+      62,
+      // 강진
+      8,
+      9,
+      51,
+      // 보성
+      10,
+      11,
+      61,
+      62,
+    ];
+
+    let defaultDataLength = 12;
+
+    if (_.includes(extendsSolarSite, this.dialing)) {
+      defaultDataLength = 14;
+    }
+
     this.device.DEFAULT.COMMAND.STATUS = [
       {
         unitId: this.dialing,
         fnCode: 4,
         address: 0,
-        dataLength: 14,
+        dataLength: defaultDataLength,
       },
     ];
 

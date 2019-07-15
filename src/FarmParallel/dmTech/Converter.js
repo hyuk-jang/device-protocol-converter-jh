@@ -120,7 +120,11 @@ class Converter extends AbstConverter {
       // NOTE: 모듈 후면 온도, 경사 일사량이 붙어 있는 로거
       const pvRearTempTableList = [1, 4];
       // NOTE: 모듈 하부 일사량이 붙어 있는 로거
+      const inclinedSolarTableList = [3, 6];
+      // NOTE: 모듈 하부 일사량이 붙어 있는 로거
       const pvUnderyingSolarTableList = [2, 5];
+      // NOTE: 추가 일사량 4기 로거
+      const fourSolarSiteList = [31, 32, 33, 34, 35, 36];
       // NOTE: 외기 환경 데이터 로거 번호
       const horizontalSiteList = [7, 9, 11, 13, 16];
       // 장치 addr
@@ -128,12 +132,15 @@ class Converter extends AbstConverter {
 
       if (_.includes(pvRearTempTableList, numDeviceId)) {
         decodingTable = this.decodingTable.PRT_SITE;
-      } else if (_.includes(pvUnderyingSolarTableList, numDeviceId)) {
-        decodingTable = this.decodingTable.PUS_SITE;
+      } else if (_.includes(inclinedSolarTableList, numDeviceId)) {
+        decodingTable = this.decodingTable.INCLINED_SITE;
       } else if (_.includes(horizontalSiteList, numDeviceId)) {
         decodingTable = this.decodingTable.HORIZONTAL_SITE;
+      } else if (_.includes(fourSolarSiteList, numDeviceId)) {
+        BU.CLI('@@');
+        decodingTable = this.decodingTable.FOUR_SOLAR_SITE;
       } else {
-        decodingTable = this.decodingTable.INCLINED_SITE;
+        decodingTable = this.decodingTable.PUS_SITE;
       }
       // 요청 시작 주소를 가져옴
       const startAddr = registerAddr;
@@ -173,7 +180,7 @@ class Converter extends AbstConverter {
     // 실제 장치 데이터 배열화
     const resDataList = [];
     for (let index = RES_DATA_START_POINT; index < resBuffer.length; index += 2) {
-      // BU.CLI(resBuffer.readUInt16BE(index));
+      BU.CLI(resBuffer.readUInt16BE(index));
       resDataList.push(resBuffer.readUInt16BE(index));
     }
     BU.CLI(resDataList);
@@ -182,19 +189,29 @@ class Converter extends AbstConverter {
     // NOTE: 모듈 후면 온도, 경사 일사량이 붙어 있는 로거
     const pvRearTempTableList = [1, 4];
     // NOTE: 모듈 하부 일사량이 붙어 있는 로거
+    const inclinedSolarTableList = [3, 6];
+    // NOTE: 모듈 하부 일사량이 붙어 있는 로거
     const pvUnderyingSolarTableList = [2, 5];
+    // NOTE: 추가 일사량 4기 로거
+    const fourSolarSiteList = [31, 32, 33, 34, 35, 36];
     // NOTE: 외기 환경 데이터 로거 번호
     const horizontalSiteList = [7, 9, 11, 13, 16];
+    // 장치 addr
     const numDeviceId = this.protocolInfo.deviceId;
+
+    BU.CLI(numDeviceId)
 
     if (_.includes(pvRearTempTableList, numDeviceId)) {
       decodingTable = this.decodingTable.PRT_SITE;
-    } else if (_.includes(pvUnderyingSolarTableList, numDeviceId)) {
-      decodingTable = this.decodingTable.PUS_SITE;
+    } else if (_.includes(inclinedSolarTableList, numDeviceId)) {
+      decodingTable = this.decodingTable.INCLINED_SITE;
     } else if (_.includes(horizontalSiteList, numDeviceId)) {
       decodingTable = this.decodingTable.HORIZONTAL_SITE;
+    } else if (_.includes(fourSolarSiteList, numDeviceId)) {
+      BU.CLI('@@');
+      decodingTable = this.decodingTable.FOUR_SOLAR_SITE;
     } else {
-      decodingTable = this.decodingTable.INCLINED_SITE;
+      decodingTable = this.decodingTable.PUS_SITE;
     }
     // 요청 시작 주소를 가져옴
     // const startAddr = registerAddr;
@@ -297,7 +314,7 @@ module.exports = Converter;
 
 if (require !== undefined && require.main === module) {
   const converter = new Converter({
-    deviceId: 7,
+    deviceId: 35,
     mainCategory: 'FarmParallel',
     subCategory: 'dmTech',
     protocolOptionInfo: {
@@ -308,13 +325,17 @@ if (require !== undefined && require.main === module) {
   // BU.CLIN(converter.model);
 
   const dataList = [
-    '025307041802e1031e0316020a016e01de02a702eb00a500fa000a000103',
+    '025323041ccccc0fff0190029f000004f6000000000168000000000000068506dd03',
     // '0253070418037400170000000002730262819103e7009600000000000003',
   ];
 
   dataList.forEach(data => {
     const result = converter.testParsingData(Buffer.from(data.slice(4, data.length - 2), 'hex'));
     BU.CLI(result);
+
+    // const realBuffer = Buffer.from(data.slice(4, data.length - 2), 'hex');
+    // const dataMap = converter.concreteParsingData(realBuffer, realTestReqMsg);
+    // BU.CLI(dataMap);
   });
 
   // converter.testParsingData(Buffer.from(dataList, 'ascii'));

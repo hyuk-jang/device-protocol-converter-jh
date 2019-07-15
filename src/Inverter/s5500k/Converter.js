@@ -75,6 +75,11 @@ class Converter extends AbstConverter {
       // /** @type {Model.BASE_KEY} */
       const dataMap = this.automaticDecoding(this.decodingTable.DEFAULT.decodingDataList, dataBody);
 
+      // 동양 s5500k 누적 발전량 이상 문제 제거
+      if (_.head(dataMap.powerCpKwh) === 0) {
+        _.set(dataMap, 'powerCpKwh', [null]);
+      }
+
       // PV 2가닥 데이터를 합산 처리
       _.set(dataMap, 'pvAmp', [_.sum(dataMap.pvAmp)]);
       _.set(dataMap, 'pvVol', [_.sum(dataMap.pvVol)]);
