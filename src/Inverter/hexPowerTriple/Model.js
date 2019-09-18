@@ -26,7 +26,7 @@ class Model extends BaseModel {
         this.device.PV.COMMAND.STATUS,
         this.device.GRID.COMMAND.STATUS,
         this.device.POWER.COMMAND.STATUS,
-        this.device.ENV.COMMAND.STATUS,
+        // this.device.ENV.COMMAND.STATUS,
       ]),
     );
   }

@@ -39,20 +39,22 @@ class Converter extends AbstConverter {
     /** @type {modbusReadFormat[]} */
     const cmdList = this.defaultGenCMD(generationInfo);
 
-    // BU.CLI(cmdList);
-    // FIXME: Function Code 04 기준으로만 작성됨.  필요시 수정
-    const returnBufferList = cmdList.map(cmdInfo => {
-      const { unitId, fnCode, address, dataLength } = cmdInfo;
-      const returnBuffer = Buffer.concat([
-        this.protocolConverter.convertNumToHxToBuf(unitId, 1),
-        this.protocolConverter.convertNumToHxToBuf(fnCode, 1),
-        this.protocolConverter.convertNumToHxToBuf(address, 2),
-        this.protocolConverter.convertNumToHxToBuf(dataLength, 2),
-      ]);
-      return returnBuffer;
-    });
+    return this.makeDefaultCommandInfo(cmdList, 1000);
 
-    return this.makeAutoGenerationCommand(returnBufferList);
+    // // BU.CLI(cmdList);
+    // // FIXME: Function Code 04 기준으로만 작성됨.  필요시 수정
+    // const returnBufferList = cmdList.map(cmdInfo => {
+    //   const { unitId, fnCode, address, dataLength } = cmdInfo;
+    //   const returnBuffer = Buffer.concat([
+    //     this.protocolConverter.convertNumToHxToBuf(unitId, 1),
+    //     this.protocolConverter.convertNumToHxToBuf(fnCode, 1),
+    //     this.protocolConverter.convertNumToHxToBuf(address, 2),
+    //     this.protocolConverter.convertNumToHxToBuf(dataLength, 2),
+    //   ]);
+    //   return returnBuffer;
+    // });
+
+    // return this.makeAutoGenerationCommand(returnBufferList);
   }
 
   /**
@@ -62,49 +64,14 @@ class Converter extends AbstConverter {
    */
   concreteParsingData(deviceData, currTransferCmd) {
     try {
+      // BU.CLI('concreteParsingData');
       // 0: SlaveAddr 1: FunctionCode, 2: DataLength, 3: Res Data (N*2)
       const RES_DATA_START_POINT = 3;
 
-      /** @type {Buffer} */
+      /** @type {modbusReadFormat} */
       const requestData = currTransferCmd;
-      const slaveAddr = requestData.readIntBE(0, 1);
-      const fnCode = requestData.readIntBE(1, 1);
-      const registerAddr = requestData.readInt16BE(2);
-      const dataLength = requestData.readInt16BE(4);
 
-      /** @type {Buffer} */
-      const resBuffer = deviceData;
-
-      // 수신받은 데이터 2 Byte Hi-Lo 형식으로 파싱
-      const resSlaveAddr = resBuffer.readIntBE(0, 1);
-      const resFnCode = resBuffer.readIntBE(1, 1);
-      const resDataLength = resBuffer.slice(RES_DATA_START_POINT).length;
-
-      // 같은 slaveId가 아닐 경우
-      if (!_.isEqual(slaveAddr, resSlaveAddr)) {
-        throw new Error(
-          `The expected slaveId: ${slaveAddr}. but received slaveId: ${resSlaveAddr} `,
-        );
-      }
-
-      // 수신받은 Function Code가 다를 경우
-      if (!_.isEqual(fnCode, resFnCode)) {
-        throw new Error(`The expected fnCode: ${fnCode}. but received fnCode: ${resFnCode}`);
-      }
-
-      // 수신받은 데이터의 길이가 다를 경우 (수신데이터는 2 * N 이므로 기대 값의 길이에 2를 곱함)
-      if (!_.isEqual(_.multiply(dataLength, 2), resDataLength)) {
-        throw new Error(
-          `The expected dataLength: ${dataLength}. but received dataLength: ${resDataLength}`,
-        );
-      }
-
-      // 실제 장치 데이터 배열화
-      const resDataList = [];
-      for (let index = RES_DATA_START_POINT; index < resBuffer.length; index += 2) {
-        // BU.CLI(resBuffer.readUInt16BE(index));
-        resDataList.push(resBuffer.readUInt16BE(index));
-      }
+      const { address: registerAddr, dataLength, fnCode, unitId: slaveAddr } = requestData;
 
       // 요청 시작 주소를 가져옴
       const startAddr = registerAddr;
@@ -112,11 +79,11 @@ class Converter extends AbstConverter {
       this.decodingTable.address = startAddr;
 
       // 실제 파싱 데이터 추출
-      const dataBody = resDataList.slice(0, requestData.dataLength);
+      const dataBody = deviceData.slice(0, requestData.dataLength);
 
       /** @type {BASE_MODEL} */
       const returnValue = this.automaticDecodingForArray(this.decodingTable, dataBody);
-
+      // BU.CLI(returnValue);
       return returnValue;
     } catch (error) {
       throw error;
