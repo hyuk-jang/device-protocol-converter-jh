@@ -127,7 +127,7 @@ const onDeviceOperationStatus = {
   [Model.CALC_KEY.InvKwhAdress]: char => {
     const lowKwh = parseInt(char.slice(0, 4), 16);
     const highKwh = parseInt(char.slice(4, 8), 16);
-    const powerCpKwh = (highKwh * 10000 + lowKwh) / 1000;
+    const powerCpKwh = highKwh * 65536 + lowKwh;
 
     return powerCpKwh;
   },
@@ -217,7 +217,7 @@ exports.decodingProtocolTable = dialing => {
     dialing,
     decodingDataList: [
       {
-        key: Model.BASE_KEY.powerPvKw,
+        key: Model.BASE_KEY.pvKw,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToDec,
         scale: 0.1,
