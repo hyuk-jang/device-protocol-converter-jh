@@ -136,10 +136,10 @@ class Converter {
    * option 에 따라 반환 Buffer Size, BE or LE , Int or UInt 형태 결정됨.
    * @param {number} dec 변환할 수 (10진수)
    * @param {Object} option
-   * @param {number} option.allocSize
-   * @param {number=} option.scale
-   * @param {boolean} option.isLE
-   * @param {boolean} option.isUnsigned
+   * @param {number=} option.allocSize default 2
+   * @param {number=} option.scale default 1
+   * @param {boolean=} option.isLE default true
+   * @param {boolean=} option.isUnsigned default true
    * @returns {Buffer} Dec
    * @example
    * (Dec) 65 -> <Buffer 34 31>

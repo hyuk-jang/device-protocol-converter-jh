@@ -40,6 +40,10 @@ class Converter extends AbstConverter {
   concreteParsingData(deviceData, currTransferCmd) {
     try {
       // BU.CLI('currTransferCmd', deviceData);
+      // 마지막 byte에 ff가 들어오는 경우 제거
+      if (deviceData.length === 41) {
+        deviceData = deviceData.slice(0, deviceData.length - 1);
+      }
       // 0: Header1 1: Header2, 2: StationID
       const RES_DATA_START_POINT = 3;
       const resId = deviceData.readInt8(2);
