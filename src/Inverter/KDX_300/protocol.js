@@ -102,6 +102,17 @@ exports.decodingProtocolTable = dialing => {
       {
         key: Model.BASE_KEY.gridLf,
       },
+      // 전체 유효전력량 + Wh (2 Address),  - Wh (2 Address)
+      {
+        key: Model.BASE_KEY.powerCpKwh,
+        byte: 2,
+      },
+      {
+        byte: 1,
+      },
+      {
+        byte: 1,
+      },
     ],
   };
 
