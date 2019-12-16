@@ -6,7 +6,7 @@ const Converter = require('../../src/UPSAS/xbee/Converter');
 
 const Model = require('../../src/UPSAS/xbee/Model');
 
-const { requestDeviceControlType } = require('../../../default-intelligence').dcmConfigModel;
+const { reqDeviceControlType } = require('../../../default-intelligence').dcmConfigModel;
 
 const model = new Model();
 
@@ -16,7 +16,7 @@ describe('encoding Test 1', () => {
     BU.CLI(model.device.WATER_DOOR.COMMAND.OPEN);
     let cmdInfo = converter.generationCommand({
       key: model.device.WATER_DOOR.KEY,
-      value: requestDeviceControlType.TRUE,
+      value: reqDeviceControlType.TRUE,
     });
     BU.CLI(cmdInfo);
     let genCmdInfo = _.head(cmdInfo);
@@ -30,7 +30,7 @@ describe('encoding Test 1', () => {
     BU.CLI(cmdInfo);
     cmdInfo = converter.generationCommand({
       key: model.device.VALVE.KEY,
-      value: requestDeviceControlType.FALSE,
+      value: reqDeviceControlType.FALSE,
     });
     genCmdInfo = _.head(cmdInfo);
     BU.CLI(genCmdInfo);

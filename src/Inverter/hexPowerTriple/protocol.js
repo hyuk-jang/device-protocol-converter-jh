@@ -127,7 +127,7 @@ const onDeviceOperationStatus = {
   [Model.CALC_KEY.InvKwhAdress]: char => {
     const lowKwh = parseInt(char.slice(0, 4), 16);
     const highKwh = parseInt(char.slice(4, 8), 16);
-    const powerCpKwh = (highKwh * 10000 + lowKwh) / 1000;
+    const powerCpKwh = highKwh * 65536 + lowKwh;
 
     return powerCpKwh;
   },
@@ -158,6 +158,7 @@ exports.decodingProtocolTable = dialing => {
         key: Model.BASE_KEY.pvAmp,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToDec,
+        scale: 0.1,
         fixed: 1,
       },
     ],
@@ -185,16 +186,22 @@ exports.decodingProtocolTable = dialing => {
         key: Model.BASE_KEY.gridRAmp,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToDec,
+        scale: 0.1,
+        fixed: 1,
       },
       {
         key: Model.BASE_KEY.gridSAmp,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToDec,
+        scale: 0.1,
+        fixed: 1,
       },
       {
         key: Model.BASE_KEY.gridTAmp,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToDec,
+        scale: 0.1,
+        fixed: 1,
       },
       {
         key: Model.BASE_KEY.gridLf,
@@ -210,7 +217,7 @@ exports.decodingProtocolTable = dialing => {
     dialing,
     decodingDataList: [
       {
-        key: Model.BASE_KEY.powerPvKw,
+        key: Model.BASE_KEY.pvKw,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToDec,
         scale: 0.1,

@@ -56,7 +56,7 @@ class Converter extends AbstConverter {
       const calcChkSum = this.protocolConverter.getBufferCheckSum(
         deviceData.slice(1, deviceData.length - 5),
       );
-      //   BU.CLI('calcChkSum', calcChkSum);
+      // BU.CLI('calcChkSum', calcChkSum);
 
       // 체크섬 비교
       if (!_.isEqual(calcChkSum, resChkSum)) {
@@ -92,6 +92,8 @@ class Converter extends AbstConverter {
         default:
           throw new Error(`Can not find it Addr ${resAddr}`);
       }
+
+      // BU.CLI(dataBody);
 
       const dataMap = this.automaticDecoding(decodingTable.decodingDataList, dataBody);
 
@@ -155,12 +157,42 @@ module.exports = Converter;
 
 if (require !== undefined && require.main === module) {
   const converter = new Converter({
-    deviceId: '01',
+    deviceId: '02',
     mainCategory: 'Inverter',
     subCategory: 'hexPowerTriple',
   });
 
-  const data = Buffer.from('0630315230303730303536303035383030363130303732303030303004', 'hex');
-  const dataMap = converter.testParsingData(data);
-  BU.CLI(dataMap);
+  const requestList = [
+    // '053031523030303430343031646204',
+    // '053031523030323030323031643704',
+    // '053031523030323030323031643704',
+    // '053031523030303430343031646204',
+    '053032523030323030323031643804',
+  ];
+
+  const dataList = [
+    // '0630315230303034666666666666666630303031666666663037303004',
+    // '063031523030323038656635663365613034306304',
+    // '0630325230303230 30316561 30306366 3033633604',
+    // '0630315230303034666666666666666630303031666666663037303004',
+    '063032523030323030316561303063663033633604',
+  ];
+
+  dataList.forEach((data, index) => {
+    const dataMap = converter.concreteParsingData(
+      Buffer.from(data, 'hex'),
+      Buffer.from(_.nth(requestList, index), 'hex'),
+    );
+    BU.CLI(dataMap);
+
+    // const dataMap = converter.testParsingData(Buffer.from(data, 'hex'));
+    // BU.CLI(dataMap);
+  });
+
+  // const data = Buffer.from(
+  //   '063032523030323030376561666263633034333104',
+  //   'hex',
+  // );
+  // const dataMap = converter.testParsingData(data);
+  // BU.CLI(dataMap);
 }

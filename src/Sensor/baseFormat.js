@@ -260,4 +260,101 @@ module.exports = {
    * @type {Object[]=}
    */
   operTroubleList: [],
+  /** @@@@@@@@@@@@@@@@@ 접속반 관련 @@@@@@@@@@@@@@@@@@@@@@ */
+  /**
+   * 전류(Ampere), 단위[A]
+   * @description PV
+   * @type {number[]=}
+   */
+  ampCh1: [],
+  /**
+   * 전류(Ampere), 단위[A]
+   * @description PV
+   * @type {number[]=}
+   */
+  ampCh2: [],
+  /**
+   * 전류(Ampere), 단위[A]
+   * @description PV
+   * @type {number[]=}
+   */
+  ampCh3: [],
+  /**
+   * 전류(Ampere), 단위[A]
+   * @description PV
+   * @type {number[]=}
+   */
+  ampCh4: [],
+  /**
+   * 전류(Ampere), 단위[A]
+   * @description PV
+   * @type {number[]=}
+   */
+  ampCh5: [],
+  /**
+   * 전류(Ampere), 단위[A]
+   * @description PV
+   * @type {number[]=}
+   */
+  ampCh6: [],
+  /**
+   * 전류(Ampere), 단위[A]
+   * @description PV
+   * @type {number[]=}
+   */
+  ampCh7: [],
+  /**
+   * 전류(Ampere), 단위[A]
+   * @description PV
+   * @type {number[]=}
+   */
+  ampCh8: [],
+  /**
+   * 전압(voltage), 단위[V]
+   * @description PV
+   * @type {number[]=}
+   */
+  volCh1: [],
+  /**
+   * 전압(voltage), 단위[V]
+   * @description PV
+   * @type {number[]=}
+   */
+  volCh2: [],
+  /**
+   * 전압(voltage), 단위[V]
+   * @description PV
+   * @type {number[]=}
+   */
+  volCh3: [],
+  /**
+   * 전압(voltage), 단위[V]
+   * @description PV
+   * @type {number[]=}
+   */
+  volCh4: [],
+  /**
+   * 전압(voltage), 단위[V]
+   * @description PV
+   * @type {number[]=}
+   */
+  volCh5: [],
+  /**
+   * 전압(voltage), 단위[V]
+   * @description PV
+   * @type {number[]=}
+   */
+  volCh6: [],
+  /**
+   * 전압(voltage), 단위[V]
+   * @description PV
+   * @type {number[]=}
+   */
+  volCh7: [],
+  /**
+   * 전압(voltage), 단위[V]
+   * @description PV
+   * @type {number[]=}
+   */
+  volCh8: [],
 };

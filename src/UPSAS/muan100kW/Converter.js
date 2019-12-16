@@ -45,7 +45,8 @@ class Converter extends AbstConverter {
         data: cmdInfo.cmd,
       };
       commandObj.data = frameObj;
-      commandObj.commandExecutionTimeoutMs = 1000 * 2;
+      commandObj.commandExecutionTimeoutMs = 100;
+      // commandObj.commandExecutionTimeoutMs = 1000 * 2;
       commandObj.delayExecutionTimeoutMs = _.isNumber(cmdInfo.timeout) && cmdInfo.timeout;
       returnValue.push(commandObj);
     });
@@ -115,27 +116,22 @@ class Converter extends AbstConverter {
 
           switch (productType) {
             case 1:
-              decodingDataList =
-                dataBody.toString().length === 12
-                  ? this.decodingTable.gateLevelSalinity
-                  : this.decodingTable.newGateLevelSalinity;
+              decodingDataList = this.decodingTable.waterDoor;
               break;
             case 2:
-              decodingDataList =
-                dataBody.toString().length === 20
-                  ? this.decodingTable.valve
-                  : this.decodingTable.salternBlockValve;
-              // BU.CLI(dataBody.toString().length, decodingDataList);
-              // decodingDataList = this.decodingTable.valve;
+              decodingDataList = this.decodingTable.gateValve;
               break;
             case 3:
               decodingDataList = this.decodingTable.pump;
               break;
-            case 5:
-              decodingDataList = this.decodingTable.earthModule;
-              break;
-            case 6:
-              decodingDataList = this.decodingTable.connectorGroundRelay;
+            // case 5:
+            //   decodingDataList = this.decodingTable.earthModule;
+            //   break;
+            // case 6:
+            //   decodingDataList = this.decodingTable.connectorGroundRelay;
+            //   break;
+            case 7:
+              decodingDataList = this.decodingTable.sensor;
               break;
             default:
               throw new Error(`productType: ${productType}은 Parsing 대상이 아닙니다.`);

@@ -39,7 +39,11 @@ class Converter extends AbstConverter {
    */
   concreteParsingData(deviceData, currTransferCmd) {
     try {
-      // BU.CLI('currTransferCmd', currTransferCmd);
+      // BU.CLI('currTransferCmd', deviceData);
+      // 마지막 byte에 ff가 들어오는 경우 제거
+      if (deviceData.length === 41) {
+        deviceData = deviceData.slice(0, deviceData.length - 1);
+      }
       // 0: Header1 1: Header2, 2: StationID
       const RES_DATA_START_POINT = 3;
       const resId = deviceData.readInt8(2);
@@ -82,7 +86,7 @@ class Converter extends AbstConverter {
 
       // PV 2가닥 데이터를 합산 처리
       _.set(dataMap, 'pvAmp', [_.sum(dataMap.pvAmp)]);
-      _.set(dataMap, 'pvVol', [_.sum(dataMap.pvVol)]);
+      _.set(dataMap, 'pvVol', [_.mean(dataMap.pvVol)]);
       _.set(dataMap, 'pvKw', [_.sum(dataMap.pvKw)]);
 
       // Trobule 목록을 하나로 합침
@@ -168,60 +172,27 @@ module.exports = Converter;
 
 if (require !== undefined && require.main === module) {
   const converter = new Converter({
-    deviceId: '\u0001',
+    deviceId: '\u000a',
     mainCategory: 'Inverter',
     subCategory: 's5500k',
   });
 
-  const data = Buffer.from([
-    0xb1,
-    0xb5,
-    0x01,
-    0x15,
-    0x0e,
-    0x32,
-    0x0a,
-    0x98,
-    0x08,
-    0xac,
-    0x0d,
-    0xce,
-    0x04,
-    0x4c,
-    0x04,
-    0xfd,
-    0x08,
-    0xd0,
-    0x07,
-    0x79,
-    0x00,
-    0x59,
-    0x02,
-    0xe7,
-    0x03,
-    0x00,
-    0x6a,
-    0x08,
-    0x60,
-    0x01,
-    0x00,
-    0x8e,
-    0x89,
-    0x00,
-    0x40,
-    0x80,
-    0x10,
-    0x20,
-    0x08,
-    0x8d,
-  ]);
+  // const testReqMsg = '02490a9640541805ac03';
+  const testReqMsg = '02490a9641541805ad03';
+  const realTestReqMsg = Buffer.from(testReqMsg.slice(4, testReqMsg.length - 2), 'hex');
+  const dataList = [
+    // '0249b1b540ed0a0b002100ec0a0d0025000000000000000000550e0000004601000000008000000000db03',
+    '0249b1b5413c09a00236064709a80250067a09e504e20b5802e605002302910100ba430040000000009a03',
+  ];
 
-  // converter.testParsingData(data);
-  // const requestMsg = converter.generationCommand({
-  //   key: converter.baseModel.device.DEFAULT.KEY,
-  // });
-  const dataMap = converter.concreteParsingData(data, _.head(converter.generationCommand()).data);
-  BU.CLI(dataMap);
+  dataList.forEach(d => {
+    const realBuffer = Buffer.from(d.slice(4, d.length - 2), 'hex');
+
+    // const result = converter.testParsingData(realBuffer);
+    // BU.CLI(result);
+    const dataMap = converter.concreteParsingData(realBuffer, realTestReqMsg);
+    BU.CLI(dataMap);
+  });
 
   // BU.CLIN(converter.model);
 
