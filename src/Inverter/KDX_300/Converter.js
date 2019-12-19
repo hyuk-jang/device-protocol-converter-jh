@@ -108,6 +108,18 @@ class Converter extends AbstConverter {
       // BU.CLI(resBuffer);
       // BU.CLIS(dataLength, resDataLength);
 
+      const realExpectDataLength = _.multiply(dataLength, 2);
+
+      // 수신받은 데이터의 길이가 다를 경우 (수신데이터는 2 * N 이므로 기대 값의 길이에 2를 곱함)
+      if (resDataLength !== realExpectDataLength) {
+        const msg = `The expected dataLength: ${realExpectDataLength}. but received dataLength: ${resDataLength}`;
+        // 데이터가 다 오지 않은 것으로 판단. DBS에 에러코드를 보내지 않고 데이터 기다림
+        if (resDataLength < realExpectDataLength) {
+          throw new RangeError(msg);
+        }
+        throw new Error(msg);
+      }
+
       // 같은 slaveId가 아닐 경우
       if (!_.isEqual(slaveAddr, resSlaveAddr)) {
         throw new Error(
@@ -120,15 +132,6 @@ class Converter extends AbstConverter {
         throw new Error(`The expected fnCode: ${fnCode}. but received fnCode: ${resFnCode}`);
       }
 
-      // 수신받은 데이터의 길이가 다를 경우 (수신데이터는 2 * N 이므로 기대 값의 길이에 2를 곱함)
-      if (!_.isEqual(_.multiply(dataLength, 2), resDataLength)) {
-        throw new Error(
-          `The expected dataLength: ${_.multiply(
-            dataLength,
-            2,
-          )}. but received dataLength: ${resDataLength}`,
-        );
-      }
       // 응답, 요청 CRC코드 비교
       if (!_.isEqual(calcCrcCode, resCrcCode)) {
         throw new Error(
@@ -136,7 +139,7 @@ class Converter extends AbstConverter {
         );
       }
 
-      // BU.CLI(resBuffer);
+      BU.CLI(resBuffer);
       // BU.CLI(resBuffer.slice(RES_DATA_START_POINT, resBuffer.length - 2));
       /** @type {BASE_MODEL} */
       const returnValue = this.automaticDecoding(

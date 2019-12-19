@@ -1,6 +1,6 @@
-// const EventEmitter = require('events');
-const { BU } = require('base-util-jh');
 const _ = require('lodash');
+
+const { BU } = require('base-util-jh');
 
 // const {definedCommanderResponse} =  require('default-intelligence').dccFlagModel;
 const {

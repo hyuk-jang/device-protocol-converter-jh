@@ -19,9 +19,7 @@ class MainConverter {
 
   /** protocolConverter 설정함 */
   setProtocolConverter() {
-    const path = `../${this.protocol_info.mainCategory}/${
-      this.protocol_info.subCategory
-    }/Converter`;
+    const path = `../${this.protocol_info.mainCategory}/${this.protocol_info.subCategory}/Converter`;
     // BU.CLI(path);
     try {
       const DeviceProtocolConverter = require(path);

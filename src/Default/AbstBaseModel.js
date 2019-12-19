@@ -92,7 +92,9 @@ class AbstBaseModel {
   }
 
   /** 현재 카테고리에 있는 장치 데이터를 저장하기 위한 모델 */
-  static get BASE_MODEL() {}
+  static get BASE_MODEL() {
+    return '';
+  }
 
   /**
    * @static

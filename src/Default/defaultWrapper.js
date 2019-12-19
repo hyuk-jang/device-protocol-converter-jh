@@ -107,10 +107,10 @@ const defaultWrapper = {
     let bufBody;
     if (indexSTX > -1 && indexETX > -1) {
       bufBody = frameData.slice(indexSTX + 2, indexETX);
-    } else if (indexSTX > -1) {
-      bufBody = frameData.slice(indexSTX + 2);
-    } else if (indexETX > -1) {
-      bufBody = frameData.slice(0, indexETX);
+    } else {
+      throw new RangeError(
+        `indexSTX: ${indexSTX} and indexETX: ${indexETX} must be greater than 0`,
+      );
     }
 
     return bufBody;

@@ -191,23 +191,22 @@ class AbstConverter {
   parsingUpdateData(dcData) {
     // BU.CLIN(dcData);
     const returnValue = {};
-    const { DONE, ERROR } = definedCommanderResponse;
+    const { DONE, ERROR, WAIT } = definedCommanderResponse;
     try {
       // 수신 데이터 추적을 하는 경우라면 dcData의 Data와 합산
-      if (_.get(this, 'protocolOptionInfo.hasTrackingData') === true) {
+      const hasTrackingData = _.get(this, 'protocolOptionInfo.hasTrackingData');
+      const { wrapperCategory = '' } = this.protocolInfo;
+      // 수신 데이터를 추적하거나 래핑타입을 사용할 경우 데이터 추적모드
+      if (hasTrackingData === true || wrapperCategory.length) {
         this.trackingDataBuffer = Buffer.concat([this.trackingDataBuffer, dcData.data]);
         dcData.data = this.trackingDataBuffer;
         // BU.CLI(dcData.data.toString());
       }
-      try {
-        // protocolInfo.wrapperCategory 여부에 따라 frame 해제
-        returnValue.data = this.concreteParsingData(
-          this.peelFrame(dcData.data),
-          this.peelFrame(this.getCurrTransferCmd(dcData)),
-        );
-      } catch (error) {
-        throw error;
-      }
+      // protocolInfo.wrapperCategory 여부에 따라 frame 해제
+      returnValue.data = this.concreteParsingData(
+        this.peelFrame(dcData.data),
+        this.peelFrame(this.getCurrTransferCmd(dcData)),
+      );
       // BU.CLI('@@@@@@@@@@');
       returnValue.eventCode = DONE;
 
@@ -216,6 +215,15 @@ class AbstConverter {
 
       return returnValue;
     } catch (error) {
+      // Range Error가 발생하면 데이터가 충분하지 않아 그런것으로 판단
+      if (error instanceof RangeError) {
+        returnValue.eventCode = WAIT;
+        return returnValue;
+      }
+
+      // 에러가 발생할 경우 추적 버퍼 리셋
+      this.resetTrackingDataBuffer();
+
       returnValue.eventCode = ERROR;
       returnValue.data = error;
       return returnValue;
@@ -247,9 +255,10 @@ class AbstConverter {
       // 수신받은 데이터에서 현재 체크 중인 값을 가져올 인덱스
       let currIndex = 0;
       decodingTable.forEach(decodingInfo => {
-        const { byte = 1 } = decodingInfo;
+        const { byte = 1, key } = decodingInfo;
         // 조회할 데이터를 가져옴
         const thisData = receiveData.slice(currIndex, currIndex + byte);
+        // BU.CLI(key, thisData);
         this.automaticParsingData(decodingInfo, thisData, returnModelInfo);
         // index 증가
         currIndex += byte;
