@@ -1,3 +1,4 @@
+const crc = require('crc');
 const BaseModel = require('../BaseModel');
 
 class Model extends BaseModel {
@@ -19,6 +20,23 @@ class Model extends BaseModel {
         dataLength: 30,
       },
     ];
+  }
+
+  /**
+   * STX ~ ETX 까지의 CRC코드 생성
+   * @param {Buffer} buffer STX ~ ETX 까지의 buffer
+   * @return {Buffer} UpperCase 적용 후 Buffer
+   */
+  makeCrcCode(buffer) {
+    // const crcValue = crc.crc16xmodem(buffer);
+    const crcValue = crc.crc16modbus(buffer);
+    // const crcValue = crc.crc16(buffer);
+    // const crcValue = crc.crc32(buffer);
+    // console.log(crcValue);
+    const lower = this.protocolConverter.convertNumToHexToBuf(crcValue, 4);
+    // console.log(lower);
+
+    return Buffer.from(lower.toString(), 'hex').reverse();
   }
 }
 

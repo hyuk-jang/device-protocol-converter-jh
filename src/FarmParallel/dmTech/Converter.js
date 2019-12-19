@@ -137,7 +137,6 @@ class Converter extends AbstConverter {
       } else if (_.includes(horizontalSiteList, numDeviceId)) {
         decodingTable = this.decodingTable.HORIZONTAL_SITE;
       } else if (_.includes(fourSolarSiteList, numDeviceId)) {
-        BU.CLI('@@');
         decodingTable = this.decodingTable.FOUR_SOLAR_SITE;
       } else {
         decodingTable = this.decodingTable.PUS_SITE;
@@ -199,7 +198,7 @@ class Converter extends AbstConverter {
     // 장치 addr
     const numDeviceId = this.protocolInfo.deviceId;
 
-    BU.CLI(numDeviceId)
+    BU.CLI(numDeviceId);
 
     if (_.includes(pvRearTempTableList, numDeviceId)) {
       decodingTable = this.decodingTable.PRT_SITE;
