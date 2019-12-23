@@ -191,7 +191,7 @@ class AbstConverter {
   parsingUpdateData(dcData) {
     // BU.CLIN(dcData);
     const returnValue = {};
-    const { DONE, ERROR, WAIT } = definedCommanderResponse;
+    const { DONE, ERROR, WAIT, RETRY } = definedCommanderResponse;
     try {
       // 수신 데이터 추적을 하는 경우라면 dcData의 Data와 합산
       const hasTrackingData = _.get(this, 'protocolOptionInfo.hasTrackingData');
@@ -223,6 +223,11 @@ class AbstConverter {
 
       // 에러가 발생할 경우 추적 버퍼 리셋
       this.resetTrackingDataBuffer();
+
+      if (error instanceof TypeError) {
+        returnValue.eventCode = RETRY;
+        return returnValue;
+      }
 
       returnValue.eventCode = ERROR;
       returnValue.data = error;

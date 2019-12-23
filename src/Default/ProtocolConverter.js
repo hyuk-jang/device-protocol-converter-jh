@@ -260,7 +260,7 @@ class Converter {
    * <Buffer 30 30 34 31> -> (Dec) 65
    */
   convertReadBuf(buffer, option = {}) {
-    BU.CLI('$$$$$$$$$$$$$$$$$$$', buffer);
+    // BU.CLI('$$$$$$$$$$$$$$$$$$$', buffer);
     if (!Buffer.isBuffer(buffer)) return null;
 
     const { isLE = true, isUnsigned = true } = option;

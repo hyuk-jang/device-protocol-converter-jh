@@ -45,7 +45,7 @@ class Converter extends AbstConverter {
     // FIXME: Function Code 04 기준으로만 작성됨.  필요시 수정
     const returnBufferList = cmdList.map(cmdInfo => {
       const { unitId, fnCode, address, dataLength } = cmdInfo;
-      BU.CLI(cmdInfo);
+      // BU.CLI(cmdInfo);
 
       const bodyBufferList = [
         this.protocolConverter.convertNumToHxToBuf(unitId, 1),
@@ -73,7 +73,7 @@ class Converter extends AbstConverter {
 
   /**
    * 데이터 분석 요청
-   * @param {number[]} deviceData 장치로 요청한 명령
+   * @param {Buffer} deviceData 장치로 요청한 명령
    * @param {Buffer} currTransferCmd 현재 요청한 명령
    */
   concreteParsingData(deviceData, currTransferCmd) {
@@ -90,6 +90,11 @@ class Converter extends AbstConverter {
       const fnCode = requestData.readIntBE(1, 1);
       const registerAddr = requestData.readInt16BE(2);
       const dataLength = requestData.readInt16BE(4);
+
+      // 데이터 끝부분에 ff 들어오는 부분 제거 (dataLength * 2, mbap Header, ff(1byte))
+      if (deviceData.length === _.sum([_.multiply(dataLength, 2), 5, 1])) {
+        deviceData = deviceData.slice(0, deviceData.length - 1);
+      }
 
       // BU.CLI(requestData);
 
@@ -134,12 +139,12 @@ class Converter extends AbstConverter {
 
       // 응답, 요청 CRC코드 비교
       if (!_.isEqual(calcCrcCode, resCrcCode)) {
-        throw new Error(
+        throw new TypeError(
           `Not Matching calculated CrcCode: ${calcCrcCode}, responsed CrcCode: ${resCrcCode}`,
         );
       }
 
-      BU.CLI(resBuffer);
+      // BU.CLI(resBuffer);
       // BU.CLI(resBuffer.slice(RES_DATA_START_POINT, resBuffer.length - 2));
       /** @type {BASE_MODEL} */
       const returnValue = this.automaticDecoding(
