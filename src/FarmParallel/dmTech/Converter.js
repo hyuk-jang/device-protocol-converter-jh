@@ -126,7 +126,7 @@ class Converter extends AbstConverter {
       // NOTE: 추가 일사량 4기 로거
       const fourSolarSiteList = [31, 32, 33, 34, 35, 36];
       // NOTE: 외기 환경 데이터 로거 번호
-      const horizontalSiteList = [7, 9, 11, 13, 16];
+      const horizontalSiteList = [7, 9, 11, 12, 16];
       // 장치 addr
       const numDeviceId = this.protocolInfo.deviceId;
 
@@ -157,6 +157,10 @@ class Converter extends AbstConverter {
       /** @type {BASE_MODEL} */
       const returnValue = this.automaticDecodingForArray(decodingTable, dataBody);
       // 계측 시간을 포함할 경우
+
+      // if (numDeviceId === 13) {
+      //   BU.CLI(returnValue);
+      // }
 
       return returnValue;
     } catch (error) {

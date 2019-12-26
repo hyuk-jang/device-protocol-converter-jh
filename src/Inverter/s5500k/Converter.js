@@ -6,6 +6,8 @@ const protocol = require('./protocol');
 
 const Model = require('./Model');
 
+const { BASE_KEY } = Model;
+
 class Converter extends AbstConverter {
   /**
    * protocol_info.option --> true: 3.3kW, any: 600W
@@ -76,7 +78,7 @@ class Converter extends AbstConverter {
       // BU.CLI(dataBody);
 
       // 데이터 자동 산정
-      // /** @type {Model.BASE_KEY} */
+      /** @type {BASE_KEY} */
       const dataMap = this.automaticDecoding(this.decodingTable.DEFAULT.decodingDataList, dataBody);
 
       // 동양 s5500k 누적 발전량 이상 문제 제거
@@ -88,6 +90,14 @@ class Converter extends AbstConverter {
       _.set(dataMap, 'pvAmp', [_.sum(dataMap.pvAmp)]);
       _.set(dataMap, 'pvVol', [_.mean(dataMap.pvVol)]);
       _.set(dataMap, 'pvKw', [_.sum(dataMap.pvKw)]);
+
+      // 보성 오른쪽 인버터
+      if (_.isEqual(this.model.dialing, Buffer.from([16]))) {
+        dataMap.powerCpKwh[0] += 1922;
+      } else if (_.isEqual(this.model.dialing, Buffer.from([17]))) {
+        // 보성 왼쪽 인버터
+        dataMap.powerCpKwh[0] += 3010;
+      }
 
       // Trobule 목록을 하나로 합침
       dataMap.operTroubleList = [_.flatten(dataMap.operTroubleList)];

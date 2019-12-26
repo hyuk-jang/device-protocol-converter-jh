@@ -5,7 +5,7 @@ const { BU } = require('base-util-jh');
 
 const protocol = require('./protocol');
 const Model = require('./Model');
-const { BASE_MODEL } = require('./Model');
+const { BASE_KEY } = require('./Model');
 const AbstConverter = require('../../Default/AbstConverter');
 
 class Converter extends AbstConverter {
@@ -146,15 +146,27 @@ class Converter extends AbstConverter {
 
       // BU.CLI(resBuffer);
       // BU.CLI(resBuffer.slice(RES_DATA_START_POINT, resBuffer.length - 2));
-      /** @type {BASE_MODEL} */
-      const returnValue = this.automaticDecoding(
+      /** @type {BASE_KEY} */
+      const dataMap = this.automaticDecoding(
         this.decodingTable.decodingDataList,
         resBuffer.slice(RES_DATA_START_POINT, resBuffer.length - 2),
       );
       // 계측 시간을 포함할 경우
 
-      return returnValue;
+      // 영산포 왼쪽 전력량계부터
+      if (_.isEqual(this.model.dialing, 5)) {
+        dataMap.powerCpKwh[0] -= 16.811;
+      } else if (_.isEqual(this.model.dialing, 6)) {
+        dataMap.powerCpKwh[0] -= 24.415;
+      } else if (_.isEqual(this.model.dialing, 7)) {
+        dataMap.powerCpKwh[0] -= 20.802;
+      } else if (_.isEqual(this.model.dialing, 8)) {
+        dataMap.powerCpKwh[0] -= 23.367;
+      }
+
+      return dataMap;
     } catch (error) {
+      // BU.CLI(error);
       throw error;
     }
   }

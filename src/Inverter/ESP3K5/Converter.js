@@ -115,6 +115,17 @@ class Converter extends AbstConverter {
       // Trobule 목록을 하나로 합침
       dataMap.operTroubleList = [_.flatten(dataMap.operTroubleList)];
 
+      // 영산포 오른쪽 인버터 부터
+      if (_.isEqual(this.model.dialing, Buffer.from([47]))) {
+        dataMap.powerCpKwh[0] -= 2237;
+      } else if (_.isEqual(this.model.dialing, Buffer.from([85]))) {
+        dataMap.powerCpKwh[0] -= 1048;
+      } else if (_.isEqual(this.model.dialing, Buffer.from([46]))) {
+        dataMap.powerCpKwh[0] -= 2870;
+      } else if (_.isEqual(this.model.dialing, Buffer.from([86]))) {
+        dataMap.powerCpKwh[0] -= 3421;
+      }
+
       // 만약 인버터가 운영중인 데이터가 아니라면 현재 데이터를 무시한다.
       if (_.eq(_.head(dataMap.operIsRun), 0)) {
         dataMap = this.model.BASE_MODEL;
@@ -258,7 +269,7 @@ if (require !== undefined && require.main === module) {
     '0249b1b72f5f0771005f073209570019018b001a000000000000015802810063131703',
     '0249b1b72f410771004107330955001a0101001800000000000015802000063131e03',
     '0249b1b72f620800006208fb0800001a0100001800000000000000580200006313f303',
-    '0249b1b72f730800007308000900001b01000018000000000000005802000063130803'
+    '0249b1b72f730800007308000900001b01000018000000000000005802000063130803',
   ];
 
   dataList.forEach(d => {
