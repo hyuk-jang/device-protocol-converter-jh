@@ -6,7 +6,7 @@ const Converter = require('../../src/UPSAS/xbee/Converter');
 
 const Model = require('../../src/UPSAS/xbee/Model');
 
-const { reqDeviceControlType } = require('../../../default-intelligence').dcmConfigModel;
+const { reqDeviceControlType } = require('../../src/module').di.dcmConfigModel;
 
 const model = new Model();
 

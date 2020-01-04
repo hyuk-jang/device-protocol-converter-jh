@@ -1,8 +1,7 @@
 const _ = require('lodash');
 const { BU } = require('base-util-jh');
 
-const { reqDeviceControlType } = require('../../../default-intelligence').dcmConfigModel;
-// require('../../../../module/default-intelligence');
+const { reqDeviceControlType } = require('../module').di.dcmConfigModel;
 
 class MainConverter {
   /**

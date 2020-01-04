@@ -19,9 +19,6 @@ const protocolInfo = {
 // 명령 모델 객체를 생성.(protocolInfo 강제 입력)
 const model = new Model(protocolInfo);
 
-// require('default-intelligence');
-// require('../../../../default-intelligence');
-
 // 센서류 데이터를 가져오기 위한 명령 변환 테스트
 describe('encoding Test 1', () => {
   const converter = new Converter(protocolInfo);

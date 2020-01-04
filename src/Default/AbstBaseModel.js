@@ -1,6 +1,4 @@
 const _ = require('lodash');
-// require('default-intelligence');
-// require('../../../default-intelligence');
 
 const ProtocolConverter = require('./ProtocolConverter');
 
