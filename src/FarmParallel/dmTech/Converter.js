@@ -313,7 +313,7 @@ module.exports = Converter;
 
 if (require !== undefined && require.main === module) {
   const converter = new Converter({
-    deviceId: 35,
+    deviceId: 10,
     mainCategory: 'FarmParallel',
     subCategory: 'dmTech',
     protocolOptionInfo: {
@@ -323,18 +323,18 @@ if (require !== undefined && require.main === module) {
 
   // BU.CLIN(converter.model);
 
-  const dataList = [
-    '025323041ccccc0fff0190029f000004f6000000000168000000000000068506dd03',
-    // '0253070418037400170000000002730262819103e7009600000000000003',
-  ];
+  const testReqMsg = '025301040000000c03';
+  const realTestReqMsg = Buffer.from(testReqMsg.slice(4, testReqMsg.length - 2), 'hex');
 
-  dataList.forEach(data => {
-    const result = converter.testParsingData(Buffer.from(data.slice(4, data.length - 2), 'hex'));
-    BU.CLI(result);
+  const dataList = ['0253010418015c035002b601db01f201f002e40000000000000000000003'];
 
-    // const realBuffer = Buffer.from(data.slice(4, data.length - 2), 'hex');
-    // const dataMap = converter.concreteParsingData(realBuffer, realTestReqMsg);
-    // BU.CLI(dataMap);
+  dataList.forEach(d => {
+    const realBuffer = Buffer.from(d.slice(4, d.length - 2), 'hex');
+
+    // const result = converter.testParsingData(realBuffer);
+    // BU.CLI(result);
+    const dataMap = converter.concreteParsingData(realBuffer, realTestReqMsg);
+    BU.CLI(dataMap);
   });
 
   // converter.testParsingData(Buffer.from(dataList, 'ascii'));
