@@ -1,7 +1,5 @@
 const { BU } = require('base-util-jh');
 const { parsingMethod } = require('../../format/moduleDefine');
-// require('default-intelligence');
-// require('../../../../default-intelligence');
 const Model = require('./Model');
 
 const model = new Model();

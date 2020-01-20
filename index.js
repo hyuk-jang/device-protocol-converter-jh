@@ -1,5 +1,3 @@
-require('../default-intelligence');
-
 const defaultModule = require('./src/Default/DefaultModel');
 const defaultWrapper = require('./src/Default/defaultWrapper');
 const ESS = require('./src/ESS/BaseModel');

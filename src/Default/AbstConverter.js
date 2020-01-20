@@ -5,8 +5,7 @@ const ProtocolConverter = require('./ProtocolConverter');
 const AbstBaseModel = require('./AbstBaseModel');
 const defaultWrapper = require('./defaultWrapper');
 
-// const {definedCommanderResponse} =  require('default-intelligence').dccFlagModel;
-const { dccFlagModel, dcmConfigModel } = require('../../../../module/default-intelligence');
+const { dccFlagModel, dcmConfigModel } = require('../module').di;
 
 const { definedCommanderResponse } = dccFlagModel;
 const { reqDeviceControlType } = dcmConfigModel;

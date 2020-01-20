@@ -14,9 +14,6 @@ const model = new BaseModel({
   subCategory: 'das_1.3',
 });
 
-// require('default-intelligence');
-// require('../../../../default-intelligence');
-
 describe('encoding Test 1', () => {
   const converter = new Converter({ deviceId: '001', subCategory: 'das_1.3' });
   it('encoding das', done => {

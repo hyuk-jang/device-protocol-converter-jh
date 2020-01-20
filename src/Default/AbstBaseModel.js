@@ -1,7 +1,6 @@
 const _ = require('lodash');
-// require('default-intelligence');
-// require('../../../default-intelligence');
 
+const dpcRouter = require('./dpcRouter');
 const ProtocolConverter = require('./ProtocolConverter');
 
 class AbstBaseModel {
@@ -35,8 +34,9 @@ class AbstBaseModel {
     this.protocolInfo = protocolInfo;
 
     if (_.get(protocolInfo, 'mainCategory') && _.get(protocolInfo, 'subCategory')) {
-      // const BaseModel = require(`./${protocol_info.mainCategory}/BaseModel`);
-      const Model = require(`../${protocolInfo.mainCategory}/${protocolInfo.subCategory}/Model`);
+      // const Model = require(`../${protocolInfo.mainCategory}/${protocolInfo.subCategory}/Model`);
+      const { Model } = dpcRouter(protocolInfo);
+
       // Model에 프로토콜 정보 설정
       const model = new Model(this.protocolInfo);
       _.set(model, 'protocolInfo', this.protocolInfo);
@@ -86,8 +86,9 @@ class AbstBaseModel {
    * @return {Object}
    */
   static GET_BASE_MODEL(protocolInfo) {
-    const path = `../${protocolInfo.mainCategory}/baseFormat`;
-    const baseFormat = require(path);
+    // const path = `../${protocolInfo.mainCategory}/baseFormat`;
+    const { baseFormat } = dpcRouter(protocolInfo);
+    // const baseFormat = require(path);
     return _.cloneDeep(baseFormat);
   }
 
@@ -104,8 +105,9 @@ class AbstBaseModel {
    * @return {Object}
    */
   static GET_BASE_KEY(protocolInfo) {
-    const path = `../${protocolInfo.mainCategory}/baseFormat`;
-    const baseFormat = require(path);
+    // const path = `../${protocolInfo.mainCategory}/baseFormat`;
+    // // const baseFormat = require(path);
+    const { baseFormat } = dpcRouter(protocolInfo);
     const baseKey = Object.assign({}, baseFormat);
     _.forEach(baseKey, (v, k) => _.set(baseKey, k, k));
     return baseKey;

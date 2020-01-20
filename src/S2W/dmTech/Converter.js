@@ -87,9 +87,6 @@ class Converter extends AbstConverter {
       const resFnCode = resBuffer.readIntBE(1, 1);
       const resDataLength = resBuffer.slice(RES_DATA_START_POINT).length;
 
-      // BU.CLI(resBuffer);
-      // BU.CLIS(dataLength, resDataLength);
-
       // 같은 slaveId가 아닐 경우
       if (!_.isEqual(slaveAddr, resSlaveAddr)) {
         throw new Error(
@@ -109,18 +106,13 @@ class Converter extends AbstConverter {
         );
       }
 
-      // 실제 장치 데이터 배열화
-      const resDataList = [];
-      for (let index = RES_DATA_START_POINT; index < resBuffer.length; index += 2) {
-        // BU.CLI(resBuffer.readUInt16BE(index));
-        resDataList.push(resBuffer.readUInt16BE(index));
-      }
-
       let decodingTable;
       // NOTE: 모듈 후면 온도, 경사 일사량이 붙어 있는 로거
-      const outsideTableList = [5];
+      const outsideTableList = [9];
       // NOTE: 모듈 하부 일사량이 붙어 있는 로거
       const insideTableList = [1, 2, 3, 4];
+      // NOTE: 마이크로 인버터 센서군
+      const microTableList = [5, 6, 7, 8];
       // 장치 addr
       const numDeviceId = this.protocolInfo.deviceId;
 
@@ -128,6 +120,8 @@ class Converter extends AbstConverter {
         decodingTable = this.decodingTable.OUTSIDE_SITE;
       } else if (_.includes(insideTableList, numDeviceId)) {
         decodingTable = this.decodingTable.INSIDE_SITE;
+      } else if (_.includes(microTableList, numDeviceId)) {
+        decodingTable = this.decodingTable.MICRO_SITE;
       } else {
         decodingTable = this.decodingTable.INSIDE_SITE;
       }
@@ -137,149 +131,18 @@ class Converter extends AbstConverter {
       decodingTable.address = startAddr;
 
       // 실제 파싱 데이터 추출
-      const dataBody = resDataList.slice(0, requestData.dataLength);
+      const dataBody = resBuffer.slice(RES_DATA_START_POINT);
 
       // FIXME: 실제 현장에서의 간헐적인 00000000000000 데이터 처리를 위함. 해당 데이터는 사용하지 않음
-      if (dataBody.every(v => v === 0)) {
+      if (_.every(dataBody, v => _.isEqual(v, Buffer.from([0])))) {
         return BASE_MODEL;
       }
 
       /** @type {BASE_MODEL} */
-      const returnValue = this.automaticDecodingForArray(decodingTable, dataBody);
+      const returnValue = this.automaticDecoding(decodingTable.decodingDataList, dataBody);
       // 계측 시간을 포함할 경우
 
       return returnValue;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  testParsingData(deviceData) {
-    BU.CLI(deviceData);
-    // 0: SlaveAddr 1: FunctionCode, 2: DataLength, 3: Res Data (N*2)
-    const RES_DATA_START_POINT = 3;
-    /** @type {Buffer} */
-    const resBuffer = deviceData;
-
-    // 수신받은 데이터 2 Byte Hi-Lo 형식으로 파싱
-    const resSlaveAddr = resBuffer.readIntBE(0, 1);
-    const resFnCode = resBuffer.readIntBE(1, 1);
-    const resDataLength = resBuffer.slice(RES_DATA_START_POINT).length;
-
-    // 실제 장치 데이터 배열화
-    const resDataList = [];
-    for (let index = RES_DATA_START_POINT; index < resBuffer.length; index += 2) {
-      // BU.CLI(resBuffer.readUInt16BE(index));
-      resDataList.push(resBuffer.readUInt16BE(index));
-    }
-    BU.CLI(resDataList);
-
-    let decodingTable;
-    const outsideTableList = [5];
-    // NOTE: 모듈 하부 일사량이 붙어 있는 로거
-    const insideTableList = [1, 2, 3, 4];
-    // 장치 addr
-    const numDeviceId = this.protocolInfo.deviceId;
-
-    if (_.includes(outsideTableList, numDeviceId)) {
-      decodingTable = this.decodingTable.OUTSIDE_SITE;
-    } else if (_.includes(insideTableList, numDeviceId)) {
-      decodingTable = this.decodingTable.INSIDE_SITE;
-    } else {
-      decodingTable = this.decodingTable.INSIDE_SITE;
-    }
-    // 요청 시작 주소를 가져옴
-    // const startAddr = registerAddr;
-    // 실제 시작하는 주소 세팅
-    decodingTable.address = 0;
-
-    // 실제 파싱 데이터 추출
-    const dataBody = resDataList.slice(0, 12);
-
-    // FIXME: 실제 현장에서의 간헐적인 00000000000000 데이터 처리를 위함. 해당 데이터는 사용하지 않음
-    if (dataBody.every(v => v === 0)) {
-      return BASE_MODEL;
-    }
-
-    /** @type {BASE_MODEL} */
-    const returnValue = this.automaticDecodingForArray(decodingTable, dataBody);
-    // 계측 시간을 포함할 경우
-
-    return returnValue;
-  }
-
-  /**
-   * @override
-   * decodingInfo 리스트 만큼 Data 파싱을 진행
-   * @param {decodingProtocolInfo} decodingTable
-   * @param {Buffer|number[]} receiveData
-   * @example
-   * addr: 3, length 5 --> 수신받은 데이터 [x, x, x, x, x] 5개
-   * decodingTable.decodingDataList --> 3번 index ~ 7번 인덱스(addr + length - 1) 반복 체크
-   * currIndex는 반복에 의해 1씩 증가 --> 해당 currIndex로 수신받은 데이터 index 추출
-   */
-  automaticDecodings(decodingTable, receiveData) {
-    // BU.CLI(decodingTable);
-    try {
-      // 데이터를 집어넣을 기본 자료형을 가져옴
-      const returnModelInfo = Model.BASE_MODEL;
-      // 도출된 자료가 2차 가공(ex: 0 -> Open, 1 -> Close )이 필요한 경우
-      const operationKeys = _.keys(this.onDeviceOperationStatus);
-      // 수신받은 데이터에서 현재 체크 중인 값을 가져올 인덱스
-      let currIndex = 0;
-
-      // 총 체크해야할 데이터 범위를 계산 (시작주소 + 수신 데이터 길이)
-      const remainedDataListLength = _.sum([receiveData.length, decodingTable.address]);
-      // 시작주소부터 체크 시작
-      for (let index = decodingTable.address; index < remainedDataListLength; index += 1) {
-        // 해당 디코딩 정보 추출
-        const decodingInfo = decodingTable.decodingDataList[index];
-
-        // 디코딩 정보 여부 체크
-        if (!_.isEmpty(decodingInfo)) {
-          // 조회할 데이터를 가져옴
-          const thisData = _.nth(receiveData, currIndex);
-          let convertValue;
-          // 사용하는 메소드를 호출
-          if (_.isNil(decodingInfo.callMethod)) {
-            convertValue = thisData;
-          } else {
-            convertValue = this.protocolConverter[decodingInfo.callMethod](thisData);
-          }
-          // 배율 및 소수점 처리를 사용한다면 적용
-          convertValue =
-            _.isNumber(decodingInfo.scale) && _.isNumber(decodingInfo.fixed)
-              ? _.round(convertValue * decodingInfo.scale, decodingInfo.fixed)
-              : convertValue;
-
-          // decodingKey가 있다면 해당 key로. 기본값은 key로 변환 키 정의
-          const decodingKey = _.get(decodingInfo, 'decodingKey')
-            ? _.get(decodingInfo, 'decodingKey')
-            : _.get(decodingInfo, 'key');
-          // 변환키가 정의되어있는지 확인
-          if (_.includes(operationKeys, decodingKey)) {
-            const operationStauts = this.onDeviceOperationStatus[decodingKey];
-            // 찾은 Decoding이 Function 이라면 값을 넘겨줌
-            if (operationStauts instanceof Function) {
-              const tempValue = operationStauts(convertValue);
-              convertValue = _.isNumber(tempValue)
-                ? _.round(tempValue, decodingInfo.fixed)
-                : tempValue;
-            } else {
-              convertValue = _.get(operationStauts, convertValue);
-            }
-          }
-
-          // 데이터 단위가 배열일 경우
-          if (Array.isArray(returnModelInfo[_.get(decodingInfo, 'key')])) {
-            returnModelInfo[_.get(decodingInfo, 'key')].push(convertValue);
-          } else {
-            returnModelInfo[_.get(decodingInfo, 'key')] = convertValue;
-          }
-        }
-        currIndex += decodingInfo.byte || 1;
-      }
-      return returnModelInfo;
     } catch (error) {
       throw error;
     }
@@ -289,7 +152,7 @@ module.exports = Converter;
 
 if (require !== undefined && require.main === module) {
   const converter = new Converter({
-    deviceId: 1,
+    deviceId: 5,
     mainCategory: 'S2W',
     subCategory: 'dmTech',
     protocolOptionInfo: {
@@ -299,19 +162,18 @@ if (require !== undefined && require.main === module) {
 
   // BU.CLIN(converter.model);
 
-  const dataList = [
-    '0253010418006400070028001e00c800460023002d00cd00690055000103',
-    '0253020418006400070028001e00c800460023002d00cd00690055000203',
-    '0253030418006400070028001e00c800460023002d00cd00690055000303',
-    '0253040418006400070028001e00c800460023002d00cd00690055000403',
-    '0253050418006400070028001e00c800460023002d00cd00690055000503',
-    // '0253070418037400170000000002730262819103e7009600000000000003',
-  ];
+  const testReqMsg = '02530c040000000c03';
+  const realTestReqMsg = Buffer.from(testReqMsg.slice(4, testReqMsg.length - 2), 'hex');
 
-  dataList.forEach(data => {
-    // const result = converter.testParsingData(Buffer.from(data.slice(4, data.length - 2), 'hex'));
-    const result = converter.testParsingData(Buffer.from(data.slice(4, data.length - 2), 'hex'));
-    BU.CLI(result);
+  const dataList = ['02530c0418006400070028001e00c800460023002d00cd00690055000c03'];
+
+  dataList.forEach(d => {
+    const realBuffer = Buffer.from(d.slice(4, d.length - 2), 'hex');
+
+    // const result = converter.testParsingData(realBuffer);
+    // BU.CLI(result);
+    const dataMap = converter.concreteParsingData(realBuffer, realTestReqMsg);
+    BU.CLI(dataMap);
   });
 
   // converter.testParsingData(Buffer.from(dataList, 'ascii'));

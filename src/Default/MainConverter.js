@@ -1,8 +1,8 @@
 const _ = require('lodash');
 const { BU } = require('base-util-jh');
 
-const { reqDeviceControlType } = require('../../../default-intelligence').dcmConfigModel;
-// require('../../../../module/default-intelligence');
+const dpcRouter = require('./dpcRouter');
+const { reqDeviceControlType } = require('../module').di.dcmConfigModel;
 
 class MainConverter {
   /**
@@ -19,12 +19,13 @@ class MainConverter {
 
   /** protocolConverter 설정함 */
   setProtocolConverter() {
-    const path = `../${this.protocol_info.mainCategory}/${this.protocol_info.subCategory}/Converter`;
+    // const path = `../${this.protocol_info.mainCategory}/${this.protocol_info.subCategory}/Converter`;
     // BU.CLI(path);
     try {
-      const DeviceProtocolConverter = require(path);
+      const { Converter } = dpcRouter(this.protocol_info);
+      // const DeviceProtocolConverter = require(path);
       // BU.CLIN(DeviceProtocolConverter, 4);
-      this.deviceCommandConverter = new DeviceProtocolConverter(this.protocol_info);
+      this.deviceCommandConverter = new Converter(this.protocol_info);
       return true;
     } catch (error) {
       throw error;

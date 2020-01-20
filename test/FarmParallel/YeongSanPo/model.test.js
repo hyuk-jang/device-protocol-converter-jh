@@ -17,9 +17,6 @@ const model = new Model({
   subCategory: 'YeongSanPo',
 });
 
-// require('default-intelligence');
-// require('../../../../default-intelligence');
-
 const protocolInfo = {
   deviceId: '1',
   mainCategory: 'FarmParallel',
