@@ -116,13 +116,16 @@ class Converter extends AbstConverter {
 
           switch (productType) {
             case 1:
-              decodingDataList = this.decodingTable.waterDoor;
+              decodingDataList = this.decodingTable.gsWaterDoor;
+              // decodingDataList = this.decodingTable.waterDoor;
               break;
             case 2:
-              decodingDataList = this.decodingTable.gateValve;
+              decodingDataList = this.decodingTable.gsGateValve;
+              // decodingDataList = this.decodingTable.gateValve;
               break;
             case 3:
-              decodingDataList = this.decodingTable.pump;
+              decodingDataList = this.decodingTable.gsPump;
+              // decodingDataList = this.decodingTable.pump;
               break;
             // case 5:
             //   decodingDataList = this.decodingTable.earthModule;
@@ -130,9 +133,9 @@ class Converter extends AbstConverter {
             // case 6:
             //   decodingDataList = this.decodingTable.connectorGroundRelay;
             //   break;
-            case 7:
-              decodingDataList = this.decodingTable.sensor;
-              break;
+            // case 7:
+            //   decodingDataList = this.decodingTable.sensor;
+            //   break;
             default:
               throw new Error(`productType: ${productType}은 Parsing 대상이 아닙니다.`);
           }
