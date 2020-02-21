@@ -4,6 +4,7 @@ const { BU } = require('base-util-jh');
 
 const Model = require('./Model');
 const protocol = require('./protocol');
+const { checkTripleInv } = require('../errorChecker');
 const AbstConverter = require('../../Default/AbstConverter');
 
 class Converter extends AbstConverter {
@@ -100,54 +101,7 @@ class Converter extends AbstConverter {
       // Trobule 목록을 하나로 합침
       dataMap.operTroubleList = [_.flatten(dataMap.operTroubleList)];
 
-      return dataMap;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  testParsingData(deviceData) {
-    try {
-      //   BU.CLI('currTransferCmd', currTransferCmd);
-      // 0: Header1 1: Header2, 2: StationID
-      const RES_DATA_START_POINT = 8;
-      const responseData = deviceData; // 응답 받은 데이터 추출
-      const resAddr = responseData.slice(4, 8).toString(); // 응답받은 주소 추출
-
-      // 헤더와 체크섬을 제외한 데이터 계산
-      const dataBody = responseData.slice(RES_DATA_START_POINT, responseData.length - 5);
-
-      // 데이터 자동 산정
-      let decodingTable;
-      switch (resAddr) {
-        case '0004':
-          decodingTable = this.decodingTable.OPERATION;
-          break;
-        case '0020':
-          decodingTable = this.decodingTable.PV;
-          break;
-        case '0050':
-          decodingTable = this.decodingTable.GRID_VOL;
-          break;
-        case '0060':
-          decodingTable = this.decodingTable.POWER;
-          break;
-        case '01e0':
-          decodingTable = this.decodingTable.SYSTEM;
-          break;
-        case '0070':
-          decodingTable = this.decodingTable.ENV;
-          break;
-        default:
-          throw new Error(`Can not find it Addr ${resAddr}`);
-      }
-
-      const dataMap = this.automaticDecoding(decodingTable.decodingDataList, dataBody);
-
-      // Trobule 목록을 하나로 합침
-      dataMap.operTroubleList = [_.flatten(dataMap.operTroubleList)];
-
-      return dataMap;
+      return checkTripleInv(dataMap);
     } catch (error) {
       throw error;
     }
