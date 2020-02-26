@@ -92,11 +92,13 @@ class Converter extends AbstConverter {
       _.set(dataMap, 'pvKw', [_.sum(dataMap.pvKw)]);
 
       // 보성 오른쪽 인버터
-      if (_.isEqual(this.model.dialing, Buffer.from([16]))) {
-        dataMap.powerCpKwh[0] += 1922;
-      } else if (_.isEqual(this.model.dialing, Buffer.from([17]))) {
-        // 보성 왼쪽 인버터
-        dataMap.powerCpKwh[0] += 3010;
+      if (_.isNumber(dataMap.powerCpKwh[0])) {
+        if (_.isEqual(this.model.dialing, Buffer.from([16]))) {
+          dataMap.powerCpKwh[0] += 1922;
+        } else if (_.isEqual(this.model.dialing, Buffer.from([17]))) {
+          // 보성 왼쪽 인버터
+          dataMap.powerCpKwh[0] += 3010;
+        }
       }
 
       // Trobule 목록을 하나로 합침
@@ -188,11 +190,11 @@ if (require !== undefined && require.main === module) {
   });
 
   // const testReqMsg = '02490a9640541805ac03';
-  const testReqMsg = '02490a9641541805ad03';
+  const testReqMsg = '02490a96105418057c03';
   const realTestReqMsg = Buffer.from(testReqMsg.slice(4, testReqMsg.length - 2), 'hex');
   const dataList = [
     // '0249b1b540ed0a0b002100ec0a0d0025000000000000000000550e0000004601000000008000000000db03',
-    '0249b1b5413c09a00236064709a80250067a09e504e20b5802e605002302910100ba430040000000009a03',
+    '0249b1b510000000000000000000000000000000000000570200000000000000000000008000000000c103',
   ];
 
   dataList.forEach(d => {
