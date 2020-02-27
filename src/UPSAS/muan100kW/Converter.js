@@ -45,8 +45,8 @@ class Converter extends AbstConverter {
         data: cmdInfo.cmd,
       };
       commandObj.data = frameObj;
-      commandObj.commandExecutionTimeoutMs = 100;
-      // commandObj.commandExecutionTimeoutMs = 1000 * 2;
+      // commandObj.commandExecutionTimeoutMs = 100;
+      commandObj.commandExecutionTimeoutMs = 1000 * 2;
       commandObj.delayExecutionTimeoutMs = _.isNumber(cmdInfo.timeout) && cmdInfo.timeout;
       returnValue.push(commandObj);
     });
