@@ -1,6 +1,6 @@
 const BaseModel = require('../BaseModel');
 
-const mainSecTime = 10;
+const mainSecTime = 1000;
 
 class Model extends BaseModel {
   constructor() {
@@ -24,7 +24,7 @@ class Model extends BaseModel {
 
     this.device.WATER_DOOR.COMMAND.CLOSE = [
       {
-        cmd: '@cgc',
+        cmd: '@ctc',
       },
       {
         cmd: '@sts',
@@ -41,7 +41,7 @@ class Model extends BaseModel {
     /** 수문용 밸브 */
     this.device.GATE_VALVE.COMMAND.OPEN = [
       {
-        cmd: '@cvo',
+        cmd: '@cto',
       },
       {
         cmd: '@sts',
@@ -51,7 +51,7 @@ class Model extends BaseModel {
 
     this.device.GATE_VALVE.COMMAND.CLOSE = [
       {
-        cmd: '@cvc',
+        cmd: '@ctc',
       },
       {
         cmd: '@sts',
@@ -68,7 +68,7 @@ class Model extends BaseModel {
     /** 밸브 */
     this.device.VALVE.COMMAND.OPEN = [
       {
-        cmd: '@cvo',
+        cmd: '@cto',
       },
       {
         cmd: '@sts',
@@ -78,7 +78,7 @@ class Model extends BaseModel {
 
     this.device.VALVE.COMMAND.CLOSE = [
       {
-        cmd: '@cvc',
+        cmd: '@ctc',
       },
       {
         cmd: '@sts',
@@ -97,7 +97,7 @@ class Model extends BaseModel {
       {
         // 펌프 킬때는 명령을 내리고 10초 후에 킴
         // timeout: mainSecTime * 10,
-        cmd: '@cpo',
+        cmd: '@cto',
       },
       {
         cmd: '@sts',
@@ -107,7 +107,7 @@ class Model extends BaseModel {
 
     this.device.PUMP.COMMAND.OFF = [
       {
-        cmd: '@cpc',
+        cmd: '@ctc',
       },
       {
         cmd: '@sts',
@@ -124,11 +124,7 @@ class Model extends BaseModel {
     /** 염도 */
     this.device.SALINITY.COMMAND.MEASURE = [
       {
-        cmd: '@cgm',
-      },
-      {
         cmd: '@sts',
-        timeout: mainSecTime,
       },
     ];
 

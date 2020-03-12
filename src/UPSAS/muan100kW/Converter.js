@@ -45,8 +45,8 @@ class Converter extends AbstConverter {
         data: cmdInfo.cmd,
       };
       commandObj.data = frameObj;
-      commandObj.commandExecutionTimeoutMs = 100;
-      // commandObj.commandExecutionTimeoutMs = 1000 * 2;
+      // commandObj.commandExecutionTimeoutMs = 100;
+      commandObj.commandExecutionTimeoutMs = 1000 * 1;
       commandObj.delayExecutionTimeoutMs = _.isNumber(cmdInfo.timeout) && cmdInfo.timeout;
       returnValue.push(commandObj);
     });
@@ -116,13 +116,16 @@ class Converter extends AbstConverter {
 
           switch (productType) {
             case 1:
-              decodingDataList = this.decodingTable.waterDoor;
+              decodingDataList = this.decodingTable.gsWaterDoor;
+              // decodingDataList = this.decodingTable.waterDoor;
               break;
             case 2:
-              decodingDataList = this.decodingTable.gateValve;
+              decodingDataList = this.decodingTable.gsGateValve;
+              // decodingDataList = this.decodingTable.gateValve;
               break;
             case 3:
-              decodingDataList = this.decodingTable.pump;
+              decodingDataList = this.decodingTable.gsPump;
+              // decodingDataList = this.decodingTable.pump;
               break;
             // case 5:
             //   decodingDataList = this.decodingTable.earthModule;
@@ -130,8 +133,11 @@ class Converter extends AbstConverter {
             // case 6:
             //   decodingDataList = this.decodingTable.connectorGroundRelay;
             //   break;
-            case 7:
-              decodingDataList = this.decodingTable.sensor;
+            // case 7:
+            //   decodingDataList = this.decodingTable.sensor;
+            //   break;
+            case 11:
+              decodingDataList = this.decodingTable.env;
               break;
             default:
               throw new Error(`productType: ${productType}은 Parsing 대상이 아닙니다.`);
@@ -167,14 +173,36 @@ class Converter extends AbstConverter {
       throw error;
     }
   }
-
-  /**
-   * decodingInfo 리스트 만큼 Data 파싱을 진행
-   * @param {Array.<decodingInfo>} decodingTable
-   * @param {Buffer} data
-   */
-  automaticDecoding(decodingTable, data) {
-    return super.automaticDecoding(decodingTable, data);
-  }
 }
 module.exports = Converter;
+
+if (require !== undefined && require.main === module) {
+  const converter = new Converter({
+    deviceId: 10,
+    mainCategory: 'UPSAS',
+    subCategory: 'muan100kW',
+    protocolOptionInfo: {
+      hasTrackingData: true,
+    },
+  });
+
+  // BU.CLIN(converter.model);
+
+  const testReqMsg = '025301040000000c03';
+
+  /** @type {xbeeApi_0x90[]} */
+  const dataList = [
+    {
+      data: Buffer.from('#0001001111.122.233.3+444.4-555.5'),
+    },
+  ];
+
+  dataList.forEach(d => {
+    // const result = converter.testParsingData(realBuffer);
+    // BU.CLI(result);
+    const dataMap = converter.processDataReceivePacketZigBee(d);
+    BU.CLI(dataMap);
+  });
+
+  // converter.testParsingData(Buffer.from(dataList, 'ascii'));
+}

@@ -3,59 +3,105 @@ const { parsingMethod } = require('../../format/moduleDefine');
 const Model = require('./Model');
 
 const model = new Model();
+const {
+  device: { WATER_DOOR, VALVE, GATE_VALVE, PUMP },
+} = model;
+const { BASE_KEY: BK } = Model;
 
 const onDeviceOperationStatus = {
   /** @type {Object} 수문 상태 */
-  [model.device.WATER_DOOR.KEY]: {
-    /** @type {string} 정지 */
-    0: model.device.WATER_DOOR.STATUS.STOP,
+  [WATER_DOOR.KEY]: {
     /** @type {string} 열림 */
-    2: model.device.WATER_DOOR.STATUS.OPEN,
+    2: WATER_DOOR.STATUS.OPEN,
     /** @type {string} 여는 중 */
-    3: model.device.WATER_DOOR.STATUS.CLOSING,
+    3: WATER_DOOR.STATUS.CLOSING,
     /** @type {string} 닫힘 */
-    4: model.device.WATER_DOOR.STATUS.CLOSE,
+    4: WATER_DOOR.STATUS.CLOSE,
     /** @type {string} 닫는 중 */
-    5: model.device.WATER_DOOR.STATUS.OPENING,
+    5: WATER_DOOR.STATUS.OPENING,
+  },
+  /** @type {Object} 게이트밸브 */
+  [GATE_VALVE.KEY]: {
+    /** @type {number} 닫힘 */
+    1: VALVE.STATUS.CLOSE,
+    /** @type {number} 열림 */
+    2: VALVE.STATUS.OPEN,
   },
   /** @type {Object} 밸브 */
-  [model.device.VALVE.KEY]: {
-    /** @type {number} 미확인 */
-    0: model.device.VALVE.STATUS.UNDEF,
+  [VALVE.KEY]: {
     /** @type {number} 닫힘 */
-    1: model.device.VALVE.STATUS.CLOSE,
+    1: VALVE.STATUS.CLOSE,
     /** @type {number} 열림 */
-    2: model.device.VALVE.STATUS.OPEN,
-    /** @type {number} 작업 중 */
-    3: model.device.VALVE.STATUS.BUSY,
-    /** @type {number} 닫는 중 */
-    4: model.device.VALVE.STATUS.OPENING,
-    /** @type {number} 여는 중 */
-    5: model.device.VALVE.STATUS.CLOSING,
+    2: VALVE.STATUS.OPEN,
   },
   /** @type {Object} 펌프 */
-  [model.device.PUMP.KEY]: {
+  [PUMP.KEY]: {
     /** @type {number} 꺼짐 */
-    0: model.device.PUMP.STATUS.OFF,
+    1: PUMP.STATUS.OFF,
     /** @type {number} 켜짐 */
-    1: model.device.PUMP.STATUS.ON,
-  },
-  /** @type {Object} 수위 */
-  [model.device.WATER_LEVEL.KEY]: waterLevel =>
-    // BU.CLI(waterLevel)
-    // 20cm에서 해당 수위(cm)를 뺌
-    20 - waterLevel,
-  /** @type {Object} 접속반 지락 계전기 */
-  [model.device.CONNECTOR_GROUND_RELAY.KEY]: {
-    /** 지락 발생 */
-    0: 1,
-    /** 정상 */
-    1: 0,
+    2: PUMP.STATUS.ON,
   },
 };
 exports.onDeviceOperationStatus = onDeviceOperationStatus;
 
 exports.decodingProtocolTable = dialing => {
+  /** @type {decodingProtocolInfo} */
+  const gsWaterDoor = {
+    dialing,
+    address: '0001',
+    bodyLength: 6,
+    decodingDataList: [
+      {
+        key: BK.waterDoor,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.battery,
+        byte: 4,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+    ],
+  };
+
+  /** @type {decodingProtocolInfo} */
+  const gsGateValve = {
+    dialing,
+    address: '0002',
+    bodyLength: 6,
+    decodingDataList: [
+      {
+        key: BK.gateValve,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.battery,
+        byte: 4,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+    ],
+  };
+
+  /** @type {decodingProtocolInfo} */
+  const gsPump = {
+    dialing,
+    address: '0003',
+    bodyLength: 6,
+    decodingDataList: [
+      {
+        key: BK.pump,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.battery,
+        byte: 4,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+    ],
+  };
+
   /** @type {decodingProtocolInfo} */
   const waterDoor = {
     dialing,
@@ -285,7 +331,42 @@ exports.decodingProtocolTable = dialing => {
     ],
   };
 
+  /** @type {decodingProtocolInfo} */
+  const env = {
+    dialing,
+    decodingDataList: [
+      {
+        key: BK.battery,
+        byte: 4,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.salinity,
+        byte: 4,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.waterLevel,
+        byte: 4,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.brineTemperature,
+        byte: 6,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.moduleRearTemperature,
+        byte: 6,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+    ],
+  };
+
   return {
+    gsGateValve,
+    gsPump,
+    gsWaterDoor,
     waterDoor,
     valve,
     gateValve,
@@ -293,5 +374,6 @@ exports.decodingProtocolTable = dialing => {
     earthModule,
     connectorGroundRelay,
     sensor,
+    env,
   };
 };
