@@ -3,7 +3,11 @@ const BaseModel = require('../BaseModel');
 const mainSecTime = 1000;
 
 class Model extends BaseModel {
-  constructor() {
+  /**
+   *
+   * @param {string} subDeviceId 장치 데이터 로거 펌프, 밸브 식별 ID
+   */
+  constructor(subDeviceId) {
     super();
 
     this.device.DEFAULT.COMMAND.STATUS = [
@@ -14,7 +18,7 @@ class Model extends BaseModel {
 
     this.device.WATER_DOOR.COMMAND.OPEN = [
       {
-        cmd: '@cgo',
+        cmd: '@cto',
       },
       {
         cmd: '@sts',
@@ -41,7 +45,7 @@ class Model extends BaseModel {
     /** 수문용 밸브 */
     this.device.GATE_VALVE.COMMAND.OPEN = [
       {
-        cmd: '@cto',
+        cmd: `@cto${subDeviceId}`,
       },
       {
         cmd: '@sts',
@@ -51,7 +55,7 @@ class Model extends BaseModel {
 
     this.device.GATE_VALVE.COMMAND.CLOSE = [
       {
-        cmd: '@ctc',
+        cmd: `@ctc${subDeviceId}`,
       },
       {
         cmd: '@sts',
@@ -68,7 +72,7 @@ class Model extends BaseModel {
     /** 밸브 */
     this.device.VALVE.COMMAND.OPEN = [
       {
-        cmd: '@cto',
+        cmd: `@cto${subDeviceId}`,
       },
       {
         cmd: '@sts',
@@ -78,7 +82,7 @@ class Model extends BaseModel {
 
     this.device.VALVE.COMMAND.CLOSE = [
       {
-        cmd: '@ctc',
+        cmd: `@ctc${subDeviceId}`,
       },
       {
         cmd: '@sts',
@@ -97,7 +101,7 @@ class Model extends BaseModel {
       {
         // 펌프 킬때는 명령을 내리고 10초 후에 킴
         // timeout: mainSecTime * 10,
-        cmd: '@cto',
+        cmd: `@cto${subDeviceId}`,
       },
       {
         cmd: '@sts',
@@ -107,7 +111,7 @@ class Model extends BaseModel {
 
     this.device.PUMP.COMMAND.OFF = [
       {
-        cmd: '@ctc',
+        cmd: `@ctc${subDeviceId}`,
       },
       {
         cmd: '@sts',

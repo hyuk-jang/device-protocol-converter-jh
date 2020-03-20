@@ -4,7 +4,17 @@ const Model = require('./Model');
 
 const model = new Model();
 const {
-  device: { WATER_DOOR, VALVE, GATE_VALVE, PUMP },
+  device: {
+    WATER_DOOR,
+    VALVE,
+    GATE_VALVE,
+    PUMP,
+    WATER_LEVEL,
+    BRINE_TEMPERATURE,
+    MODULE_FRONT_TEMPERATURE,
+    MODULE_REAR_TEMPERATURE,
+    SALINITY,
+  },
 } = model;
 const { BASE_KEY: BK } = Model;
 
@@ -37,9 +47,34 @@ const onDeviceOperationStatus = {
   /** @type {Object} 펌프 */
   [PUMP.KEY]: {
     /** @type {number} 꺼짐 */
-    1: PUMP.STATUS.OFF,
+    0: PUMP.STATUS.OFF,
     /** @type {number} 켜짐 */
-    2: PUMP.STATUS.ON,
+    1: PUMP.STATUS.ON,
+  },
+  // 센서 값 유효성 검증
+  // checkWaterLevel: wl => (wl < 0 || wl > 200 ? null : wl),
+  checkTemp: temp => (temp < -20 || temp > 80 ? null : temp),
+  checkSalinity: salinity => (salinity < 0 || salinity > 50 ? null : salinity),
+
+  // /** @type {Object} 수위 */
+  // [WATER_LEVEL.KEY]: temp => {
+  //   return this.onDeviceOperationStatus.checkWaterLevel(temp);
+  // },
+  /** @type {Object} 온도 */
+  [BRINE_TEMPERATURE.KEY]: temp => {
+    return this.onDeviceOperationStatus.checkTemp(temp);
+  },
+  /** @type {Object} 온도 */
+  [MODULE_FRONT_TEMPERATURE.KEY]: temp => {
+    return this.onDeviceOperationStatus.checkTemp(temp);
+  },
+  /** @type {Object} 온도 */
+  [MODULE_REAR_TEMPERATURE.KEY]: temp => {
+    return this.onDeviceOperationStatus.checkTemp(temp);
+  },
+  /** @type {Object} 염도 */
+  [SALINITY.KEY]: temp => {
+    return this.onDeviceOperationStatus.checkSalinity(temp);
   },
 };
 exports.onDeviceOperationStatus = onDeviceOperationStatus;

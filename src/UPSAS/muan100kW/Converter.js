@@ -10,6 +10,8 @@ class Converter extends AbstConverter {
   /** @param {protocol_info} protocolInfo */
   constructor(protocolInfo) {
     super(protocolInfo);
+    // 펌프, 밸브 제어반에서 장치별 제어를 하기 위한 값
+    this.subDeviceId = _.get(protocolInfo, 'subDeviceId', '');
 
     this.decodingTable = protocol.decodingProtocolTable(protocolInfo.deviceId);
     this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
@@ -17,7 +19,7 @@ class Converter extends AbstConverter {
     this.frameIdList = [];
 
     /** BaseModel */
-    this.model = new Model();
+    this.model = new Model(this.subDeviceId);
   }
 
   /**
@@ -46,7 +48,7 @@ class Converter extends AbstConverter {
       };
       commandObj.data = frameObj;
       // commandObj.commandExecutionTimeoutMs = 100;
-      commandObj.commandExecutionTimeoutMs = 1000 * 1;
+      commandObj.commandExecutionTimeoutMs = 1000 * 2;
       commandObj.delayExecutionTimeoutMs = _.isNumber(cmdInfo.timeout) && cmdInfo.timeout;
       returnValue.push(commandObj);
     });
@@ -179,12 +181,20 @@ module.exports = Converter;
 if (require !== undefined && require.main === module) {
   const converter = new Converter({
     deviceId: 10,
+    subDeviceId: '11',
     mainCategory: 'UPSAS',
     subCategory: 'muan100kW',
     protocolOptionInfo: {
       hasTrackingData: true,
     },
   });
+
+  const cmdInfo = converter.generationCommand({
+    key: 'pump',
+    value: 1,
+  });
+
+  BU.CLI(cmdInfo);
 
   // BU.CLIN(converter.model);
 
