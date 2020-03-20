@@ -141,27 +141,15 @@ exports.decodingProtocolTable = dialing => {
   const waterDoor = {
     dialing,
     address: '0001',
-    bodyLength: 13, // 수신할 데이터 Byte,
+    bodyLength: 6,
     decodingDataList: [
       {
-        key: model.device.WATER_DOOR.KEY,
+        key: BK.waterDoor,
         byte: 2,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.WATER_LEVEL.KEY,
-        byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
-        scale: 0.1,
-        fixed: 1,
-      },
-      {
-        key: model.device.SALINITY.KEY,
-        byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
-      },
-      {
-        key: model.device.BATTERY.KEY,
+        key: BK.battery,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
@@ -172,11 +160,9 @@ exports.decodingProtocolTable = dialing => {
   const valve = {
     dialing,
     address: '0002',
-    bodyLength: '6',
     decodingDataList: [
       {
         key: model.device.VALVE.KEY,
-        byte: 2,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
@@ -211,39 +197,70 @@ exports.decodingProtocolTable = dialing => {
   const gateValve = {
     dialing,
     address: '0002',
-    bodyLength: 21,
+    bodyLength: 16,
     decodingDataList: [
       {
-        key: model.device.GATE_VALVE.KEY,
-        decodingKey: model.device.VALVE.KEY,
-        byte: 2,
+        key: BK.gateValve,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.WATER_LEVEL.KEY,
-        byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
-        scale: 0.1,
-        fixed: 1,
-      },
-      {
-        key: model.device.SALINITY.KEY,
-        byte: 4,
+        key: BK.gateValve,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.BRINE_TEMPERATURE.KEY,
-        byte: 6,
+        key: BK.gateValve,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.MODULE_REAR_TEMPERATURE.KEY,
-        byte: 6,
+        key: BK.gateValve,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.BATTERY.KEY,
-        byte: 4,
+        key: BK.gateValve,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.gateValve,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.gateValve,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.gateValve,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.gateValve,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.gateValve,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.gateValve,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.gateValve,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.gateValve,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.gateValve,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.gateValve,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.gateValve,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
     ],
@@ -253,114 +270,70 @@ exports.decodingProtocolTable = dialing => {
   const pump = {
     dialing,
     address: '0003',
-    bodyLength: 6,
+    bodyLength: 16,
     decodingDataList: [
       {
-        key: model.device.PUMP.KEY,
-        byte: 2,
+        key: BK.pump,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.BATTERY.KEY,
-        byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
-      },
-    ],
-  };
-
-  /** @type {decodingProtocolInfo} */
-  const earthModule = {
-    dialing,
-    address: '0005',
-    bodyLength: 21,
-    decodingDataList: [
-      {
-        key: model.device.VALVE.KEY,
-        byte: 2,
+        key: BK.pump,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.WATER_LEVEL.KEY,
-        byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
-        scale: 0.1,
-        fixed: 1,
-      },
-      {
-        key: model.device.MODULE_REAR_TEMPERATURE.KEY,
-        byte: 6,
+        key: BK.pump,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.MODULE_REAR_TEMPERATURE.KEY,
-        byte: 6,
+        key: BK.pump,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.BATTERY.KEY,
-        byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
-      },
-    ],
-  };
-  /** @type {decodingProtocolInfo} */
-  const connectorGroundRelay = {
-    dialing,
-    address: '0006',
-    bodyLength: 7,
-    decodingDataList: [
-      {
-        byte: 1,
-      },
-      {
-        key: model.device.CONNECTOR_GROUND_RELAY.KEY,
-        byte: 1,
+        key: BK.pump,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.CONNECTOR_GROUND_RELAY.KEY,
-        byte: 1,
+        key: BK.pump,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.BATTERY.KEY,
-        byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
-      },
-    ],
-  };
-
-  /** @type {decodingProtocolInfo} */
-  const sensor = {
-    dialing,
-    address: '0007',
-    bodyLength: 7,
-    decodingDataList: [
-      {
-        key: model.device.WATER_LEVEL.KEY,
-        byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
-        scale: 0.1,
-        fixed: 1,
-      },
-      {
-        key: model.device.SALINITY.KEY,
-        byte: 4,
+        key: BK.pump,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.BRINE_TEMPERATURE.KEY,
-        byte: 6,
+        key: BK.pump,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.MODULE_REAR_TEMPERATURE.KEY,
-        byte: 6,
+        key: BK.pump,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.BATTERY.KEY,
-        byte: 4,
+        key: BK.pump,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.pump,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.pump,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.pump,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.pump,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.pump,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.pump,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
     ],
@@ -369,6 +342,7 @@ exports.decodingProtocolTable = dialing => {
   /** @type {decodingProtocolInfo} */
   const env = {
     dialing,
+    address: '0011',
     decodingDataList: [
       {
         key: BK.battery,
@@ -406,9 +380,6 @@ exports.decodingProtocolTable = dialing => {
     valve,
     gateValve,
     pump,
-    earthModule,
-    connectorGroundRelay,
-    sensor,
     env,
   };
 };

@@ -10,8 +10,6 @@ class Converter extends AbstConverter {
   /** @param {protocol_info} protocolInfo */
   constructor(protocolInfo) {
     super(protocolInfo);
-    // 펌프, 밸브 제어반에서 장치별 제어를 하기 위한 값
-    this.subDeviceId = _.get(protocolInfo, 'subDeviceId', '');
 
     this.decodingTable = protocol.decodingProtocolTable(protocolInfo.deviceId);
     this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
@@ -118,35 +116,24 @@ class Converter extends AbstConverter {
 
           switch (productType) {
             case 1:
-              decodingDataList = this.decodingTable.gsWaterDoor;
-              // decodingDataList = this.decodingTable.waterDoor;
+              decodingDataList = this.decodingTable.waterDoor;
               break;
             case 2:
-              decodingDataList = this.decodingTable.gsGateValve;
-              // decodingDataList = this.decodingTable.gateValve;
+              decodingDataList = this.decodingTable.gateValve;
               break;
             case 3:
-              decodingDataList = this.decodingTable.gsPump;
-              // decodingDataList = this.decodingTable.pump;
+              decodingDataList = this.decodingTable.pump;
               break;
-            // case 5:
-            //   decodingDataList = this.decodingTable.earthModule;
-            //   break;
-            // case 6:
-            //   decodingDataList = this.decodingTable.connectorGroundRelay;
-            //   break;
-            // case 7:
-            //   decodingDataList = this.decodingTable.sensor;
-            //   break;
+
             case 11:
               decodingDataList = this.decodingTable.env;
               break;
             default:
               throw new Error(`productType: ${productType}은 Parsing 대상이 아닙니다.`);
           }
-          // BU.CLI(decodingDataList);
+
           const hasValid = _.chain(decodingDataList.decodingDataList)
-            .map('byte')
+            .map(row => _.get(row, 'byte', 1))
             .sum()
             .isEqual(dataBody.length)
             .value();
@@ -161,10 +148,7 @@ class Converter extends AbstConverter {
             decodingDataList.decodingDataList,
             dataBody,
           );
-          // if (productType === 6) {
-          //   BU.CLI(dataBody);
-          //   BU.CLI(resultAutomaticDecoding);
-          // }
+
           return resultAutomaticDecoding;
         }
         throw new Error(`productType: ${productType}이 이상합니다.`);
@@ -192,9 +176,12 @@ if (require !== undefined && require.main === module) {
   const cmdInfo = converter.generationCommand({
     key: 'pump',
     value: 1,
+    nodeInfo: {
+      data_logger_index: 8,
+    },
   });
 
-  BU.CLI(cmdInfo);
+  // BU.CLI(cmdInfo);
 
   // BU.CLIN(converter.model);
 
@@ -202,8 +189,14 @@ if (require !== undefined && require.main === module) {
 
   /** @type {xbeeApi_0x90[]} */
   const dataList = [
+    // {
+    //   data: Buffer.from('#0001001111.122.233.3+444.4-555.5'),
+    // },
     {
-      data: Buffer.from('#0001001111.122.233.3+444.4-555.5'),
+      data: Buffer.from('#000100021212121212122122'),
+    },
+    {
+      data: Buffer.from('#000100030101010101010101'),
     },
   ];
 
