@@ -23,19 +23,19 @@ const onDeviceOperationStatus = {
   [WATER_DOOR.KEY]: {
     /** @type {string} 열림 */
     2: WATER_DOOR.STATUS.OPEN,
-    /** @type {string} 여는 중 */
+    /** @type {string} 닫는 중 */
     3: WATER_DOOR.STATUS.CLOSING,
     /** @type {string} 닫힘 */
     4: WATER_DOOR.STATUS.CLOSE,
-    /** @type {string} 닫는 중 */
+    /** @type {string} 여는 중 */
     5: WATER_DOOR.STATUS.OPENING,
   },
   /** @type {Object} 게이트밸브 */
   [GATE_VALVE.KEY]: {
     /** @type {number} 닫힘 */
-    1: VALVE.STATUS.CLOSE,
+    0: VALVE.STATUS.CLOSE,
     /** @type {number} 열림 */
-    2: VALVE.STATUS.OPEN,
+    1: VALVE.STATUS.OPEN,
   },
   /** @type {Object} 밸브 */
   [VALVE.KEY]: {
@@ -196,7 +196,7 @@ exports.decodingProtocolTable = dialing => {
   /** @type {decodingProtocolInfo} */
   const gateValve = {
     dialing,
-    address: '0002',
+    address: '0004',
     bodyLength: 16,
     decodingDataList: [
       {
@@ -269,7 +269,7 @@ exports.decodingProtocolTable = dialing => {
   /** @type {decodingProtocolInfo} */
   const pump = {
     dialing,
-    address: '0003',
+    address: '0005',
     bodyLength: 16,
     decodingDataList: [
       {
