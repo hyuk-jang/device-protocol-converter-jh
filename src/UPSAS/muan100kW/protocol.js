@@ -73,8 +73,8 @@ const onDeviceOperationStatus = {
     return this.onDeviceOperationStatus.checkTemp(temp);
   },
   /** @type {Object} 염도 */
-  [SALINITY.KEY]: temp => {
-    return this.onDeviceOperationStatus.checkSalinity(temp);
+  [SALINITY.KEY]: salinity => {
+    return this.onDeviceOperationStatus.checkSalinity(salinity);
   },
 };
 exports.onDeviceOperationStatus = onDeviceOperationStatus;

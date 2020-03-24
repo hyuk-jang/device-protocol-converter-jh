@@ -182,3 +182,54 @@ class Converter extends AbstConverter {
   }
 }
 module.exports = Converter;
+
+if (require !== undefined && require.main === module) {
+  const converter = new Converter({
+    deviceId: 10,
+    subDeviceId: '11',
+    mainCategory: 'UPSAS',
+    subCategory: 'muan100kW',
+    protocolOptionInfo: {
+      hasTrackingData: true,
+    },
+  });
+
+  const cmdInfo = converter.generationCommand({
+    key: 'pump',
+    value: 1,
+    nodeInfo: {
+      data_logger_index: 8,
+    },
+  });
+
+  // BU.CLI(cmdInfo);
+
+  // BU.CLIN(converter.model);
+
+  const testReqMsg = '025301040000000c03';
+
+  /** @type {xbeeApi_0x90[]} */
+  const dataList = [
+    // {
+    //   data: Buffer.from('#0001001111.122.233.3+444.4-555.5'),
+    // },
+    {
+      data: Buffer.from('#00010002022351000.00999.909.6'),
+    },
+    {
+      data: Buffer.from('#00010002022351000.00999.909.6'),
+    },
+    // {
+    //   data: Buffer.from('#000100030101010101010101'),
+    // },
+  ];
+
+  dataList.forEach(d => {
+    // const result = converter.testParsingData(realBuffer);
+    // BU.CLI(result);
+    const dataMap = converter.processDataReceivePacketZigBee(d);
+    BU.CLI(dataMap);
+  });
+
+  // converter.testParsingData(Buffer.from(dataList, 'ascii'));
+}

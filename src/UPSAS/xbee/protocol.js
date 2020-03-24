@@ -3,50 +3,87 @@ const { parsingMethod } = require('../../format/moduleDefine');
 const Model = require('./Model');
 
 const model = new Model();
+const {
+  device: {
+    CONNECTOR_GROUND_RELAY,
+    WATER_DOOR,
+    VALVE,
+    GATE_VALVE,
+    PUMP,
+    WATER_LEVEL,
+    BRINE_TEMPERATURE,
+    MODULE_FRONT_TEMPERATURE,
+    MODULE_REAR_TEMPERATURE,
+    SALINITY,
+  },
+} = model;
+const { BASE_KEY: BK } = Model;
 
 const onDeviceOperationStatus = {
   /** @type {Object} 수문 상태 */
-  [model.device.WATER_DOOR.KEY]: {
+  [WATER_DOOR.KEY]: {
     /** @type {string} 정지 */
-    0: model.device.WATER_DOOR.STATUS.STOP,
+    0: WATER_DOOR.STATUS.STOP,
     /** @type {string} 열림 */
-    2: model.device.WATER_DOOR.STATUS.OPEN,
+    2: WATER_DOOR.STATUS.OPEN,
     /** @type {string} 여는 중 */
-    3: model.device.WATER_DOOR.STATUS.CLOSING,
+    3: WATER_DOOR.STATUS.CLOSING,
     /** @type {string} 닫힘 */
-    4: model.device.WATER_DOOR.STATUS.CLOSE,
+    4: WATER_DOOR.STATUS.CLOSE,
     /** @type {string} 닫는 중 */
-    5: model.device.WATER_DOOR.STATUS.OPENING,
+    5: WATER_DOOR.STATUS.OPENING,
   },
   /** @type {Object} 밸브 */
-  [model.device.VALVE.KEY]: {
+  [VALVE.KEY]: {
     /** @type {number} 미확인 */
-    0: model.device.VALVE.STATUS.UNDEF,
+    0: VALVE.STATUS.UNDEF,
     /** @type {number} 닫힘 */
-    1: model.device.VALVE.STATUS.CLOSE,
+    1: VALVE.STATUS.CLOSE,
     /** @type {number} 열림 */
-    2: model.device.VALVE.STATUS.OPEN,
+    2: VALVE.STATUS.OPEN,
     /** @type {number} 작업 중 */
-    3: model.device.VALVE.STATUS.BUSY,
-    /** @type {number} 닫는 중 */
-    4: model.device.VALVE.STATUS.OPENING,
+    3: VALVE.STATUS.BUSY,
     /** @type {number} 여는 중 */
-    5: model.device.VALVE.STATUS.CLOSING,
+    4: VALVE.STATUS.OPENING,
+    /** @type {number} 닫는중 중 */
+    5: VALVE.STATUS.CLOSING,
   },
   /** @type {Object} 펌프 */
-  [model.device.PUMP.KEY]: {
+  [PUMP.KEY]: {
     /** @type {number} 꺼짐 */
-    0: model.device.PUMP.STATUS.OFF,
+    0: PUMP.STATUS.OFF,
     /** @type {number} 켜짐 */
-    1: model.device.PUMP.STATUS.ON,
+    1: PUMP.STATUS.ON,
   },
+
+  // 센서 값 유효성 검증
+  checkWaterLevel: wl => (wl < 0 || wl > 200 ? null : wl),
+  checkTemp: temp => (temp < -20 || temp > 80 ? null : temp),
+  checkSalinity: salinity => (salinity < 0 || salinity > 50 ? null : salinity),
+
   /** @type {Object} 수위 */
-  [model.device.WATER_LEVEL.KEY]: waterLevel =>
-    // BU.CLI(waterLevel)
+  [WATER_LEVEL.KEY]: waterLevel => {
     // 20cm에서 해당 수위(cm)를 뺌
-    20 - waterLevel,
+    return this.onDeviceOperationStatus.checkWaterLevel(20 - waterLevel);
+  },
+  /** @type {Object} 온도 */
+  [BRINE_TEMPERATURE.KEY]: temp => {
+    return this.onDeviceOperationStatus.checkTemp(temp);
+  },
+  /** @type {Object} 온도 */
+  [MODULE_FRONT_TEMPERATURE.KEY]: temp => {
+    return this.onDeviceOperationStatus.checkTemp(temp);
+  },
+  /** @type {Object} 온도 */
+  [MODULE_REAR_TEMPERATURE.KEY]: temp => {
+    return this.onDeviceOperationStatus.checkTemp(temp);
+  },
+  /** @type {Object} 염도 */
+  [SALINITY.KEY]: salinity => {
+    return this.onDeviceOperationStatus.checkSalinity(salinity);
+  },
   /** @type {Object} 접속반 지락 계전기 */
-  [model.device.CONNECTOR_GROUND_RELAY.KEY]: {
+  [CONNECTOR_GROUND_RELAY.KEY]: {
     /** 지락 발생 */
     0: 1,
     /** 정상 */
@@ -63,24 +100,25 @@ exports.decodingProtocolTable = dialing => {
     bodyLength: 12, // 수신할 데이터 Byte,
     decodingDataList: [
       {
-        key: model.device.WATER_DOOR.KEY,
+        key: WATER_DOOR.KEY,
         byte: 2,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.WATER_LEVEL.KEY,
+        key: WATER_LEVEL.KEY,
         byte: 2,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
         fixed: 1,
       },
       {
-        key: model.device.SALINITY.KEY,
+        key: SALINITY.KEY,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
+        fixed: 1,
       },
       {
-        key: model.device.BATTERY.KEY,
+        key: BK.battery,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
@@ -94,24 +132,25 @@ exports.decodingProtocolTable = dialing => {
     bodyLength: 13, // 수신할 데이터 Byte,
     decodingDataList: [
       {
-        key: model.device.WATER_DOOR.KEY,
+        key: WATER_DOOR.KEY,
         byte: 2,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.WATER_LEVEL.KEY,
+        key: WATER_LEVEL.KEY,
         byte: 3,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
         fixed: 1,
       },
       {
-        key: model.device.SALINITY.KEY,
+        key: SALINITY.KEY,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
+        fixed: 1,
       },
       {
-        key: model.device.BATTERY.KEY,
+        key: BK.battery,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
@@ -125,27 +164,30 @@ exports.decodingProtocolTable = dialing => {
     bodyLength: '6',
     decodingDataList: [
       {
-        key: model.device.VALVE.KEY,
+        key: VALVE.KEY,
         byte: 2,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.WATER_LEVEL.KEY,
+        key: WATER_LEVEL.KEY,
         byte: 2,
         callMethod: parsingMethod.convertBufToHexToNum,
+        fixed: 1,
       },
       {
-        key: model.device.BRINE_TEMPERATURE.KEY,
+        key: BRINE_TEMPERATURE.KEY,
         byte: 6,
         callMethod: parsingMethod.convertBufToHexToNum,
+        fixed: 1,
       },
       {
-        key: model.device.MODULE_REAR_TEMPERATURE.KEY,
+        key: MODULE_REAR_TEMPERATURE.KEY,
         byte: 6,
         callMethod: parsingMethod.convertBufToHexToNum,
+        fixed: 1,
       },
       {
-        key: model.device.BATTERY.KEY,
+        key: BK.battery,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
@@ -159,30 +201,32 @@ exports.decodingProtocolTable = dialing => {
     bodyLength: 21,
     decodingDataList: [
       {
-        key: model.device.GATE_VALVE.KEY,
-        decodingKey: model.device.VALVE.KEY,
+        key: GATE_VALVE.KEY,
+        decodingKey: VALVE.KEY,
         byte: 2,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.WATER_LEVEL.KEY,
+        key: WATER_LEVEL.KEY,
         byte: 3,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
         fixed: 1,
       },
       {
-        key: model.device.BRINE_TEMPERATURE.KEY,
+        key: BRINE_TEMPERATURE.KEY,
         byte: 6,
         callMethod: parsingMethod.convertBufToHexToNum,
+        fixed: 1,
       },
       {
-        key: model.device.MODULE_REAR_TEMPERATURE.KEY,
+        key: MODULE_REAR_TEMPERATURE.KEY,
         byte: 6,
         callMethod: parsingMethod.convertBufToHexToNum,
+        fixed: 1,
       },
       {
-        key: model.device.BATTERY.KEY,
+        key: BK.battery,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
@@ -196,12 +240,12 @@ exports.decodingProtocolTable = dialing => {
     bodyLength: 6,
     decodingDataList: [
       {
-        key: model.device.PUMP.KEY,
+        key: PUMP.KEY,
         byte: 2,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.BATTERY.KEY,
+        key: BK.battery,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
@@ -215,29 +259,31 @@ exports.decodingProtocolTable = dialing => {
     bodyLength: 21,
     decodingDataList: [
       {
-        key: model.device.VALVE.KEY,
+        key: VALVE.KEY,
         byte: 2,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.WATER_LEVEL.KEY,
+        key: WATER_LEVEL.KEY,
         byte: 3,
         callMethod: parsingMethod.convertBufToHexToNum,
         scale: 0.1,
         fixed: 1,
       },
       {
-        key: model.device.MODULE_REAR_TEMPERATURE.KEY,
+        key: MODULE_REAR_TEMPERATURE.KEY,
         byte: 6,
         callMethod: parsingMethod.convertBufToHexToNum,
+        fixed: 1,
       },
       {
-        key: model.device.MODULE_REAR_TEMPERATURE.KEY,
+        key: MODULE_REAR_TEMPERATURE.KEY,
         byte: 6,
         callMethod: parsingMethod.convertBufToHexToNum,
+        fixed: 1,
       },
       {
-        key: model.device.BATTERY.KEY,
+        key: BK.battery,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
@@ -253,17 +299,17 @@ exports.decodingProtocolTable = dialing => {
         byte: 1,
       },
       {
-        key: model.device.CONNECTOR_GROUND_RELAY.KEY,
+        key: CONNECTOR_GROUND_RELAY.KEY,
         byte: 1,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.CONNECTOR_GROUND_RELAY.KEY,
+        key: CONNECTOR_GROUND_RELAY.KEY,
         byte: 1,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
       {
-        key: model.device.BATTERY.KEY,
+        key: BK.battery,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
