@@ -197,7 +197,7 @@ exports.decodingProtocolTable = dialing => {
   const gateValve = {
     dialing,
     address: '0004',
-    bodyLength: 16,
+    bodyLength: 20,
     decodingDataList: [
       {
         key: BK.gateValve,
@@ -261,6 +261,11 @@ exports.decodingProtocolTable = dialing => {
       },
       {
         key: BK.gateValve,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.battery,
+        byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
     ],
@@ -270,7 +275,7 @@ exports.decodingProtocolTable = dialing => {
   const pump = {
     dialing,
     address: '0005',
-    bodyLength: 16,
+    bodyLength: 20,
     decodingDataList: [
       {
         key: BK.pump,
@@ -334,6 +339,11 @@ exports.decodingProtocolTable = dialing => {
       },
       {
         key: BK.pump,
+        callMethod: parsingMethod.convertBufToHexToNum,
+      },
+      {
+        key: BK.battery,
+        byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
       },
     ],
@@ -353,6 +363,7 @@ exports.decodingProtocolTable = dialing => {
         key: BK.salinity,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToNum,
+        fixed: 1,
       },
       {
         key: BK.waterLevel,
@@ -363,11 +374,13 @@ exports.decodingProtocolTable = dialing => {
         key: BK.brineTemperature,
         byte: 6,
         callMethod: parsingMethod.convertBufToHexToNum,
+        fixed: 1,
       },
       {
         key: BK.moduleRearTemperature,
         byte: 6,
         callMethod: parsingMethod.convertBufToHexToNum,
+        fixed: 1,
       },
     ],
   };

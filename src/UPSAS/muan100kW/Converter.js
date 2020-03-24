@@ -118,13 +118,12 @@ class Converter extends AbstConverter {
             case 1:
               decodingDataList = this.decodingTable.waterDoor;
               break;
-            case 2:
+            case 4:
               decodingDataList = this.decodingTable.gateValve;
               break;
-            case 3:
+            case 5:
               decodingDataList = this.decodingTable.pump;
               break;
-
             case 11:
               decodingDataList = this.decodingTable.env;
               break;
@@ -193,11 +192,11 @@ if (require !== undefined && require.main === module) {
     //   data: Buffer.from('#0001001111.122.233.3+444.4-555.5'),
     // },
     {
-      data: Buffer.from('#000100021212121212122122'),
+      data: Buffer.from('#00010005010000000000000009.7'),
     },
-    {
-      data: Buffer.from('#000100030101010101010101'),
-    },
+    // {
+    //   data: Buffer.from('#000100030101010101010101'),
+    // },
   ];
 
   dataList.forEach(d => {
