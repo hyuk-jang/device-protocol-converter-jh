@@ -137,12 +137,15 @@ class Converter extends AbstConverter {
             case 6:
               decodingDataList = this.decodingTable.connectorGroundRelay;
               break;
+            case 12:
+              decodingDataList = this.decodingTable.envModuleTemp;
+              break;
             default:
               throw new Error(`productType: ${productType}은 Parsing 대상이 아닙니다.`);
           }
           // BU.CLI(decodingDataList);
           const hasValid = _.chain(decodingDataList.decodingDataList)
-            .map('byte')
+            .map(row => _.get(row, 'byte', 1))
             .sum()
             .isEqual(dataBody.length)
             .value();
@@ -213,11 +216,11 @@ if (require !== undefined && require.main === module) {
     // {
     //   data: Buffer.from('#0001001111.122.233.3+444.4-555.5'),
     // },
+    // {
+    //   data: Buffer.from('#00010002022351000.00999.909.6'),
+    // },
     {
-      data: Buffer.from('#00010002022351000.00999.909.6'),
-    },
-    {
-      data: Buffer.from('#00010002022351000.00999.909.6'),
+      data: Buffer.from('#0001001222311.0029.9'),
     },
     // {
     //   data: Buffer.from('#000100030101010101010101'),

@@ -316,6 +316,33 @@ exports.decodingProtocolTable = dialing => {
     ],
   };
 
+  /** @type {decodingProtocolInfo} */
+  const envModuleTemp = {
+    dialing,
+    address: '0012',
+    bodyLength: 12,
+    decodingDataList: [
+      {
+        key: BK.battery,
+        byte: 4,
+        callMethod: parsingMethod.convertBufToHexToNum,
+        fixed: 1,
+      },
+      {
+        key: BK.moduleRearTemperature,
+        byte: 4,
+        callMethod: parsingMethod.convertBufToHexToNum,
+        fixed: 1,
+      },
+      {
+        key: BK.moduleRearTemperature,
+        byte: 4,
+        callMethod: parsingMethod.convertBufToHexToNum,
+        fixed: 1,
+      },
+    ],
+  };
+
   return {
     gateLevelSalinity,
     newGateLevelSalinity,
@@ -324,5 +351,6 @@ exports.decodingProtocolTable = dialing => {
     pump,
     earthModule,
     connectorGroundRelay,
+    envModuleTemp,
   };
 };
