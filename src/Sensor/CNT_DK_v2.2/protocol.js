@@ -1,6 +1,10 @@
 const Model = require('./Model');
 
-const onDeviceOperationStatus = {};
+const onDeviceOperationStatus = {
+  [Model.CALC_KEY.pvAmp]: amp => {
+    return amp > 100 ? 0 : amp;
+  },
+};
 exports.onDeviceOperationStatus = onDeviceOperationStatus;
 
 /**
@@ -43,6 +47,7 @@ exports.decodingProtocolTable = dialing => {
         key: Model.BASE_KEY.ampCh1,
         scale: 0.01,
         fixed: 2,
+        decodingKey: Model.CALC_KEY.pvAmp,
       },
       {
         key: Model.BASE_KEY.volCh1,
@@ -53,6 +58,7 @@ exports.decodingProtocolTable = dialing => {
         key: Model.BASE_KEY.ampCh2,
         scale: 0.01,
         fixed: 2,
+        decodingKey: Model.CALC_KEY.pvAmp,
       },
       {
         key: Model.BASE_KEY.volCh2,
@@ -63,6 +69,7 @@ exports.decodingProtocolTable = dialing => {
         key: Model.BASE_KEY.ampCh3,
         scale: 0.01,
         fixed: 2,
+        decodingKey: Model.CALC_KEY.pvAmp,
       },
       {
         key: Model.BASE_KEY.volCh3,
@@ -73,6 +80,7 @@ exports.decodingProtocolTable = dialing => {
         key: Model.BASE_KEY.ampCh4,
         scale: 0.01,
         fixed: 2,
+        decodingKey: Model.CALC_KEY.pvAmp,
       },
       {
         key: Model.BASE_KEY.volCh4,
@@ -83,6 +91,7 @@ exports.decodingProtocolTable = dialing => {
         key: Model.BASE_KEY.ampCh5,
         scale: 0.01,
         fixed: 2,
+        decodingKey: Model.CALC_KEY.pvAmp,
       },
       {
         key: Model.BASE_KEY.volCh5,
@@ -93,6 +102,7 @@ exports.decodingProtocolTable = dialing => {
         key: Model.BASE_KEY.ampCh6,
         scale: 0.01,
         fixed: 2,
+        decodingKey: Model.CALC_KEY.pvAmp,
       },
       {
         key: Model.BASE_KEY.volCh6,

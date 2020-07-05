@@ -64,6 +64,12 @@ class Model extends BaseModel {
       throw error;
     }
   }
+
+  static get CALC_KEY() {
+    return {
+      pvAmp: 'pvAmp',
+    };
+  }
 }
 
 module.exports = Model;

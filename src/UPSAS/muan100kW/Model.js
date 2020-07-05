@@ -2,7 +2,7 @@ const _ = require('lodash');
 
 const BaseModel = require('../BaseModel');
 
-const mainSecTime = 1000;
+const mainSecTime = 10;
 
 class Model extends BaseModel {
   constructor() {
