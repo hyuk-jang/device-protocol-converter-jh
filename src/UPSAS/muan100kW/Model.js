@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const BaseModel = require('../BaseModel');
 
 const mainSecTime = 10;
@@ -14,7 +16,7 @@ class Model extends BaseModel {
 
     this.device.WATER_DOOR.COMMAND.OPEN = [
       {
-        cmd: '@cgo',
+        cmd: '@cto',
       },
       {
         cmd: '@sts',
@@ -24,7 +26,7 @@ class Model extends BaseModel {
 
     this.device.WATER_DOOR.COMMAND.CLOSE = [
       {
-        cmd: '@cgc',
+        cmd: '@ctc',
       },
       {
         cmd: '@sts',
@@ -39,25 +41,21 @@ class Model extends BaseModel {
     ];
 
     /** 수문용 밸브 */
-    this.device.GATE_VALVE.COMMAND.OPEN = [
-      {
-        cmd: '@cvo',
-      },
-      {
-        cmd: '@sts',
-        timeout: mainSecTime * 15,
-      },
-    ];
+    this.device.GATE_VALVE.COMMAND.OPEN = nodeInfo => {
+      return [
+        {
+          cmd: `@cto${this.convertNodeNumber(nodeInfo)}`,
+        },
+      ];
+    };
 
-    this.device.GATE_VALVE.COMMAND.CLOSE = [
-      {
-        cmd: '@cvc',
-      },
-      {
-        cmd: '@sts',
-        timeout: mainSecTime * 15,
-      },
-    ];
+    this.device.GATE_VALVE.COMMAND.CLOSE = nodeInfo => {
+      return [
+        {
+          cmd: `@ctc${this.convertNodeNumber(nodeInfo)}`,
+        },
+      ];
+    };
 
     this.device.GATE_VALVE.COMMAND.STATUS = [
       {
@@ -66,25 +64,21 @@ class Model extends BaseModel {
     ];
 
     /** 밸브 */
-    this.device.VALVE.COMMAND.OPEN = [
-      {
-        cmd: '@cvo',
-      },
-      {
-        cmd: '@sts',
-        timeout: mainSecTime * 15,
-      },
-    ];
+    this.device.VALVE.COMMAND.OPEN = nodeInfo => {
+      return [
+        {
+          cmd: `@cto${this.convertNodeNumber(nodeInfo)}`,
+        },
+      ];
+    };
 
-    this.device.VALVE.COMMAND.CLOSE = [
-      {
-        cmd: '@cvc',
-      },
-      {
-        cmd: '@sts',
-        timeout: mainSecTime * 15,
-      },
-    ];
+    this.device.VALVE.COMMAND.CLOSE = nodeInfo => {
+      return [
+        {
+          cmd: `@ctc${this.convertNodeNumber(nodeInfo)}`,
+        },
+      ];
+    };
 
     this.device.VALVE.COMMAND.STATUS = [
       {
@@ -93,27 +87,21 @@ class Model extends BaseModel {
     ];
 
     /** 펌프 */
-    this.device.PUMP.COMMAND.ON = [
-      {
-        // 펌프 킬때는 명령을 내리고 10초 후에 킴
-        // timeout: mainSecTime * 10,
-        cmd: '@cpo',
-      },
-      {
-        cmd: '@sts',
-        timeout: mainSecTime * 5,
-      },
-    ];
+    this.device.PUMP.COMMAND.ON = nodeInfo => {
+      return [
+        {
+          cmd: `@cto${this.convertNodeNumber(nodeInfo)}`,
+        },
+      ];
+    };
 
-    this.device.PUMP.COMMAND.OFF = [
-      {
-        cmd: '@cpc',
-      },
-      {
-        cmd: '@sts',
-        timeout: mainSecTime * 5,
-      },
-    ];
+    this.device.PUMP.COMMAND.OFF = nodeInfo => {
+      return [
+        {
+          cmd: `@ctc${this.convertNodeNumber(nodeInfo)}`,
+        },
+      ];
+    };
 
     this.device.PUMP.COMMAND.STATUS = [
       {
@@ -124,11 +112,7 @@ class Model extends BaseModel {
     /** 염도 */
     this.device.SALINITY.COMMAND.MEASURE = [
       {
-        cmd: '@cgm',
-      },
-      {
         cmd: '@sts',
-        timeout: mainSecTime,
       },
     ];
 
@@ -164,6 +148,16 @@ class Model extends BaseModel {
         cmd: '@sts',
       },
     ];
+  }
+
+  /**
+   * 데이터로거 노드 인덱스에 1을 더한 후 2자리 string으로 변환
+   * @param {nodeInfo=} nodeInfo nodeInfo에서의 data_logger_index
+   */
+  convertNodeNumber(nodeInfo) {
+    const { data_logger_index: dlNodeIdx = 0 } = nodeInfo;
+
+    return _.padStart(dlNodeIdx + 1, 2, '0');
   }
 }
 

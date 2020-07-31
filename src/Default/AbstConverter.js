@@ -133,7 +133,7 @@ class AbstConverter {
    */
   defaultGenCMD(generationInfo = {}) {
     const { TRUE, FALSE, MEASURE, SET } = reqDeviceControlType;
-    const { key = 'DEFAULT', value = MEASURE, setValue } = generationInfo;
+    const { key = 'DEFAULT', value = MEASURE, setValue, nodeInfo } = generationInfo;
 
     /** @type {baseModelDeviceStructure} */
     const foundIt = _.find(this.model.device, deviceModel =>
@@ -148,38 +148,40 @@ class AbstConverter {
     const commandInfo = _.get(foundIt, 'COMMAND', {});
     // BU.CLI(commandInfo);
 
-    /** @type {Object[]} */
-    let cmdList;
+    let command;
 
     // 컨트롤 밸류가 0이나 False라면 장치 작동을 Close, Off
     if (value === FALSE) {
       if (_.keys(commandInfo).includes('CLOSE')) {
-        cmdList = commandInfo.CLOSE;
+        command = commandInfo.CLOSE;
       } else if (_.keys(commandInfo).includes('OFF')) {
-        cmdList = commandInfo.OFF;
+        command = commandInfo.OFF;
       }
     } else if (value === TRUE) {
       if (_.keys(commandInfo).includes('OPEN')) {
-        cmdList = commandInfo.OPEN;
+        command = commandInfo.OPEN;
       } else if (_.keys(commandInfo).includes('ON')) {
-        cmdList = commandInfo.ON;
+        command = commandInfo.ON;
       }
     } else if (value === MEASURE) {
       if (_.keys(commandInfo).includes('STATUS')) {
-        cmdList = commandInfo.STATUS;
+        command = commandInfo.STATUS;
       }
     } else if (value === SET) {
       // Set 은 메소드로 이루어져 있어야하며 set 값을 반영한 결과를 돌려줌
       if (_.keys(commandInfo).includes('SET')) {
-        cmdList = commandInfo.SET(setValue);
+        command = commandInfo.SET(setValue);
       }
     } else {
       throw new Error(`singleControlType: ${value}는 유효한 값이 아닙니다.`);
     }
-    if (cmdList === undefined || _.isEmpty(cmdList)) {
+
+    command = command instanceof Function ? command(nodeInfo) : command;
+
+    if (command === undefined || _.isEmpty(command)) {
       throw new Error(`${key}에는 Value: ${value} 존재하지 않습니다.`);
     }
-    return cmdList;
+    return command;
   }
 
   /**

@@ -17,7 +17,7 @@ class Converter extends AbstConverter {
     this.frameIdList = [];
 
     /** BaseModel */
-    this.model = new Model();
+    this.model = new Model(this.subDeviceId);
   }
 
   /**
@@ -45,8 +45,8 @@ class Converter extends AbstConverter {
         data: cmdInfo.cmd,
       };
       commandObj.data = frameObj;
-      commandObj.commandExecutionTimeoutMs = 100;
-      // commandObj.commandExecutionTimeoutMs = 1000 * 2;
+      // commandObj.commandExecutionTimeoutMs = 100;
+      commandObj.commandExecutionTimeoutMs = 1000 * 2;
       commandObj.delayExecutionTimeoutMs = _.isNumber(cmdInfo.timeout) && cmdInfo.timeout;
       returnValue.push(commandObj);
     });
@@ -118,27 +118,21 @@ class Converter extends AbstConverter {
             case 1:
               decodingDataList = this.decodingTable.waterDoor;
               break;
-            case 2:
+            case 4:
               decodingDataList = this.decodingTable.gateValve;
               break;
-            case 3:
+            case 5:
               decodingDataList = this.decodingTable.pump;
               break;
-            // case 5:
-            //   decodingDataList = this.decodingTable.earthModule;
-            //   break;
-            // case 6:
-            //   decodingDataList = this.decodingTable.connectorGroundRelay;
-            //   break;
-            case 7:
-              decodingDataList = this.decodingTable.sensor;
+            case 11:
+              decodingDataList = this.decodingTable.env;
               break;
             default:
               throw new Error(`productType: ${productType}은 Parsing 대상이 아닙니다.`);
           }
-          // BU.CLI(decodingDataList);
+
           const hasValid = _.chain(decodingDataList.decodingDataList)
-            .map('byte')
+            .map(row => _.get(row, 'byte', 1))
             .sum()
             .isEqual(dataBody.length)
             .value();
@@ -153,10 +147,7 @@ class Converter extends AbstConverter {
             decodingDataList.decodingDataList,
             dataBody,
           );
-          // if (productType === 6) {
-          //   BU.CLI(dataBody);
-          //   BU.CLI(resultAutomaticDecoding);
-          // }
+
           return resultAutomaticDecoding;
         }
         throw new Error(`productType: ${productType}이 이상합니다.`);
@@ -167,14 +158,53 @@ class Converter extends AbstConverter {
       throw error;
     }
   }
-
-  /**
-   * decodingInfo 리스트 만큼 Data 파싱을 진행
-   * @param {Array.<decodingInfo>} decodingTable
-   * @param {Buffer} data
-   */
-  automaticDecoding(decodingTable, data) {
-    return super.automaticDecoding(decodingTable, data);
-  }
 }
 module.exports = Converter;
+
+if (require !== undefined && require.main === module) {
+  const converter = new Converter({
+    deviceId: 10,
+    subDeviceId: '11',
+    mainCategory: 'UPSAS',
+    subCategory: 'muan100kW',
+    protocolOptionInfo: {
+      hasTrackingData: true,
+    },
+  });
+
+  const cmdInfo = converter.generationCommand({
+    key: 'pump',
+    value: 1,
+    nodeInfo: {
+      data_logger_index: 8,
+    },
+  });
+
+  // BU.CLI(cmdInfo);
+
+  // BU.CLIN(converter.model);
+
+  const testReqMsg = '025301040000000c03';
+
+  /** @type {xbeeApi_0x90[]} */
+  const dataList = [
+    // {
+    //   data: Buffer.from('#0001001111.122.233.3+444.4-555.5'),
+    // },
+    {
+      data: Buffer.from('#00010005010000000000000009.7'),
+    },
+    // {
+    //   data: Buffer.from('#000100030101010101010101'),
+    // },
+  ];
+
+  dataList.forEach(d => {
+    // const result = converter.testParsingData(realBuffer);
+    // BU.CLI(result);
+    const dataMap = converter.processDataReceivePacketZigBee(d);
+    BU.CLI(dataMap);
+  });
+
+  // converter.testParsingData(Buffer.from(dataList, 'ascii'));
+}

@@ -59,7 +59,7 @@ class Converter extends AbstConverter {
 
   /**
    * 데이터 분석 요청
-   * @param {Buffer} deviceData 장치로 요청한 명령
+   * @param {number} deviceData 장치로 요청한 명령
    * @param {Buffer} currTransferCmd 현재 요청한 명령
    */
   concreteParsingData(deviceData, currTransferCmd) {
@@ -71,7 +71,7 @@ class Converter extends AbstConverter {
       /** @type {modbusReadFormat} */
       const requestData = currTransferCmd;
 
-      const { address: registerAddr, dataLength, fnCode, unitId: slaveAddr } = requestData;
+      const { address: registerAddr, dataLength } = requestData;
 
       // 요청 시작 주소를 가져옴
       const startAddr = registerAddr;
@@ -79,7 +79,7 @@ class Converter extends AbstConverter {
       this.decodingTable.address = startAddr;
 
       // 실제 파싱 데이터 추출
-      const dataBody = deviceData.slice(0, requestData.dataLength);
+      const dataBody = deviceData.slice(0, dataLength);
 
       /** @type {BASE_MODEL} */
       const returnValue = this.automaticDecodingForArray(this.decodingTable, dataBody);
@@ -100,10 +100,7 @@ if (require !== undefined && require.main === module) {
     subCategory: 'CNT_DK_v2.2',
   });
 
-  const data = Buffer.from(
-    'R001,01,000000000000000000510020000000000176',
-    // 'R001,02,00000000000000000051002000000000,000000000000000000510020000000000176',
-  );
+  const data = [3, 450, 65534, 450, 65533, 450, 65530, 450, 65534, 450, 65535, 450];
 
   const dataMap = converter.concreteParsingData(data, _.head(converter.generationCommand()).data);
   BU.CLI('dataMap', dataMap);

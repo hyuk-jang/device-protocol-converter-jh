@@ -183,7 +183,7 @@ exports.decodingProtocolTable = dialing => {
     dialing,
     decodingDataList: [
       {
-        key: Model.BASE_KEY.powerPvKw,
+        key: Model.BASE_KEY.pvKw,
         byte: 4,
         callMethod: parsingMethod.convertBufToHexToDec,
         scale: 0.001,

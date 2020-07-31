@@ -112,7 +112,7 @@ const decodingProtocolTable = dialing => {
         fixed: 1,
       },
       {
-        key: Model.BASE_KEY.pvVol,
+        key: Model.BASE_KEY.pvVol2,
         byte: 2,
         callMethod: parsingMethod.convertReadBuf,
         scale: 0.1,

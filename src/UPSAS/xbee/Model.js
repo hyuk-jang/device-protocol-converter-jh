@@ -1,6 +1,6 @@
 const BaseModel = require('../BaseModel');
 
-const mainSecTime = 10;
+const mainSecTime = 1000;
 
 class Model extends BaseModel {
   constructor() {
