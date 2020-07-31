@@ -84,6 +84,11 @@ class Converter extends AbstConverter {
         .head()
         .value();
 
+      const pvVol2 = _.chain(dataMap)
+        .get('pvVol2')
+        .head()
+        .value();
+
       // PV 전류
       const pvAmp = _.chain(dataMap)
         .get('pvAmp')
@@ -92,7 +97,14 @@ class Converter extends AbstConverter {
 
       // PV 전력
       if (_.isNumber(pvVol) && _.isNumber(pvAmp)) {
-        dataMap.pvKw.push(_.round(pvVol * pvAmp * 0.001, 4));
+        let pvKw = pvVol * pvAmp * 0.001;
+        // 1번째 전압과 2번째 전압의 수치가 같다면 DC 2 CH은 없는 것으로 판단함
+        if (pvVol === pvVol2) {
+          dataMap.pvKw.push(_.round(pvKw, 4));
+        } else {
+          pvKw += pvVol2 * pvAmp * 0.001;
+          dataMap.pvKw.push(_.round(pvKw, 4));
+        }
       }
 
       // GRID 전압
@@ -255,10 +267,10 @@ if (require !== undefined && require.main === module) {
   });
 
   const dataList = [
-    '0249b1b72f5f0771005f073209570019018b001a000000000000015802810063131703',
-    '0249b1b72f410771004107330955001a0101001800000000000015802000063131e03',
-    '0249b1b72f620800006208fb0800001a0100001800000000000000580200006313f303',
-    '0249b1b72f730800007308000900001b01000018000000000000005802000063130803'
+    '0249b1b72f340611003406fb080b00990140021f0d00000000000158029b026313ba03',
+    '0249b1b7559a0613009a06fd080d009201af02690a00000000000158029d0263145603',
+    '0249b1b72e4a0611004a0600090b0096014902b41000000000000158029b026313f103',
+    '0249b1b756a7061300a70600090e009301db02491400000000000158029d026314e103',
   ];
 
   dataList.forEach(d => {

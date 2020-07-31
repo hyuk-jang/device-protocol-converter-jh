@@ -21,6 +21,42 @@ module.exports = {
    */
   pvKw: [],
   /**
+   * 전류(Ampere), 단위[A]
+   * @description PV
+   * @type {number[]=}
+   */
+  pvAmp1: [],
+  /**
+   * 전압(voltage), 단위[V]
+   * @description PV
+   * @type {number[]=}
+   */
+  pvVol1: [],
+  /**
+   * 전력(power), 단위[kW]
+   * @description PV
+   * @type {number[]=}
+   */
+  pvKw1: [],
+  /**
+   * 전류(Ampere), 단위[A]
+   * @description PV
+   * @type {number[]=}
+   */
+  pvAmp2: [],
+  /**
+   * 전압(voltage), 단위[V]
+   * @description PV
+   * @type {number[]=}
+   */
+  pvVol2: [],
+  /**
+   * 전력(power), 단위[kW]
+   * @description PV
+   * @type {number[]=}
+   */
+  pvKw2: [],
+  /**
    * 태양 전지 현재 전력, 단위[kW]
    * @description Power
    * @type {number[]=}
