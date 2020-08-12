@@ -8,6 +8,17 @@ module.exports = {
    */
   writeDate: [],
   /**
+   * 전동 개폐기
+   * @type {number[]=} ON, OFF
+   */
+  shutter: [],
+  /**
+   * 펌프
+   * @type {number[]=} ON, OFF
+   */
+  pump: [],
+
+  /**
    * 토양 온도, 단위[℃]
    * @description T_S
    * @type {number[]=} 섭씨: 1 atm에서의 물의 어는점을 0도, 끓는점을 100도로 정한 온도

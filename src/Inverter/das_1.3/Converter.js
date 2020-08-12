@@ -40,57 +40,53 @@ class Converter extends AbstConverter {
    * @param {Buffer} currTransferCmd 현재 요청한 명령
    */
   concreteParsingData(deviceData, currTransferCmd) {
-    try {
-      // BU.CLI(dcData);
-      // 요청한 명령 추출
-      const requestData = currTransferCmd;
-      // 응답 받은 데이터 추출
-      const responseData = deviceData;
+    // BU.CLI(dcData);
+    // 요청한 명령 추출
+    const requestData = currTransferCmd;
+    // 응답 받은 데이터 추출
+    const responseData = deviceData;
 
-      // BU.CLIS(deviceData, currTransferCmd);
+    // BU.CLIS(deviceData, currTransferCmd);
 
-      // 요청한 주소 추출
-      const reqAddr = this.model.getRequestAddr(requestData);
-      // 응답받은 주소 추출
-      const resAddr = this.model.getResponseAddr(responseData);
+    // 요청한 주소 추출
+    const reqAddr = this.model.getRequestAddr(requestData);
+    // 응답받은 주소 추출
+    const resAddr = this.model.getResponseAddr(responseData);
 
-      // BU.CLIS(reqAddr, resAddr);
-      // 비교
-      if (reqAddr !== resAddr) {
-        throw new Error(`Not Matching ReqAddr: ${reqAddr}, ResAddr: ${resAddr}`);
-      }
-
-      let decodingTable;
-      switch (resAddr) {
-        case 0:
-          decodingTable = this.decodingTable.SYSTEM;
-          break;
-        case 1:
-          decodingTable = this.decodingTable.PV;
-          break;
-        case 2:
-          decodingTable = this.decodingTable.GRID_VOL;
-          break;
-        case 3:
-          decodingTable = this.decodingTable.GRID_AMP;
-          break;
-        case 4:
-          decodingTable = this.decodingTable.POWER;
-          break;
-        case 6:
-          decodingTable = this.decodingTable.OPERATION;
-          break;
-        default:
-          throw new Error(`Can not find it Addr ${resAddr}`);
-      }
-
-      // 응답받은 데이터가 정상적인지 검증하고 유효하다면 데이터 바디 추출
-      const dataBody = this.model.getValidateData(responseData, decodingTable);
-      // BU.CLI(dataBody);
-      return this.automaticDecoding(decodingTable.decodingDataList, dataBody);
-    } catch (error) {
-      throw error;
+    // BU.CLIS(reqAddr, resAddr);
+    // 비교
+    if (reqAddr !== resAddr) {
+      throw new Error(`Not Matching ReqAddr: ${reqAddr}, ResAddr: ${resAddr}`);
     }
+
+    let decodingTable;
+    switch (resAddr) {
+      case 0:
+        decodingTable = this.decodingTable.SYSTEM;
+        break;
+      case 1:
+        decodingTable = this.decodingTable.PV;
+        break;
+      case 2:
+        decodingTable = this.decodingTable.GRID_VOL;
+        break;
+      case 3:
+        decodingTable = this.decodingTable.GRID_AMP;
+        break;
+      case 4:
+        decodingTable = this.decodingTable.POWER;
+        break;
+      case 6:
+        decodingTable = this.decodingTable.OPERATION;
+        break;
+      default:
+        throw new Error(`Can not find it Addr ${resAddr}`);
+    }
+
+    // 응답받은 데이터가 정상적인지 검증하고 유효하다면 데이터 바디 추출
+    const dataBody = this.model.getValidateData(responseData, decodingTable);
+    // BU.CLI(dataBody);
+    return this.automaticDecoding(decodingTable.decodingDataList, dataBody);
   }
 }
 module.exports = Converter;

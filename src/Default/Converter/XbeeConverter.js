@@ -1,23 +1,24 @@
 const _ = require('lodash');
-const xbeeApi = require('xbee-api');
 const { BU } = require('base-util-jh');
 
-const AbstConverter = require('../../Default/AbstConverter');
-const Model = require('./Model');
-const protocol = require('./protocol');
+const AbstConverter = require('../AbstConverter');
 
-class Converter extends AbstConverter {
-  /** @param {protocol_info} protocolInfo */
+module.exports = class extends AbstConverter {
+  /**
+   * @param {protocol_info} protocolInfo
+   */
   constructor(protocolInfo) {
     super(protocolInfo);
 
-    this.decodingTable = protocol.decodingProtocolTable(protocolInfo.deviceId);
-    this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
-    this.xbeeAPI = new xbeeApi.XBeeAPI();
-    this.frameIdList = [];
-
-    /** BaseModel */
-    this.model = new Model();
+    // 국번은 Buffer로 변환하여 저장함.
+    const { deviceId } = this.protocolInfo;
+    if (Buffer.isBuffer(deviceId)) {
+      this.protocolInfo.deviceId = deviceId;
+    } else if (_.isNumber(deviceId)) {
+      this.protocolInfo.deviceId = this.protocolConverter.convertNumToHxToBuf(deviceId);
+    } else if (_.isString(deviceId)) {
+      this.protocolInfo.deviceId = Buffer.from(deviceId, 'hex');
+    }
   }
 
   /**
@@ -29,55 +30,89 @@ class Converter extends AbstConverter {
   generationCommand(generationInfo) {
     /** @type {Array.<commandInfoModel>} */
     const cmdList = this.defaultGenCMD(generationInfo);
-    /** @type {Array.<commandInfo>} */
-    const returnValue = [];
 
-    // BU.CLI(cmdList);
+    /** @type {Array.<commandInfo>} */
     cmdList.forEach(cmdInfo => {
-      /** @type {commandInfo} */
-      const commandObj = {};
-      const frameId = this.xbeeAPI.nextFrameId();
-      /** @type {xbeeApi_0x10} */
-      const frameObj = {
-        type: 0x10,
-        id: frameId,
-        destination64: this.protocolInfo.deviceId,
-        data: cmdInfo.cmd,
-      };
-      commandObj.data = frameObj;
-      commandObj.commandExecutionTimeoutMs = 1000 * 2;
-      commandObj.delayExecutionTimeoutMs = _.isNumber(cmdInfo.timeout) && cmdInfo.timeout;
-      returnValue.push(commandObj);
+      const { cmd } = cmdInfo;
+
+      const bufHeader = Buffer.concat([
+        // Start Delimiter
+        Buffer.from('7E', 'hex'),
+        // Length(2byte),
+        Buffer.from('0010', 'hex'),
+      ]);
+
+      const bufBody = Buffer.concat([
+        // Frame Type
+        Buffer.from('10', 'hex'),
+        // Frame ID
+        Buffer.from('01', 'hex'),
+        // 64-bit Destination Address
+        this.protocolInfo.deviceId,
+        // 16-bit Destination Network Address(2byte),
+        Buffer.from('FFFE', 'hex'),
+        // Broadcast Radius
+        Buffer.from('00', 'hex'),
+        // Options
+        Buffer.from('00', 'hex'),
+        // RF Data
+        Buffer.from(cmd),
+      ]);
+
+      const checkSum = this.protocolConverter.getBufferCheckSum(bufBody, 1);
+
+      cmdInfo.cmd = Buffer.concat([bufHeader, bufBody, checkSum]);
+
+      return cmdInfo;
     });
-    return returnValue;
+
+    return cmdList;
   }
 
   /**
    * 데이터 분석 요청
-   * @param {xbeeApi_0x8B|xbeeApi_0x90} deviceData 응답받은 데이터
-   * @param {xbeeApi_0x10} currTransferCmd 현재 요청한 명령
+   * @param {Buffer} deviceData 응답받은 데이터
+   * @param {Buffer} currTransferCmd 현재 요청한 명령
    */
   concreteParsingData(deviceData, currTransferCmd) {
-    // BU.CLIS(deviceData, currTransferCmd);
+    BU.CLIS(deviceData, currTransferCmd);
     // string 형식이 다를 수 있으므로 대문자로 모두 변환
-    const reqId = _.toUpper(currTransferCmd.destination64);
-    const resId = _.toUpper(deviceData.remote64);
-    // 비교
-    if (!_.eq(reqId, resId)) {
-      throw new Error(`Not Matching ReqAddr: ${reqId}, ResAddr: ${resId}`);
+    // Res Frame Type
+    const REC_FRAME_TYPE_INDEX = 3;
+    const REC_LAST_INDEX = deviceData.length - 1;
+
+    const recFrameType = deviceData.readInt8(REC_FRAME_TYPE_INDEX);
+    const recFrameSpecData = deviceData.slice(REC_FRAME_TYPE_INDEX, REC_LAST_INDEX);
+
+    const resId = deviceData.slice(4, 8);
+
+    // 지그비 64-bit Address 일치 확인
+    if (!_.isEqual(resId, this.protocolInfo.deviceId)) {
+      throw new Error(
+        `Not Matching ReqAddr: ${this.protocolInfo.deviceId.toString()}, ResAddr: ${resId.toString()}`,
+      );
+    }
+
+    // 체크섬 일치 확인
+    const resCheckSum = deviceData.slice(REC_LAST_INDEX);
+
+    const calcCheckSum = this.protocolConverter.getBufferCheckSum(recFrameSpecData, 1);
+
+    if (!_.isEqual(calcCheckSum, resCheckSum)) {
+      throw new Error(`Not Matching CheckSum Calc: ${calcCheckSum}, Res: ${resCheckSum}`);
     }
 
     let result;
     // 해당 프로토콜에서 생성된 명령인지 체크
-    switch (deviceData.type) {
+    switch (recFrameType) {
       case 0x88:
-        result = this.processDataResponseAT();
+        result = this.refineAtCmdResponse(deviceData);
         break;
       case 0x90:
-        result = this.processDataReceivePacketZigBee(deviceData);
+        result = this.refineZigbeeReceivePacket(deviceData);
         break;
       default:
-        throw new Error(`Not Matching Type ${deviceData.type}`);
+        throw new Error(`Not Matching Type ${recFrameType}`);
     }
     return result;
   }
@@ -86,15 +121,19 @@ class Converter extends AbstConverter {
    *
    * @param {xbeeApi_0x88} xbeeApi0x88
    */
-  processDataResponseAT(xbeeApi0x88) {}
+  refineAtCmdResponse(xbeeApi0x88) {}
 
   /**
    *
-   * @param {xbeeApi_0x90} xbeeApi0x90
+   * @param {Buffer} zigbeeReceivePacket
    */
-  processDataReceivePacketZigBee(xbeeApi0x90) {
-    // BU.CLI(xbeeApi0x90);
-    const { data } = xbeeApi0x90;
+  refineZigbeeReceivePacket(zigbeeReceivePacket) {
+    // 최소 Speccific Data 길이를 만족하는지 체크
+    if (zigbeeReceivePacket.length < 16) {
+      throw new Error(`Failure to meet minimum length: ${zigbeeReceivePacket.length}`);
+    }
+
+    const data = zigbeeReceivePacket.slice(15, zigbeeReceivePacket.length - 1);
 
     const STX = _.nth(data, 0);
     // STX 체크 (# 문자 동일 체크)
@@ -166,65 +205,4 @@ class Converter extends AbstConverter {
       throw new Error('STX가 일치하지 않습니다.');
     }
   }
-
-  /**
-   * decodingInfo 리스트 만큼 Data 파싱을 진행
-   * @param {Array.<decodingInfo>} decodingTable
-   * @param {Buffer} data
-   */
-  automaticDecoding(decodingTable, data) {
-    return super.automaticDecoding(decodingTable, data);
-  }
-}
-module.exports = Converter;
-
-if (require !== undefined && require.main === module) {
-  const converter = new Converter({
-    deviceId: 10,
-    subDeviceId: '11',
-    mainCategory: 'UPSAS',
-    subCategory: 'muan100kW',
-    protocolOptionInfo: {
-      hasTrackingData: true,
-    },
-  });
-
-  const cmdInfo = converter.generationCommand({
-    key: 'pump',
-    value: 1,
-    nodeInfo: {
-      data_logger_index: 8,
-    },
-  });
-
-  // BU.CLI(cmdInfo);
-
-  // BU.CLIN(converter.model);
-
-  const testReqMsg = '025301040000000c03';
-
-  /** @type {xbeeApi_0x90[]} */
-  const dataList = [
-    // {
-    //   data: Buffer.from('#0001001111.122.233.3+444.4-555.5'),
-    // },
-    // {
-    //   data: Buffer.from('#00010002022351000.00999.909.6'),
-    // },
-    {
-      data: Buffer.from('#0001001222311.0029.9'),
-    },
-    // {
-    //   data: Buffer.from('#000100030101010101010101'),
-    // },
-  ];
-
-  dataList.forEach(d => {
-    // const result = converter.testParsingData(realBuffer);
-    // BU.CLI(result);
-    const dataMap = converter.processDataReceivePacketZigBee(d);
-    BU.CLI(dataMap);
-  });
-
-  // converter.testParsingData(Buffer.from(dataList, 'ascii'));
-}
+};

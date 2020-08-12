@@ -60,6 +60,10 @@ module.exports = protocolInfo => {
           Converter = require('../S2W/dmTech/Converter');
           Model = require('../S2W/dmTech/Model');
           break;
+        case 'sm':
+          Converter = require('../S2W/sm/Converter');
+          Model = require('../S2W/sm/Model');
+          break;
         default:
           break;
       }

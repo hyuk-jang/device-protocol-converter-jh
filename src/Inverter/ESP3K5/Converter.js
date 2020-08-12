@@ -40,102 +40,83 @@ class Converter extends AbstConverter {
    * @param {Buffer} currTransferCmd 현재 요청한 명령
    */
   concreteParsingData(deviceData, currTransferCmd) {
-    try {
-      // BU.CLI('currTransferCmd', currTransferCmd);
-      // 0: Header1 1: Header2, 2: StationID
-      const RES_DATA_START_POINT = 3;
-      const resId = deviceData.readInt8(2);
-      const reqId = currTransferCmd.readInt8(2);
-      const resChkSum = deviceData.slice(deviceData.length - 1);
+    // BU.CLI('currTransferCmd', currTransferCmd);
+    // 0: Header1 1: Header2, 2: StationID
+    const RES_DATA_START_POINT = 3;
+    const resId = deviceData.readInt8(2);
+    const reqId = currTransferCmd.readInt8(2);
+    const resChkSum = deviceData.slice(deviceData.length - 1);
 
-      // 전송 데이터 유효성 체크
-      if (deviceData.length !== 32) {
-        throw new Error(`The expected length(32) 
+    // 전송 데이터 유효성 체크
+    if (deviceData.length !== 32) {
+      throw new Error(`The expected length(32) 
         of the data body is different from the length(${deviceData.length}) received.`);
-      }
-
-      // 인버터 국번 비교
-      if (!_.eq(reqId, resId)) {
-        throw new Error(`Not Matching ReqAddr: ${reqId}, ResAddr: ${resId}`);
-      }
-
-      // 수신 받은 데이터 체크섬 계산
-      const calcChkSum = this.protocolConverter.getXorBuffer(
-        deviceData.slice(0, deviceData.length - 1),
-      );
-
-      // 체크섬 비교
-      if (!_.isEqual(calcChkSum, resChkSum)) {
-        // throw new Error(`Not Matching Check Sum: ${calcChkSum}, Res Check Sum: ${resChkSum}`);
-      }
-
-      // 헤더와 체크섬을 제외한 데이터 계산
-      const dataBody = deviceData.slice(RES_DATA_START_POINT, deviceData.length - 1);
-      // BU.CLI(dataBody);
-
-      // 데이터 자동 산정
-      /** @type {BASE_KEY} */
-      let dataMap = this.automaticDecoding(this.decodingTable.DEFAULT.decodingDataList, dataBody);
-
-      // 인버터에서 PV출력 및 GRID 출력을 주지 않으므로 계산하여 집어넣음
-      // PV 전압
-      const pvVol = _.chain(dataMap)
-        .get('pvVol')
-        .head()
-        .value();
-
-      const pvVol2 = _.chain(dataMap)
-        .get('pvVol2')
-        .head()
-        .value();
-
-      // PV 전류
-      const pvAmp = _.chain(dataMap)
-        .get('pvAmp')
-        .head()
-        .value();
-
-      // PV 전력
-      if (_.isNumber(pvVol) && _.isNumber(pvAmp)) {
-        let pvKw = pvVol * pvAmp * 0.001;
-        // 1번째 전압과 2번째 전압의 수치가 같다면 DC 2 CH은 없는 것으로 판단함
-        if (pvVol === pvVol2) {
-          dataMap.pvKw.push(_.round(pvKw, 4));
-        } else {
-          pvKw += pvVol2 * pvAmp * 0.001;
-          dataMap.pvKw.push(_.round(pvKw, 4));
-        }
-      }
-
-      // GRID 전압
-      const gridRsVol = _.chain(dataMap)
-        .get('gridRsVol')
-        .head()
-        .value();
-
-      // GRID 전류
-      const gridRAmp = _.chain(dataMap)
-        .get('gridRAmp')
-        .head()
-        .value();
-
-      // GRID 전력
-      if (_.isNumber(gridRsVol) && _.isNumber(gridRAmp)) {
-        dataMap.powerGridKw.push(_.round(gridRsVol * gridRAmp * 0.001, 4));
-      }
-
-      // Trobule 목록을 하나로 합침
-      dataMap.operTroubleList = [_.flatten(dataMap.operTroubleList)];
-
-      // 만약 인버터가 운영중인 데이터가 아니라면 현재 데이터를 무시한다.
-      if (_.eq(_.head(dataMap.operIsRun), 0)) {
-        dataMap = this.model.BASE_MODEL;
-      }
-
-      return dataMap;
-    } catch (error) {
-      throw error;
     }
+
+    // 인버터 국번 비교
+    if (!_.eq(reqId, resId)) {
+      throw new Error(`Not Matching ReqAddr: ${reqId}, ResAddr: ${resId}`);
+    }
+
+    // 수신 받은 데이터 체크섬 계산
+    const calcChkSum = this.protocolConverter.getXorBuffer(
+      deviceData.slice(0, deviceData.length - 1),
+    );
+
+    // 체크섬 비교
+    if (!_.isEqual(calcChkSum, resChkSum)) {
+      // throw new Error(`Not Matching Check Sum: ${calcChkSum}, Res Check Sum: ${resChkSum}`);
+    }
+
+    // 헤더와 체크섬을 제외한 데이터 계산
+    const dataBody = deviceData.slice(RES_DATA_START_POINT, deviceData.length - 1);
+    // BU.CLI(dataBody);
+
+    // 데이터 자동 산정
+    /** @type {BASE_KEY} */
+    let dataMap = this.automaticDecoding(this.decodingTable.DEFAULT.decodingDataList, dataBody);
+
+    // 인버터에서 PV출력 및 GRID 출력을 주지 않으므로 계산하여 집어넣음
+    // PV 전압
+    const pvVol = _.chain(dataMap).get('pvVol').head().value();
+
+    const pvVol2 = _.chain(dataMap).get('pvVol2').head().value();
+
+    // PV 전류
+    const pvAmp = _.chain(dataMap).get('pvAmp').head().value();
+
+    // PV 전력
+    if (_.isNumber(pvVol) && _.isNumber(pvAmp)) {
+      let pvKw = pvVol * pvAmp * 0.001;
+      // 1번째 전압과 2번째 전압의 수치가 같다면 DC 2 CH은 없는 것으로 판단함
+      if (pvVol === pvVol2) {
+        dataMap.pvKw.push(_.round(pvKw, 4));
+      } else {
+        pvKw += pvVol2 * pvAmp * 0.001;
+        dataMap.pvKw.push(_.round(pvKw, 4));
+      }
+    }
+
+    // GRID 전압
+    const gridRsVol = _.chain(dataMap).get('gridRsVol').head().value();
+
+    // GRID 전류
+    const gridRAmp = _.chain(dataMap).get('gridRAmp').head().value();
+
+    // GRID 전력
+    if (_.isNumber(gridRsVol) && _.isNumber(gridRAmp)) {
+      dataMap.powerGridKw.push(_.round(gridRsVol * gridRAmp * 0.001, 4));
+    }
+
+    // Trobule 목록을 하나로 합침
+    dataMap.operTroubleList = [_.flatten(dataMap.operTroubleList)];
+
+    // 만약 인버터가 운영중인 데이터가 아니라면 현재 데이터를 무시한다.
+    if (_.eq(_.head(dataMap.operIsRun), 0)) {
+      dataMap = this.model.BASE_MODEL;
+    }
+
+    return dataMap;
   }
 
   /**

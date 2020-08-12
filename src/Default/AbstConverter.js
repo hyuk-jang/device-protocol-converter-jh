@@ -254,25 +254,21 @@ class AbstConverter {
    * currIndex는 반복에 의해 1씩 증가 --> 해당 currIndex로 수신받은 데이터 index 추출
    */
   automaticDecoding(decodingTable, receiveData) {
-    try {
-      // BU.CLI(data);
-      // 데이터를 집어넣을 기본 자료형을 가져옴
-      const returnModelInfo = AbstBaseModel.GET_BASE_MODEL(this.protocolInfo);
-      // 수신받은 데이터에서 현재 체크 중인 값을 가져올 인덱스
-      let currIndex = 0;
-      decodingTable.forEach(decodingInfo => {
-        const { byte = 1, key } = decodingInfo;
-        // 조회할 데이터를 가져옴
-        const thisData = receiveData.slice(currIndex, currIndex + byte);
-        // BU.CLI(key, thisData);
-        this.automaticParsingData(decodingInfo, thisData, returnModelInfo);
-        // index 증가
-        currIndex += byte;
-      });
-      return returnModelInfo;
-    } catch (error) {
-      throw error;
-    }
+    // BU.CLI(data);
+    // 데이터를 집어넣을 기본 자료형을 가져옴
+    const returnModelInfo = AbstBaseModel.GET_BASE_MODEL(this.protocolInfo);
+    // 수신받은 데이터에서 현재 체크 중인 값을 가져올 인덱스
+    let currIndex = 0;
+    decodingTable.forEach(decodingInfo => {
+      const { byte = 1, key } = decodingInfo;
+      // 조회할 데이터를 가져옴
+      const thisData = receiveData.slice(currIndex, currIndex + byte);
+      // BU.CLI(key, thisData);
+      this.automaticParsingData(decodingInfo, thisData, returnModelInfo);
+      // index 증가
+      currIndex += byte;
+    });
+    return returnModelInfo;
   }
 
   /**
@@ -286,34 +282,30 @@ class AbstConverter {
    * currIndex는 반복에 의해 1씩 증가 --> 해당 currIndex로 수신받은 데이터 index 추출
    */
   automaticDecodingForArray(decodingTable, receiveData) {
-    try {
-      const { address = 0, decodingDataList } = decodingTable;
-      // 데이터를 집어넣을 기본 자료형을 가져옴
-      const returnModelInfo = AbstBaseModel.GET_BASE_MODEL(this.protocolInfo);
-      // 수신받은 데이터에서 현재 체크 중인 값을 가져올 인덱스
-      let currIndex = 0;
+    const { address = 0, decodingDataList } = decodingTable;
+    // 데이터를 집어넣을 기본 자료형을 가져옴
+    const returnModelInfo = AbstBaseModel.GET_BASE_MODEL(this.protocolInfo);
+    // 수신받은 데이터에서 현재 체크 중인 값을 가져올 인덱스
+    let currIndex = 0;
 
-      // 총 체크해야할 데이터 범위를 계산 (시작주소 + 수신 데이터 길이)
-      const remainedDataListLength = _.sum([receiveData.length, address]);
-      // 시작주소부터 체크 시작
-      for (let index = address; index < remainedDataListLength; index += 1) {
-        // 해당 디코딩 정보 추출
-        // const decodingInfo = decodingDataList[index];
-        /** @type {decodingInfo} */
-        const decoding = decodingDataList[index];
-        // BU.CLI(decoding);
-        const { byte = 1 } = decoding;
+    // 총 체크해야할 데이터 범위를 계산 (시작주소 + 수신 데이터 길이)
+    const remainedDataListLength = _.sum([receiveData.length, address]);
+    // 시작주소부터 체크 시작
+    for (let index = address; index < remainedDataListLength; index += 1) {
+      // 해당 디코딩 정보 추출
+      // const decodingInfo = decodingDataList[index];
+      /** @type {decodingInfo} */
+      const decoding = decodingDataList[index];
+      // BU.CLI(decoding);
+      const { byte = 1 } = decoding;
 
-        // BU.CLI(decodingInfo, receiveData);
-        // 파싱 의뢰
-        this.automaticParsingData(decoding, _.nth(receiveData, currIndex), returnModelInfo);
-        currIndex += byte;
-      }
-      // BU.CLI(returnModelInfo);
-      return returnModelInfo;
-    } catch (error) {
-      throw error;
+      // BU.CLI(decodingInfo, receiveData);
+      // 파싱 의뢰
+      this.automaticParsingData(decoding, _.nth(receiveData, currIndex), returnModelInfo);
+      currIndex += byte;
     }
+    // BU.CLI(returnModelInfo);
+    return returnModelInfo;
   }
 
   /**

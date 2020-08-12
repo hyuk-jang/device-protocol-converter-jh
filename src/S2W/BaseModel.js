@@ -35,6 +35,35 @@ class BaseModel extends AbstBaseModel {
           STATUS: [],
         },
       },
+      // Device
+      SHUTTER: {
+        KEY: baseKey.shutter,
+        NAME: '전동 개폐기',
+        STATUS: {
+          ON: 'ON',
+          OFF: 'OFF',
+        },
+        COMMAND: {
+          ON: [],
+          OFF: [],
+          STATUS: [],
+        },
+      },
+      PUMP: {
+        KEY: baseKey.pump,
+        NAME: '펌프',
+        STATUS: {
+          ON: 'ON',
+          OFF: 'OFF',
+        },
+        COMMAND: {
+          ON: [],
+          OFF: [],
+          STATUS: [],
+        },
+      },
+
+      // Sensor
       SOIL_TEMPERATURE: {
         KEY: baseKey.soilTemperature,
         NAME: '토양 온도',

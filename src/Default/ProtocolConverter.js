@@ -289,6 +289,26 @@ class Converter {
   }
 
   /**
+   * Buffer를 Ascii Char로 변환 후 반환
+   * @param {Buffer|string} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
+   * @returns {string}
+   * @example
+   * <Buffer 30 30 34 31> -> (Hx)'30303431'
+   */
+  convertBufToHx(buffer) {
+    if (_.isString(buffer)) {
+      buffer = Buffer.from(buffer);
+    }
+    if (!Buffer.isBuffer(buffer)) return '';
+    let returnValue = '';
+    buffer.forEach(element => {
+      returnValue = returnValue.concat(this.converter().dec2hex(element));
+    });
+
+    return returnValue;
+  }
+
+  /**
    * Buffer를 Ascii Char로 변환 후 해당 값을 Hex Number를 Dec로 계산
    * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
    * @returns {number} Dec
@@ -322,7 +342,7 @@ class Converter {
    * @param {number=} binaryLength binary 단위
    * @return {string}
    * @example
-   * <Buffer 30 30 34 31> -> (Hex)'30303431' -> (string) '‭0011 0000 0011 0000 0011 0100 0011 0001‬'
+   * <Buffer 30 30 34 31> -> (Hx)'30303431' -> (string) '‭0011 0000 0011 0000 0011 0100 0011 0001‬'
    */
   convertBufToHexToBin(buffer, binaryLength = 8) {
     if (!Buffer.isBuffer(buffer)) return '';
@@ -556,40 +576,22 @@ class Converter {
     }
 
     // binary to decimal
-    ConvertBase.bin2dec = num =>
-      ConvertBase(num)
-        .from(2)
-        .to(10);
+    ConvertBase.bin2dec = num => ConvertBase(num).from(2).to(10);
 
     // binary to hexadecimal
-    ConvertBase.bin2hex = num =>
-      ConvertBase(num)
-        .from(2)
-        .to(16);
+    ConvertBase.bin2hex = num => ConvertBase(num).from(2).to(16);
 
     // decimal to binary
-    ConvertBase.dec2bin = num =>
-      ConvertBase(num)
-        .from(10)
-        .to(2);
+    ConvertBase.dec2bin = num => ConvertBase(num).from(10).to(2);
 
     // decimal to hexadecimal
-    ConvertBase.dec2hex = num =>
-      ConvertBase(num)
-        .from(10)
-        .to(16);
+    ConvertBase.dec2hex = num => ConvertBase(num).from(10).to(16);
 
     // hexadecimal to binary
-    ConvertBase.hex2bin = num =>
-      ConvertBase(num)
-        .from(16)
-        .to(2);
+    ConvertBase.hex2bin = num => ConvertBase(num).from(16).to(2);
 
     // hexadecimal to decimal
-    ConvertBase.hex2dec = num =>
-      ConvertBase(num)
-        .from(16)
-        .to(10);
+    ConvertBase.hex2dec = num => ConvertBase(num).from(16).to(10);
     return ConvertBase;
   }
 
