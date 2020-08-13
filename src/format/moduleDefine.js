@@ -1,22 +1,14 @@
 const parsingMethod = {
   /**
-   * 10진수를 Hex로 변환한 후 Buffer로 반환
-   * @param {number|number[]} dec 10진수 number, Hx로 바꿀 값
-   * @param {number} byteLength Hex to Hex 후 Byte Length. Buffer의 길이가 적을 경우 앞에서부터 0x00 채움
-   * @return {Buffer}
-   * @example
-   * (Dec) 555 -> (Hex)'02 2B' -> <Buffer 02 2B>
-   */
-  convertNumToHxToBuf: 'convertNumToHxToBuf',
-  /**
-   *
+   * 10진수를 toString(Radix)로 변환한 후 각 자리수를 Buffer로 반환
    * @param {number} dec 10진수 number, Buffer로 바꿀 값
-   * @param {number} byteLength Hex to Ascii Buffer 후 Byte Length. Buffer의 길이가 적을 경우 앞에서부터 0 채움
+   * @param {convertNumOption} convertNumOption 변환 옵션
    * @return {Buffer}
    * @example
-   * (Dec) 65 -> (Hex)'41' -> <Buffer 30 30 34 31>
+   * Radix: 16 (Dec) 65 -> (Hex)'41' -> <Buffer 30 30 34 31>
+   * Radix: 10 (Dec) 65 -> (Hex)'65' -> <Buffer 30 30 36 35>
    */
-  convertNumToHexToBuf: 'convertNumToHexToBuf',
+  convertNumToStrToBuf: 'convertNumToStrToBuf',
   /**
    * Buffer 본연의 API를 숫자를 Buffer로 변환
    * option 에 따라 반환 Buffer Size, BE or LE , Int or UInt 형태 결정됨.
@@ -30,7 +22,7 @@ const parsingMethod = {
    * @example
    * (Dec) 65 -> <Buffer 34 31>
    */
-  convertIntWriteBuf: 'convertIntWriteBuf',
+  convertNumToWriteInt: 'convertNumToWriteInt',
   /**
    * Buffer 본연의 API를 이용하여 데이터를 Int or UInt 형으로 읽음.
    * option 에 따라 BE or LE 읽을지 여부, Int or UInt 로 읽을지가 결정됨.
@@ -42,7 +34,7 @@ const parsingMethod = {
    * @example
    * <Buffer 30 30 34 31> -> (Dec) 65
    */
-  convertReadBuf: 'convertReadBuf',
+  convertBufToReadInt: 'convertBufToReadInt',
   /**
    * Buffer를 Ascii Char로 변환 후 반환
    * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>

@@ -36,75 +36,71 @@ class Converter extends AbstConverter {
    * @param {Buffer} currTransferCmd 현재 요청한 명령
    */
   concreteParsingData(deviceData, currTransferCmd) {
-    try {
-      //   BU.CLI('currTransferCmd', currTransferCmd);
-      // 0: Header1 1: Header2, 2: StationID
-      const RES_DATA_START_POINT = 8;
-      const reqId = currTransferCmd.slice(1, 3).toString();
-      const resId = deviceData.slice(1, 3).toString();
-      const requestData = currTransferCmd; // 요청한 명령 추출
-      const responseData = deviceData; // 응답 받은 데이터 추출
-      const resChkSum = deviceData.slice(deviceData.length - 5, deviceData.length - 1);
-      const reqAddr = requestData.slice(4, 8).toString(); // 요청한 주소 추출
-      const resAddr = responseData.slice(4, 8).toString(); // 응답받은 주소 추출
+    //   BU.CLI('currTransferCmd', currTransferCmd);
+    // 0: Header1 1: Header2, 2: StationID
+    const RES_DATA_START_POINT = 8;
+    const reqId = currTransferCmd.slice(1, 3).toString();
+    const resId = deviceData.slice(1, 3).toString();
+    const requestData = currTransferCmd; // 요청한 명령 추출
+    const responseData = deviceData; // 응답 받은 데이터 추출
+    const resChkSum = deviceData.slice(deviceData.length - 5, deviceData.length - 1);
+    const reqAddr = requestData.slice(4, 8).toString(); // 요청한 주소 추출
+    const resAddr = responseData.slice(4, 8).toString(); // 응답받은 주소 추출
 
-      // 인버터 국번 비교
-      if (!_.eq(reqId, resId)) {
-        throw new Error(`Not Matching ReqAddr: ${reqId}, ResAddr: ${resId}`);
-      }
-
-      // 수신 받은 데이터 체크섬 계산
-      const calcChkSum = this.protocolConverter.getBufferCheckSum(
-        deviceData.slice(1, deviceData.length - 5),
-      );
-      // BU.CLI('calcChkSum', calcChkSum);
-
-      // 체크섬 비교
-      if (!_.isEqual(calcChkSum, resChkSum)) {
-        throw new Error(`Not Matching Check Sum: ${calcChkSum}, Res Check Sum: ${resChkSum}`);
-      }
-
-      // 비교
-      if (reqAddr !== resAddr) {
-        throw new Error(`Not Matching ReqAddr: ${reqAddr}, ResAddr: ${resAddr}`);
-      }
-
-      // 헤더와 체크섬을 제외한 데이터 계산
-      const dataBody = responseData.slice(RES_DATA_START_POINT, responseData.length - 5);
-
-      // 데이터 자동 산정
-      let decodingTable;
-      switch (resAddr) {
-        case '0004':
-          decodingTable = this.decodingTable.OPERATION;
-          break;
-        case '0020':
-          decodingTable = this.decodingTable.PV;
-          break;
-        case '0050':
-          decodingTable = this.decodingTable.GRID_VOL;
-          break;
-        case '0060':
-          decodingTable = this.decodingTable.POWER;
-          break;
-        case '01e0':
-          decodingTable = this.decodingTable.SYSTEM;
-          break;
-        default:
-          throw new Error(`Can not find it Addr ${resAddr}`);
-      }
-
-      // BU.CLI(dataBody);
-
-      const dataMap = this.automaticDecoding(decodingTable.decodingDataList, dataBody);
-
-      // Trobule 목록을 하나로 합침
-      dataMap.operTroubleList = [_.flatten(dataMap.operTroubleList)];
-
-      return checkTripleInv(dataMap);
-    } catch (error) {
-      throw error;
+    // 인버터 국번 비교
+    if (!_.eq(reqId, resId)) {
+      throw new Error(`Not Matching ReqAddr: ${reqId}, ResAddr: ${resId}`);
     }
+
+    // 수신 받은 데이터 체크섬 계산
+    const calcChkSum = this.protocolConverter.getBufferCheckSum(
+      deviceData.slice(1, deviceData.length - 5),
+    );
+    // BU.CLI('calcChkSum', calcChkSum);
+
+    // 체크섬 비교
+    if (!_.isEqual(calcChkSum, resChkSum)) {
+      throw new Error(`Not Matching Check Sum: ${calcChkSum}, Res Check Sum: ${resChkSum}`);
+    }
+
+    // 비교
+    if (reqAddr !== resAddr) {
+      throw new Error(`Not Matching ReqAddr: ${reqAddr}, ResAddr: ${resAddr}`);
+    }
+
+    // 헤더와 체크섬을 제외한 데이터 계산
+    const dataBody = responseData.slice(RES_DATA_START_POINT, responseData.length - 5);
+
+    // 데이터 자동 산정
+    let decodingTable;
+    switch (resAddr) {
+      case '0004':
+        decodingTable = this.decodingTable.OPERATION;
+        break;
+      case '0020':
+        decodingTable = this.decodingTable.PV;
+        break;
+      case '0050':
+        decodingTable = this.decodingTable.GRID_VOL;
+        break;
+      case '0060':
+        decodingTable = this.decodingTable.POWER;
+        break;
+      case '01e0':
+        decodingTable = this.decodingTable.SYSTEM;
+        break;
+      default:
+        throw new Error(`Can not find it Addr ${resAddr}`);
+    }
+
+    // BU.CLI(dataBody);
+
+    const dataMap = this.automaticDecoding(decodingTable.decodingDataList, dataBody);
+
+    // Trobule 목록을 하나로 합침
+    dataMap.operTroubleList = [_.flatten(dataMap.operTroubleList)];
+
+    return checkTripleInv(dataMap);
   }
 }
 module.exports = Converter;

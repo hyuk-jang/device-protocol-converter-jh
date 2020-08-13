@@ -17,7 +17,7 @@ class Converter extends AbstConverter {
     this.frameIdList = [];
 
     /** BaseModel */
-    this.model = new Model();
+    this.model = new Model(protocolInfo);
   }
 
   /**

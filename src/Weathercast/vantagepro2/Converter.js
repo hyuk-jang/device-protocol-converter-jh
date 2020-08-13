@@ -35,90 +35,83 @@ class Converter extends AbstConverter {
    * @param {Buffer} deviceData 장치로 요청한 명령
    */
   concreteParsingData(deviceData) {
-    try {
-      // const requestData = this.getCurrTransferCmd(dcData);
-      const responseData = deviceData;
+    // const requestData = this.getCurrTransferCmd(dcData);
+    const responseData = deviceData;
 
-      // if(_.includes(requestData, this.baseModel.device.DEFAULT.COMMAND.LOOP)){
-      let bufferData =
-        responseData instanceof Buffer
-          ? responseData
-          : this.protocolConverter.makeMsg2Buffer(responseData);
+    // if(_.includes(requestData, this.baseModel.device.DEFAULT.COMMAND.LOOP)){
+    let bufferData =
+      responseData instanceof Buffer
+        ? responseData
+        : this.protocolConverter.makeMsg2Buffer(responseData);
 
-      const wakeupSTX = bufferData.slice(0, 2);
-      const cmdSTX = bufferData.slice(0, 4);
-      let loopSTX = bufferData.slice(0, 3);
-      // wakeUp 명령을 내렸을 경우 \n\r 포함여부 확인
-      if (wakeupSTX.toString() === Buffer.from([0x0a, 0x0d]).toString()) {
-        // ACK를 제외하고 데이터 저장
-        this.resetTrackingDataBuffer();
-        throw new Error('wakeUp Event');
+    const wakeupSTX = bufferData.slice(0, 2);
+    const cmdSTX = bufferData.slice(0, 4);
+    let loopSTX = bufferData.slice(0, 3);
+    // wakeUp 명령을 내렸을 경우 \n\r 포함여부 확인
+    if (wakeupSTX.toString() === Buffer.from([0x0a, 0x0d]).toString()) {
+      // ACK를 제외하고 데이터 저장
+      this.resetTrackingDataBuffer();
+      throw new Error('wakeUp Event');
+    }
+    if (cmdSTX.toString() === Buffer.from([0x06, 0x4c, 0x4f, 0x4f]).toString()) {
+      // ACK를 제외하고 데이터 저장
+      this.resetTrackingDataBuffer();
+      this.trackingDataBuffer = bufferData.slice(1);
+      bufferData = this.trackingDataBuffer;
+      loopSTX = bufferData.slice(0, 3);
+    }
+    if (loopSTX.toString() !== Buffer.from([0x4c, 0x4f, 0x4f]).toString()) {
+      // LOOP 명령 수행 여부 확인
+      throw new Error(
+        `Not Matching ReqAddr: ${Buffer.from([
+          0x4c,
+          0x4f,
+          0x4f,
+        ]).toString()}, ResAddr: ${loopSTX.toString()}`,
+      );
+    }
+    if (bufferData.length !== 99) {
+      throw new Error(`Not Matching Length Expect: ${99}, Length: ${bufferData.length}`);
+    }
+    protocol.forEach(protocolInfo => {
+      const startPoint = protocolInfo.substr[0];
+      const endPoint = protocolInfo.substr[1];
+      const realStartPoint = startPoint + endPoint - 1;
+      let hexCode = '';
+      let hasError = false;
+      for (let i = realStartPoint; i >= startPoint; i -= 1) {
+        let TargetValue = bufferData[i].toString(16);
+        if (TargetValue === 'ff') {
+          TargetValue = '00';
+          if (protocolInfo.key === 'OutsideTemperature' || protocolInfo.key === 'SolarRadiation') {
+            hasError = true;
+          }
+        }
+        if (TargetValue.length === 1) {
+          hexCode += '0';
+        }
+        hexCode += TargetValue;
       }
-      if (cmdSTX.toString() === Buffer.from([0x06, 0x4c, 0x4f, 0x4f]).toString()) {
-        // ACK를 제외하고 데이터 저장
-        this.resetTrackingDataBuffer();
-        this.trackingDataBuffer = bufferData.slice(1);
-        bufferData = this.trackingDataBuffer;
-        loopSTX = bufferData.slice(0, 3);
-      }
-      if (loopSTX.toString() !== Buffer.from([0x4c, 0x4f, 0x4f]).toString()) {
-        // LOOP 명령 수행 여부 확인
-        throw new Error(
-          `Not Matching ReqAddr: ${Buffer.from([
-            0x4c,
-            0x4f,
-            0x4f,
-          ]).toString()}, ResAddr: ${loopSTX.toString()}`,
+      if (hasError) {
+        protocolInfo.value = null;
+      } else {
+        protocolInfo.value = this.changeData(
+          protocolInfo.key,
+          this.protocolConverter.converter().hex2dec(hexCode),
         );
       }
-      if (bufferData.length !== 99) {
-        throw new Error(`Not Matching Length Expect: ${99}, Length: ${bufferData.length}`);
-      }
-      protocol.forEach(protocolInfo => {
-        const startPoint = protocolInfo.substr[0];
-        const endPoint = protocolInfo.substr[1];
-        const realStartPoint = startPoint + endPoint - 1;
-        let hexCode = '';
-        let hasError = false;
-        for (let i = realStartPoint; i >= startPoint; i -= 1) {
-          let TargetValue = bufferData[i].toString(16);
-          if (TargetValue === 'ff') {
-            TargetValue = '00';
-            if (
-              protocolInfo.key === 'OutsideTemperature' ||
-              protocolInfo.key === 'SolarRadiation'
-            ) {
-              hasError = true;
-            }
-          }
-          if (TargetValue.length === 1) {
-            hexCode += '0';
-          }
-          hexCode += TargetValue;
-        }
-        if (hasError) {
-          protocolInfo.value = null;
-        } else {
-          protocolInfo.value = this.changeData(
-            protocolInfo.key,
-            this.protocolConverter.converter().hex2dec(hexCode),
-          );
-        }
-      });
+    });
 
-      const vantagePro2Data = {};
-      protocol.forEach(protocolInfo => {
-        const result = this.getProtocolValue(protocolInfo.key);
-        vantagePro2Data[result.key] = result.value;
-      });
-      return vantagePro2Data;
-      // }
-      // else {
-      //   throw new Error('요청한 데이터에 문제가 있습니다.');
-      // }
-    } catch (error) {
-      throw error;
-    }
+    const vantagePro2Data = {};
+    protocol.forEach(protocolInfo => {
+      const result = this.getProtocolValue(protocolInfo.key);
+      vantagePro2Data[result.key] = result.value;
+    });
+    return vantagePro2Data;
+    // }
+    // else {
+    //   throw new Error('요청한 데이터에 문제가 있습니다.');
+    // }
   }
 
   getProtocolValue(findKey) {
@@ -203,6 +196,6 @@ if (require !== undefined && require.main === module) {
       commandSet: { currCmdIndex: 0, cmdList: [{ data: 'LOOP\n' }] },
       data: buf,
     });
-    console.dir(res.data);
+    console.dir(res);
   });
 }

@@ -45,13 +45,13 @@ exports.decodingProtocolTable = protocolInfo => {
       {
         key: Model.BASE_KEY.lux,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
         key: Model.BASE_KEY.pvUnderlyingSolar,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
@@ -59,7 +59,7 @@ exports.decodingProtocolTable = protocolInfo => {
         scale: 0.1,
         fixed: 1,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
@@ -67,13 +67,13 @@ exports.decodingProtocolTable = protocolInfo => {
         scale: 0.1,
         fixed: 1,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
         key: Model.BASE_KEY.co2,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
@@ -81,7 +81,7 @@ exports.decodingProtocolTable = protocolInfo => {
         scale: 0.1,
         fixed: 1,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
@@ -89,7 +89,7 @@ exports.decodingProtocolTable = protocolInfo => {
         scale: 0.1,
         fixed: 1,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
@@ -97,13 +97,13 @@ exports.decodingProtocolTable = protocolInfo => {
         scale: 0.1,
         fixed: 1,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
         key: Model.BASE_KEY.windDirection,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
@@ -111,7 +111,7 @@ exports.decodingProtocolTable = protocolInfo => {
         scale: 0.1,
         fixed: 1,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
@@ -119,13 +119,13 @@ exports.decodingProtocolTable = protocolInfo => {
         scale: 0.1,
         fixed: 1,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
         key: Model.BASE_KEY.isRain,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
     ],
@@ -140,13 +140,13 @@ exports.decodingProtocolTable = protocolInfo => {
       {
         key: Model.BASE_KEY.r1,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
         key: Model.BASE_KEY.pvUnderlyingSolar,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
@@ -154,7 +154,7 @@ exports.decodingProtocolTable = protocolInfo => {
         byte: 2,
         scale: 0.1,
         fixed: 1,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
@@ -162,13 +162,13 @@ exports.decodingProtocolTable = protocolInfo => {
         byte: 2,
         scale: 0.1,
         fixed: 1,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
         key: Model.BASE_KEY.lux,
         byte: 4,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
@@ -176,7 +176,7 @@ exports.decodingProtocolTable = protocolInfo => {
         scale: 0.1,
         fixed: 1,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
@@ -184,7 +184,7 @@ exports.decodingProtocolTable = protocolInfo => {
         scale: 0.1,
         fixed: 1,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
     ],
@@ -199,13 +199,13 @@ exports.decodingProtocolTable = protocolInfo => {
       {
         key: Model.BASE_KEY.lux,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
         key: Model.BASE_KEY.horizontalSolar,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
@@ -213,7 +213,7 @@ exports.decodingProtocolTable = protocolInfo => {
         scale: 0.1,
         fixed: 1,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
@@ -221,13 +221,13 @@ exports.decodingProtocolTable = protocolInfo => {
         scale: 0.1,
         fixed: 1,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
         key: Model.BASE_KEY.co2,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
@@ -235,7 +235,7 @@ exports.decodingProtocolTable = protocolInfo => {
         scale: 0.1,
         fixed: 1,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
@@ -243,7 +243,7 @@ exports.decodingProtocolTable = protocolInfo => {
         scale: 0.1,
         fixed: 1,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
@@ -251,13 +251,13 @@ exports.decodingProtocolTable = protocolInfo => {
         scale: 0.1,
         fixed: 1,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
         key: Model.BASE_KEY.windDirection,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
@@ -265,7 +265,7 @@ exports.decodingProtocolTable = protocolInfo => {
         scale: 0.1,
         fixed: 1,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
@@ -273,13 +273,13 @@ exports.decodingProtocolTable = protocolInfo => {
         scale: 0.1,
         fixed: 1,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
       {
         key: Model.BASE_KEY.isRain,
         byte: 2,
-        callMethod: 'convertReadBuf',
+        callMethod: 'convertBufToReadInt',
         isLE: false,
       },
     ],

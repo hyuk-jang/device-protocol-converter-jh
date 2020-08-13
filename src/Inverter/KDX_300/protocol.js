@@ -29,7 +29,7 @@ exports.decodingProtocolTable = dialing => {
       // 상전압 V1, V2, V3
       {
         key: Model.BASE_KEY.gridRsVol,
-        callMethod: parsingMethod.convertReadBuf,
+        callMethod: parsingMethod.convertBufToReadInt,
         byte: 2,
         scale: 0.1,
         fixed: 1,
@@ -43,7 +43,7 @@ exports.decodingProtocolTable = dialing => {
       // 전류 A1, A2, A3
       {
         key: Model.BASE_KEY.gridRAmp,
-        callMethod: parsingMethod.convertReadBuf,
+        callMethod: parsingMethod.convertBufToReadInt,
         byte: 2,
         scale: 0.01,
         fixed: 2,
@@ -57,7 +57,7 @@ exports.decodingProtocolTable = dialing => {
       // 유효전력 W1, W2, W3, Total W
       {
         key: Model.BASE_KEY.powerGridKw,
-        callMethod: parsingMethod.convertReadBuf,
+        callMethod: parsingMethod.convertBufToReadInt,
         byte: 2,
         scale: 0.001,
         fixed: 4,
@@ -79,7 +79,7 @@ exports.decodingProtocolTable = dialing => {
       },
       {
         key: Model.BASE_KEY.powerPf,
-        callMethod: parsingMethod.convertReadBuf,
+        callMethod: parsingMethod.convertBufToReadInt,
         byte: 2,
         scale: 0.1,
         fixed: 1,
@@ -87,7 +87,7 @@ exports.decodingProtocolTable = dialing => {
       // 주파수
       {
         key: Model.BASE_KEY.gridLf,
-        callMethod: parsingMethod.convertReadBuf,
+        callMethod: parsingMethod.convertBufToReadInt,
         byte: 2,
         scale: 0.01,
         fixed: 2,
@@ -95,7 +95,7 @@ exports.decodingProtocolTable = dialing => {
       // 전체 유효전력량 + Wh (2 Address),  - Wh (2 Address)
       {
         key: Model.BASE_KEY.powerCpKwh,
-        callMethod: parsingMethod.convertReadBuf,
+        callMethod: parsingMethod.convertBufToReadInt,
         byte: 4,
         scale: 0.001,
         fixed: 3,

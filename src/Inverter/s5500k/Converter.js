@@ -38,134 +38,59 @@ class Converter extends AbstConverter {
    * @param {Buffer} currTransferCmd 현재 요청한 명령
    */
   concreteParsingData(deviceData, currTransferCmd) {
-    try {
-      // BU.CLI('currTransferCmd', deviceData);
-      // 마지막 byte에 ff가 들어오는 경우 제거
-      if (deviceData.length === 41) {
-        deviceData = deviceData.slice(0, deviceData.length - 1);
-      }
-      // 0: Header1 1: Header2, 2: StationID
-      const RES_DATA_START_POINT = 3;
-      const resId = deviceData.readInt8(2);
-      const reqId = currTransferCmd.readInt8(2);
-      const resChkSum = deviceData.slice(deviceData.length - 1);
+    // 마지막 byte에 ff가 들어오는 경우 제거
+    if (deviceData.length === 41) {
+      deviceData = deviceData.slice(0, deviceData.length - 1);
+    }
+    // 0: Header1 1: Header2, 2: StationID
+    const RES_DATA_START_POINT = 3;
+    const resId = deviceData.readInt8(2);
+    const reqId = currTransferCmd.readInt8(2);
+    const resChkSum = deviceData.slice(deviceData.length - 1);
 
-      // 전송 데이터 유효성 체크
-      if (deviceData.length !== 40) {
-        throw new Error(`The expected length(40) 
+    // 전송 데이터 유효성 체크
+    if (deviceData.length !== 40) {
+      throw new Error(`The expected length(40) 
         of the data body is different from the length(${deviceData.length}) received.`);
-      }
-
-      // 인버터 국번 비교
-      if (!_.eq(reqId, resId)) {
-        throw new Error(`Not Matching ReqAddr: ${reqId}, ResAddr: ${resId}`);
-      }
-
-      // 수신 받은 데이터 체크섬 계산
-      const calcChkSum = this.protocolConverter.getXorBuffer(
-        deviceData.slice(0, deviceData.length - 1),
-      );
-
-      // 체크섬 비교
-      if (!_.isEqual(calcChkSum, resChkSum)) {
-        throw new Error(`Not Matching Check Sum: ${calcChkSum}, Res Check Sum: ${resChkSum}`);
-      }
-
-      // 헤더와 체크섬을 제외한 데이터 계산
-      const dataBody = deviceData.slice(RES_DATA_START_POINT, deviceData.length - 1);
-      // BU.CLI(dataBody);
-
-      // 데이터 자동 산정
-      // /** @type {Model.BASE_KEY} */
-      const dataMap = this.automaticDecoding(this.decodingTable.DEFAULT.decodingDataList, dataBody);
-
-      // 동양 s5500k 누적 발전량 이상 문제 제거
-      if (_.head(dataMap.powerCpKwh) === 0) {
-        _.set(dataMap, 'powerCpKwh', [null]);
-      }
-
-      // PV 2가닥 데이터를 합산 처리
-      _.set(dataMap, 'pvAmp', [_.sum(dataMap.pvAmp)]);
-      _.set(dataMap, 'pvVol', [_.mean(dataMap.pvVol)]);
-      _.set(dataMap, 'pvKw', [_.sum(dataMap.pvKw)]);
-
-      // Trobule 목록을 하나로 합침
-      dataMap.operTroubleList = [_.flatten(dataMap.operTroubleList)];
-
-      return dataMap;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  /**
-   *
-   * @param {Buffer} deviceData
-   */
-  testParsingData(deviceData) {
-    BU.CLI(deviceData);
-
-    const returnValue = this.model.BASE_MODEL;
-    const decodingTable = this.decodingTable.DEFAULT;
-    const { decodingDataList } = decodingTable;
-
-    // 시작주소부터 체크 시작
-    const dataList = [];
-    let currIndex = 0;
-    for (let index = 0; index < decodingDataList.length; index += 1) {
-      // 해당 디코딩 정보 추출
-      const decodingInfo = decodingDataList[index];
-      const {
-        byte = 1,
-        key,
-        decodingKey = key,
-        callMethod,
-        isLE = true,
-        isUnsigned = true,
-        fixed = 0,
-        scale,
-      } = decodingInfo;
-      const thisBuf = deviceData.slice(currIndex, currIndex + byte);
-      let convertValue;
-
-      // 사용하는 메소드를 호출
-      if (_.isString(callMethod)) {
-        if (_.eq(callMethod, 'convertReadBuf')) {
-          const option = {
-            isLE,
-            isUnsigned,
-          };
-          convertValue = this.protocolConverter.convertReadBuf(thisBuf, option);
-        } else {
-          convertValue = this.protocolConverter[callMethod](thisBuf);
-        }
-
-        if (_.isNumber(scale)) {
-          convertValue = _.round(convertValue * scale, fixed);
-        }
-
-        // 변환키가 정의되어있는지 확인
-        if (_.includes(_.keys(this.onDeviceOperationStatus), decodingKey)) {
-          const operationStauts = this.onDeviceOperationStatus[decodingKey];
-          // 찾은 Decoding이 Function 이라면 값을 넘겨줌
-          if (operationStauts instanceof Function) {
-            const tempValue = operationStauts(convertValue);
-            convertValue = _.isNumber(tempValue) ? _.round(tempValue, fixed) : tempValue;
-          } else {
-            convertValue = _.get(operationStauts, convertValue);
-          }
-        }
-
-        dataList.push(convertValue);
-        returnValue[key].push(convertValue);
-        // returnValue[key] = convertValue;
-      }
-
-      currIndex += byte;
     }
 
-    // BU.CLI(dataList);
-    BU.CLI(returnValue);
+    // 인버터 국번 비교
+    if (!_.eq(reqId, resId)) {
+      throw new Error(`Not Matching ReqAddr: ${reqId}, ResAddr: ${resId}`);
+    }
+
+    // 수신 받은 데이터 체크섬 계산
+    const calcChkSum = this.protocolConverter.getXorBuffer(
+      deviceData.slice(0, deviceData.length - 1),
+    );
+
+    // 체크섬 비교
+    if (!_.isEqual(calcChkSum, resChkSum)) {
+      throw new Error(`Not Matching Check Sum: ${calcChkSum}, Res Check Sum: ${resChkSum}`);
+    }
+
+    // 헤더와 체크섬을 제외한 데이터 계산
+    const dataBody = deviceData.slice(RES_DATA_START_POINT, deviceData.length - 1);
+    // BU.CLI(dataBody);
+
+    // 데이터 자동 산정
+    // /** @type {Model.BASE_KEY} */
+    const dataMap = this.automaticDecoding(this.decodingTable.DEFAULT.decodingDataList, dataBody);
+
+    // 동양 s5500k 누적 발전량 이상 문제 제거
+    if (_.head(dataMap.powerCpKwh) === 0) {
+      _.set(dataMap, 'powerCpKwh', [null]);
+    }
+
+    // PV 2가닥 데이터를 합산 처리
+    _.set(dataMap, 'pvAmp', [_.sum(dataMap.pvAmp)]);
+    _.set(dataMap, 'pvVol', [_.mean(dataMap.pvVol)]);
+    _.set(dataMap, 'pvKw', [_.sum(dataMap.pvKw)]);
+
+    // Trobule 목록을 하나로 합침
+    dataMap.operTroubleList = [_.flatten(dataMap.operTroubleList)];
+
+    return dataMap;
   }
 }
 module.exports = Converter;

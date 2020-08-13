@@ -35,67 +35,63 @@ class Converter extends AbstConverter {
    * @param {Buffer} currTransferCmd 현재 요청한 명령
    */
   concreteParsingData(deviceData, currTransferCmd) {
-    try {
-      const RES_DATA_START_POINT = 9;
+    const RES_DATA_START_POINT = 9;
 
-      const responseData = deviceData; // 응답 buffer
-      const resId = deviceData.slice(2, 5).toString(); // 응답 접속반 ID
+    const responseData = deviceData; // 응답 buffer
+    const resId = deviceData.slice(2, 5).toString(); // 응답 접속반 ID
 
-      const requestData = currTransferCmd; // 요청 buffer
-      const reqId = requestData.slice(2, 5).toString(); // 요청 접속반 ID
+    const requestData = currTransferCmd; // 요청 buffer
+    const reqId = requestData.slice(2, 5).toString(); // 요청 접속반 ID
 
-      const indexETX = responseData.indexOf(0x03); // 응답 buffer의 ETX 위치 값
-      const indexEOT = responseData.indexOf(0x04); // 응답 buffer의 EOT 위치 값
-      const moduleCount = _.parseInt(responseData.slice(6, 8).toString()); // 응답 buffer 모듈 개수
-      const resCrcCode = responseData.slice(indexETX + 1, indexEOT); // 응답 buffer의 crc코드
+    const indexETX = responseData.indexOf(0x03); // 응답 buffer의 ETX 위치 값
+    const indexEOT = responseData.indexOf(0x04); // 응답 buffer의 EOT 위치 값
+    const moduleCount = _.parseInt(responseData.slice(6, 8).toString()); // 응답 buffer 모듈 개수
+    const resCrcCode = responseData.slice(indexETX + 1, indexEOT); // 응답 buffer의 crc코드
 
-      // 응답, 요청 접속반 ID 비교
-      if (!_.eq(reqId, resId)) {
-        throw new Error(`Not Matching ReqId: ${reqId}, ResId: ${resId}`);
-      }
-
-      // 응답 데이터 CRC코드 계산 (구분자 포함)
-      const calcCrcCode = this.model.makeCrcCode(
-        responseData.slice(0, responseData.indexOf(0x03) + 1),
-      );
-
-      // 응답, 요청 CRC코드 비교
-      if (!_.isEqual(calcCrcCode, resCrcCode)) {
-        throw new Error(
-          `Not Matching calculated CrcCode: ${calcCrcCode}, responsed CrcCode: ${resCrcCode}`,
-        );
-      }
-
-      // 모듈 개수에 따라 decodingDataList 변경
-      const { decodingTable } = this;
-      switch (moduleCount) {
-        case 1:
-          decodingTable.decodingDataList = this.decodingTable.decodingDataList.slice(0, 8);
-          break;
-        case 2:
-          decodingTable.decodingDataList = this.decodingTable.decodingDataList.slice(0, 16);
-          break;
-        case 3:
-          decodingTable.decodingDataList = this.decodingTable.decodingDataList.slice(0, 32);
-          break;
-        case 4:
-          decodingTable.decodingDataList = this.decodingTable.decodingDataList.slice(0, 48);
-          break;
-        default:
-          throw new Error('Module Count Error');
-      }
-
-      // 헤더와 CRC코드, ETX를 제외한 데이터 계산, 구분점 제거
-      const dataBody = this.protocolConverter.returnBufferExceptDelimiter(
-        responseData.slice(RES_DATA_START_POINT, indexETX),
-        ',',
-      );
-      const dataMap = this.automaticDecoding(decodingTable.decodingDataList, dataBody);
-
-      return dataMap;
-    } catch (error) {
-      throw error;
+    // 응답, 요청 접속반 ID 비교
+    if (!_.eq(reqId, resId)) {
+      throw new Error(`Not Matching ReqId: ${reqId}, ResId: ${resId}`);
     }
+
+    // 응답 데이터 CRC코드 계산 (구분자 포함)
+    const calcCrcCode = this.model.makeCrcCode(
+      responseData.slice(0, responseData.indexOf(0x03) + 1),
+    );
+
+    // 응답, 요청 CRC코드 비교
+    if (!_.isEqual(calcCrcCode, resCrcCode)) {
+      throw new Error(
+        `Not Matching calculated CrcCode: ${calcCrcCode}, responsed CrcCode: ${resCrcCode}`,
+      );
+    }
+
+    // 모듈 개수에 따라 decodingDataList 변경
+    const { decodingTable } = this;
+    switch (moduleCount) {
+      case 1:
+        decodingTable.decodingDataList = this.decodingTable.decodingDataList.slice(0, 8);
+        break;
+      case 2:
+        decodingTable.decodingDataList = this.decodingTable.decodingDataList.slice(0, 16);
+        break;
+      case 3:
+        decodingTable.decodingDataList = this.decodingTable.decodingDataList.slice(0, 32);
+        break;
+      case 4:
+        decodingTable.decodingDataList = this.decodingTable.decodingDataList.slice(0, 48);
+        break;
+      default:
+        throw new Error('Module Count Error');
+    }
+
+    // 헤더와 CRC코드, ETX를 제외한 데이터 계산, 구분점 제거
+    const dataBody = this.protocolConverter.returnBufferExceptDelimiter(
+      responseData.slice(RES_DATA_START_POINT, indexETX),
+      ',',
+    );
+    const dataMap = this.automaticDecoding(decodingTable.decodingDataList, dataBody);
+
+    return dataMap;
   }
 }
 module.exports = Converter;

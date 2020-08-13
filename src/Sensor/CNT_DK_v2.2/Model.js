@@ -31,7 +31,7 @@ class Model extends BaseModel {
    */
   makeCrcCode(buffer) {
     const crcValue = crc.crc16xmodem(buffer.toString());
-    const lower = this.protocolConverter.convertNumToHexToBuf(crcValue, 4);
+    const lower = this.protocolConverter.convertNumToStrToBuf(crcValue);
     const strLower = lower.toString();
     const strUpper = strLower.toLocaleUpperCase();
 
@@ -44,25 +44,20 @@ class Model extends BaseModel {
    * @return {Buffer} Data Buffer만 리턴
    */
   getValidateData(responseBuf) {
-    try {
-      const STX = Buffer.from([_.nth(responseBuf, 0)]);
+    const STX = Buffer.from([_.nth(responseBuf, 0)]);
 
-      if (!_.isEqual(STX, this.STX)) {
-        throw new Error('Not Matching STX');
-      }
-
-      // 실제 장치 데이터를 담은 Buffer 생성
-      let dataBodyBuf = responseBuf.slice(8, responseBuf.length - 5);
-
-      // 구분자 제거
-      dataBodyBuf = this.protocolConverter.returnBufferExceptDelimiter(dataBodyBuf, ',');
-      //   BU.CLI(dataBodyBuf);
-
-      return dataBodyBuf;
-    } catch (error) {
-      // BU.CLI('Error');
-      throw error;
+    if (!_.isEqual(STX, this.STX)) {
+      throw new Error('Not Matching STX');
     }
+
+    // 실제 장치 데이터를 담은 Buffer 생성
+    let dataBodyBuf = responseBuf.slice(8, responseBuf.length - 5);
+
+    // 구분자 제거
+    dataBodyBuf = this.protocolConverter.returnBufferExceptDelimiter(dataBodyBuf, ',');
+    //   BU.CLI(dataBodyBuf);
+
+    return dataBodyBuf;
   }
 
   static get CALC_KEY() {

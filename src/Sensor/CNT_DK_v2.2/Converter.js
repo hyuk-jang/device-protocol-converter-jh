@@ -40,21 +40,6 @@ class Converter extends AbstConverter {
     const cmdList = this.defaultGenCMD(generationInfo);
 
     return this.makeDefaultCommandInfo(cmdList, 1000);
-
-    // // BU.CLI(cmdList);
-    // // FIXME: Function Code 04 기준으로만 작성됨.  필요시 수정
-    // const returnBufferList = cmdList.map(cmdInfo => {
-    //   const { unitId, fnCode, address, dataLength } = cmdInfo;
-    //   const returnBuffer = Buffer.concat([
-    //     this.protocolConverter.convertNumToHxToBuf(unitId, 1),
-    //     this.protocolConverter.convertNumToHxToBuf(fnCode, 1),
-    //     this.protocolConverter.convertNumToHxToBuf(address, 2),
-    //     this.protocolConverter.convertNumToHxToBuf(dataLength, 2),
-    //   ]);
-    //   return returnBuffer;
-    // });
-
-    // return this.makeAutoGenerationCommand(returnBufferList);
   }
 
   /**
@@ -63,31 +48,26 @@ class Converter extends AbstConverter {
    * @param {Buffer} currTransferCmd 현재 요청한 명령
    */
   concreteParsingData(deviceData, currTransferCmd) {
-    try {
-      // BU.CLI('concreteParsingData');
-      // 0: SlaveAddr 1: FunctionCode, 2: DataLength, 3: Res Data (N*2)
-      const RES_DATA_START_POINT = 3;
+    // 0: SlaveAddr 1: FunctionCode, 2: DataLength, 3: Res Data (N*2)
+    const RES_DATA_START_POINT = 3;
 
-      /** @type {modbusReadFormat} */
-      const requestData = currTransferCmd;
+    /** @type {modbusReadFormat} */
+    const requestData = currTransferCmd;
 
-      const { address: registerAddr, dataLength } = requestData;
+    const { address: registerAddr, dataLength } = requestData;
 
-      // 요청 시작 주소를 가져옴
-      const startAddr = registerAddr;
-      // 실제 시작하는 주소 세팅
-      this.decodingTable.address = startAddr;
+    // 요청 시작 주소를 가져옴
+    const startAddr = registerAddr;
+    // 실제 시작하는 주소 세팅
+    this.decodingTable.address = startAddr;
 
-      // 실제 파싱 데이터 추출
-      const dataBody = deviceData.slice(0, dataLength);
+    // 실제 파싱 데이터 추출
+    const dataBody = deviceData.slice(0, dataLength);
 
-      /** @type {BASE_MODEL} */
-      const returnValue = this.automaticDecodingForArray(this.decodingTable, dataBody);
-      // BU.CLI(returnValue);
-      return returnValue;
-    } catch (error) {
-      throw error;
-    }
+    /** @type {BASE_MODEL} */
+    const returnValue = this.automaticDecodingForArray(this.decodingTable, dataBody);
+    // BU.CLI(returnValue);
+    return returnValue;
   }
 }
 module.exports = Converter;

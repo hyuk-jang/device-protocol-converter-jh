@@ -27,7 +27,7 @@ class Converter extends AbstConverter {
     this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
 
     /** BaseModel */
-    this.model = new Model();
+    this.model = new Model(protocolInfo);
   }
 
   /**
@@ -46,10 +46,10 @@ class Converter extends AbstConverter {
     const returnBufferList = cmdList.map(cmdInfo => {
       const { unitId, fnCode, address, dataLength } = cmdInfo;
       const returnBuffer = Buffer.concat([
-        this.protocolConverter.convertNumToHxToBuf(unitId, 1),
-        this.protocolConverter.convertNumToHxToBuf(fnCode, 1),
-        this.protocolConverter.convertNumToHxToBuf(address, 2),
-        this.protocolConverter.convertNumToHxToBuf(dataLength, 2),
+        this.protocolConverter.convertNumToWriteInt(unitId),
+        this.protocolConverter.convertNumToWriteInt(fnCode),
+        this.protocolConverter.convertNumToWriteInt(address, { allocSize: 2 }),
+        this.protocolConverter.convertNumToWriteInt(dataLength, { allocSize: 2 }),
       ]);
       return returnBuffer;
     });
@@ -146,7 +146,7 @@ module.exports = Converter;
 
 if (require !== undefined && require.main === module) {
   const converter = new Converter({
-    deviceId: 5,
+    deviceId: 42,
     mainCategory: 'S2W',
     subCategory: 'dmTech',
     protocolOptionInfo: {
@@ -156,10 +156,10 @@ if (require !== undefined && require.main === module) {
 
   // BU.CLIN(converter.model);
 
-  const testReqMsg = '02530c040000000c03';
+  const testReqMsg = '025329040000000c03';
   const realTestReqMsg = Buffer.from(testReqMsg.slice(4, testReqMsg.length - 2), 'hex');
 
-  const dataList = ['02530c0418006400070028001e00c800460023002d00cd00690055000c03'];
+  const dataList = ['02532904180000002c028d014f08a30000029401f3000000000000000003'];
 
   dataList.forEach(d => {
     const realBuffer = Buffer.from(d.slice(4, d.length - 2), 'hex');

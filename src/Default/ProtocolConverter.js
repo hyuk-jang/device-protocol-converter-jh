@@ -86,54 +86,30 @@ class Converter {
   }
 
   /**
-   * 10진수를 Unsined BE 형태로 Buffer 변환 후 반환
-   * @param {number|number[]} dec 10진수 number, Hx로 바꿀 값
-   * @param {number=} byteLength 반환하는 Buffer Size
-   * @param {number=} scale 배율
-   * @return {Buffer}
-   * @example
-   * (Dec) 555 -> (Hex)'02 2B' -> <Buffer 02 2B>
+   * Buffer 시작값이 0인경우 없앰
+   * @param {Buffer} buffer
    */
-  convertNumToHxToBuf(dec, byteLength = 2, scale = 1) {
-    // 배열형태라면 재귀호출로 처리
-    if (Array.isArray(dec)) {
-      return Buffer.concat(dec.map(d => this.convertNumToHxToBuf(d, byteLength)));
-    }
+  filterZeroBuf(buffer) {
+    let isFindPositive = false;
+    return buffer.filter((num, index) => {
+      // 0이 아닌 수가 나온다면 이후 값은 전부 반환
+      if (num > 0) {
+        isFindPositive = true;
+      }
 
-    // 문자형 숫자라면 치환
-    BU.isNumberic(dec) && (dec = Number(dec));
-
-    // 숫자가 아니라면 즉시 빈 버퍼 반환
-    if (!_.isNumber(dec)) return Buffer.from('');
-
-    const returnBuffer = Buffer.alloc(byteLength);
-
-    // 배율이 존재할 경우 곱셈
-    dec = scale !== 1 ? _.round(_.multiply(dec, scale)) : _.round(dec);
-
-    switch (byteLength) {
-      case 1:
-        returnBuffer.writeUInt8(dec);
-        break;
-      case 2:
-        returnBuffer.writeUInt16BE(dec);
-        break;
-      case 4:
-        returnBuffer.writeUInt32BE(dec);
-        break;
-      default:
-        break;
-    }
-
-    return returnBuffer;
+      return isFindPositive || index === buffer.length - 1;
+    });
   }
 
   /**
-   * Buffer 본연의 API를 숫자를 Buffer로 변환
+   * Buffer API를 이용하여 숫자로 변환
    * option 에 따라 반환 Buffer Size, BE or LE , Int or UInt 형태 결정됨.
+   * @default
+   * BE, Unsign, Alloc Auto
    * @param {number} dec 변환할 수 (10진수)
    * @param {Object} option
-   * @param {number=} option.allocSize default 2
+   * @param {number=} option.allocSize default Auto
+   * @param {number=} option.byteLength return Buffer Length
    * @param {number=} option.scale default 1
    * @param {boolean=} option.isLE default true
    * @param {boolean=} option.isUnsigned default true
@@ -141,14 +117,23 @@ class Converter {
    * @example
    * (Dec) 65 -> <Buffer 34 31>
    */
-  convertIntWriteBuf(dec, option = {}) {
+  convertNumToWriteInt(dec, option = {}) {
     // 문자형 숫자라면 치환
     BU.isNumberic(dec) && (dec = Number(dec));
 
     // 숫자가 아니라면 즉시 빈 버퍼 반환
     if (!_.isNumber(dec)) return null;
 
-    const { allocSize = 2, scale = 1, isLE = true, isUnsigned = true } = option;
+    const { byteLength = 0, scale = 1, isLE = false, isUnsigned = true } = option;
+
+    let { allocSize = 0 } = option;
+
+    let isZeroFilter = 0;
+
+    if (allocSize === 0) {
+      isZeroFilter = 1;
+      allocSize = 4;
+    }
 
     // 배율이 존재할 경우 곱셈
     dec = scale !== 1 ? _.round(_.multiply(dec, scale)) : _.round(dec);
@@ -186,7 +171,7 @@ class Converter {
     } else if (!isLE && isUnsigned) {
       switch (allocSize) {
         case 1:
-          returnBuffer.writeUIntBE8(dec);
+          returnBuffer.writeUIntBE(dec, 0, 1);
           break;
         case 2:
           returnBuffer.writeUInt16BE(dec);
@@ -200,7 +185,7 @@ class Converter {
     } else if (!isLE && !isUnsigned) {
       switch (allocSize) {
         case 1:
-          returnBuffer.writeIntBE8(dec);
+          returnBuffer.writeIntBE(dec);
           break;
         case 2:
           returnBuffer.writeInt16BE(dec);
@@ -213,41 +198,44 @@ class Converter {
       }
     }
 
-    return returnBuffer;
+    // byteLength가 클 경우 Buffer 00 추가
+    if (byteLength > returnBuffer.length) {
+      const addBuffer = Buffer.alloc(byteLength - returnBuffer, 0);
+
+      return Buffer.concat(addBuffer, returnBuffer);
+    }
+
+    // 앞에서부터 삭제하고 반환
+    if (byteLength > 0 && byteLength < returnBuffer.length) {
+      return returnBuffer.slice(returnBuffer.length - byteLength);
+    }
+
+    return isZeroFilter ? this.filterZeroBuf(returnBuffer) : returnBuffer;
   }
 
   /**
-   * 10진수를 ASCII HEX로 변환한 후 각 자리수를 Buffer로 반환
+   * 10진수를 toString(Radix)로 변환한 후 각 자리수를 Buffer로 반환
    * @param {number} dec 10진수 number, Buffer로 바꿀 값
-   * @param {number} byteLength Hex to Ascii Buffer 후 Byte Length. Buffer의 길이가 적을 경우 앞에서부터 0 채움
+   * @param {convertNumOption} convertNumOption 변환 옵션
    * @return {Buffer}
    * @example
    * (Dec) 65 -> (Hex)'41' -> <Buffer 30 30 34 31>
    */
-  convertNumToHexToBuf(dec, byteLength) {
+  convertNumToStrToBuf(dec, convertNumOption = {}) {
     if (!_.isNumber(dec)) return Buffer.from('');
-    let hex = dec.toString(16);
-    hex = this.pad(hex, byteLength || 4);
-    return Buffer.from(hex, 'ascii');
-  }
 
-  /**
-   * 10진수 각 자리수를 Buffer로 반환
-   * @param {number} dec 10진수 number, Buffer로 바꿀 값
-   * @param {number} byteLength Hex to Ascii Buffer 후 Byte Length. Buffer의 길이가 적을 경우 앞에서부터 0 채움
-   * @return {Buffer}
-   * @example
-   * (Dec) 41 ->  <Buffer 30 30 34 31>
-   */
-  convertNumToBuf(dec, byteLength) {
-    if (!_.isNumber(dec)) return Buffer.from('');
-    dec = this.pad(dec.toString(), byteLength || 4);
-    return Buffer.from(dec, 'ascii');
+    const { byteLength = 4, toStringRadix = 16 } = convertNumOption;
+
+    let hex = dec.toString(toStringRadix);
+    hex = this.pad(hex, byteLength);
+    return Buffer.from(hex);
   }
 
   /**
    * Buffer 본연의 API를 이용하여 데이터를 Int or UInt 형으로 읽음.
    * option 에 따라 BE or LE 읽을지 여부, Int or UInt 로 읽을지가 결정됨.
+   * @default
+   * LE, Unsign
    * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
    * @param {Object=} option
    * @param {boolean} option.isLE
@@ -256,8 +244,7 @@ class Converter {
    * @example
    * <Buffer 30 30 34 31> -> (Dec) 65
    */
-  convertReadBuf(buffer, option = {}) {
-    // BU.CLI('$$$$$$$$$$$$$$$$$$$', buffer);
+  convertBufToReadInt(buffer, option = {}) {
     if (!Buffer.isBuffer(buffer)) return null;
 
     const { isLE = true, isUnsigned = true } = option;
@@ -318,6 +305,7 @@ class Converter {
   convertBufToHexToDec(buffer, encoding) {
     if (!Buffer.isBuffer(buffer)) return null;
     const strValue = encoding ? buffer.toString(encoding) : buffer.toString();
+
     return _.isNaN(strValue) ? strValue : parseInt(strValue, 16);
   }
 
@@ -362,7 +350,7 @@ class Converter {
    * @param {Buffer} buffer Buffer
    * @return {string}
    * @example
-   * <Buffer 30 30 34 31> -> (Ascii)'0041' -> (string) '0000 0000 0100 0001'
+   * <Buffer 30 30 34 31> -> (Char)'0041' -> (string) '0000 0000 0100 0001'
    */
   convertBufToStrToBin(buffer, binaryLength = 4) {
     if (!Buffer.isBuffer(buffer)) return '';
@@ -377,7 +365,7 @@ class Converter {
    * @param {Buffer} buffer Buffer
    * @return {string}
    * @example
-   * <Buffer 30 30 34 31> -> (Ascii)'0041' -> (string) '0000 0000 0100 0001' -> (string) '1111 1111 1011 1110'
+   * <Buffer 30 30 34 31> -> (Char)'0041' -> (string) '0000 0000 0100 0001' -> (string) '1111 1111 1011 1110'
    */
   convertBufToStrToBinConverse(buffer, binaryLength = 4) {
     if (!Buffer.isBuffer(buffer)) return '';
@@ -416,7 +404,20 @@ class Converter {
     buffer.forEach(element => {
       hx += element;
     });
+
     return Buffer.from(this.pad(hx.toString(16), byteLength || 4));
+  }
+
+  /**
+   *
+   * @param {Buffer} buffer
+   */
+  getDigiChecksum(buffer) {
+    const lower8Bit = this.convertNumToWriteInt(_.sum(buffer), { byteLength: 1 });
+    //
+    const crcNum = Buffer.from('ff', 'hex').readInt8() - lower8Bit.readInt8();
+
+    return Buffer.from([crcNum]);
   }
 
   /**
@@ -617,3 +618,16 @@ class Converter {
   }
 }
 module.exports = Converter;
+
+const converter = new Converter();
+console.log('convertNumToStrToBuf', converter.convertNumToStrToBuf(0, 2));
+console.log('convertNumToWriteInt', converter.convertNumToWriteInt(20480));
+// console.log(converter.convertBufToReadInt(Buffer.from('010a')));
+// console.log(converter.convertBufToHexToDec(Buffer.from('0101', 16)));
+// console.log(converter.convertBufToHexToNum(Buffer.from('0101')));
+
+/**
+ * @typedef {Object} convertNumOption
+ * @property {number} byteLength default: 4, 반환 데이터 길이
+ * @property {number=} toStringRadix default: 16, toString(radix)
+ */

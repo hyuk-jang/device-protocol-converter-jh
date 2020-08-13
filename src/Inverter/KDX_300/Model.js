@@ -28,13 +28,9 @@ class Model extends BaseModel {
    * @return {Buffer} UpperCase 적용 후 Buffer
    */
   makeCrcCode(buffer) {
-    // const crcValue = crc.crc16xmodem(buffer);
     const crcValue = crc.crc16modbus(buffer);
-    // const crcValue = crc.crc16(buffer);
-    // const crcValue = crc.crc32(buffer);
-    // console.log(crcValue);
-    const lower = this.protocolConverter.convertNumToHexToBuf(crcValue, 4);
-    // console.log(lower);
+
+    const lower = this.protocolConverter.convertNumToStrToBuf(crcValue);
 
     return Buffer.from(lower.toString(), 'hex').reverse();
   }

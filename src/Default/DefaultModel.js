@@ -15,18 +15,15 @@ module.exports = {
    */
   encodingSimpleMsg: msg => {
     const converter = new ProtocolConverter();
-    try {
-      if (msg == null) {
-        return new SyntaxError();
-      }
-      const body = converter.makeMsg2Buffer(msg);
 
-      const bufferStorage = Buffer.concat([converter.STX, body, converter.ETX]);
-
-      return bufferStorage;
-    } catch (error) {
-      throw error;
+    if (msg == null) {
+      return new SyntaxError();
     }
+    const body = converter.makeMsg2Buffer(msg);
+
+    const bufferStorage = Buffer.concat([converter.STX, body, converter.ETX]);
+
+    return bufferStorage;
   },
   /**
    * STX + Buffer(msg) + ETX + CRC(4Byte) + EOT
@@ -35,23 +32,25 @@ module.exports = {
    */
   encodingMsg: msg => {
     const converter = new ProtocolConverter();
-    try {
-      if (msg == null) {
-        return new SyntaxError();
-      }
-      const body = converter.makeMsg2Buffer(msg);
-
-      const bufferStorage = Buffer.concat([converter.STX, body, converter.ETX]);
-
-      // BU.CLI(bufferStorage.toString());
-      const crcValue = crc.crc16xmodem(bufferStorage.toString());
-
-      const returnValue = [bufferStorage, converter.convertNumToBuf(crcValue, 4), converter.EOT];
-
-      return Buffer.concat(returnValue);
-    } catch (error) {
-      throw error;
+    if (msg == null) {
+      return new SyntaxError();
     }
+    const body = converter.makeMsg2Buffer(msg);
+
+    const bufferStorage = Buffer.concat([converter.STX, body, converter.ETX]);
+
+    // BU.CLI(bufferStorage.toString());
+    const crcValue = crc.crc16xmodem(bufferStorage.toString());
+
+    const returnValue = [
+      bufferStorage,
+      converter.convertNumToStrToBuf(crcValue, {
+        toStringRadix: 10,
+      }),
+      converter.EOT,
+    ];
+
+    return Buffer.concat(returnValue);
   },
   /**
    * 첫 STX와 마지막 ETX를 기준으로 데이터를 짤라 반환

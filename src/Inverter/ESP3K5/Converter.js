@@ -154,12 +154,12 @@ class Converter extends AbstConverter {
 
       // 사용하는 메소드를 호출
       if (_.isString(callMethod)) {
-        if (_.eq(callMethod, 'convertReadBuf')) {
+        if (_.eq(callMethod, 'convertBufToReadInt')) {
           const option = {
             isLE,
             isUnsigned,
           };
-          convertValue = this.protocolConverter.convertReadBuf(thisBuf, option);
+          convertValue = this.protocolConverter.convertBufToReadInt(thisBuf, option);
         } else {
           convertValue = this.protocolConverter[callMethod](thisBuf);
         }

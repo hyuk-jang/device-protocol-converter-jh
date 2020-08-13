@@ -15,7 +15,7 @@ module.exports = class extends AbstConverter {
     if (Buffer.isBuffer(deviceId)) {
       this.protocolInfo.deviceId = deviceId;
     } else if (_.isNumber(deviceId)) {
-      this.protocolInfo.deviceId = this.protocolConverter.convertNumToHxToBuf(deviceId);
+      this.protocolInfo.deviceId = this.protocolConverter.convertNumToWriteInt(deviceId);
     } else if (_.isString(deviceId)) {
       this.protocolInfo.deviceId = Buffer.from(deviceId, 'hex');
     }
@@ -39,7 +39,7 @@ module.exports = class extends AbstConverter {
         // Start Delimiter
         Buffer.from('7E', 'hex'),
         // Length(2byte),
-        Buffer.from('0010', 'hex'),
+        Buffer.from('0012', 'hex'),
       ]);
 
       const bufBody = Buffer.concat([
@@ -59,7 +59,7 @@ module.exports = class extends AbstConverter {
         Buffer.from(cmd),
       ]);
 
-      const checkSum = this.protocolConverter.getBufferCheckSum(bufBody, 1);
+      const checkSum = this.protocolConverter.getDigiChecksum(bufBody, 2);
 
       cmdInfo.cmd = Buffer.concat([bufHeader, bufBody, checkSum]);
 

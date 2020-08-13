@@ -14,7 +14,7 @@ class AbstConverter {
   /**
    * @param {protocol_info} protocolInfo
    */
-  constructor(protocolInfo) {
+  constructor(protocolInfo = {}) {
     this.protocolInfo = protocolInfo;
 
     this.protocolConverter = new ProtocolConverter();
@@ -190,7 +190,7 @@ class AbstConverter {
    * @return {parsingResultFormat}
    */
   parsingUpdateData(dcData) {
-    // BU.CLIN(dcData);
+    BU.CLIN(dcData);
     const returnValue = {};
     const { DONE, ERROR, WAIT, RETRY } = definedCommanderResponse;
     try {
@@ -216,6 +216,7 @@ class AbstConverter {
 
       return returnValue;
     } catch (error) {
+      BU.CLI(error);
       // Range Error가 발생하면 데이터가 충분하지 않아 그런것으로 판단
       if (error instanceof RangeError) {
         returnValue.eventCode = WAIT;
@@ -320,6 +321,7 @@ class AbstConverter {
     if (!_.isEmpty(decodingInfo)) {
       const {
         callMethod,
+        callMethodParam,
         key,
         decodingKey = key,
         isLE = true,
@@ -331,14 +333,14 @@ class AbstConverter {
       // 사용하는 메소드를 호출
       if (_.isNil(callMethod)) {
         returnValue = parsingData;
-      } else if (_.eq(callMethod, 'convertReadBuf')) {
+      } else if (_.eq(callMethod, 'convertBufToReadInt')) {
         const option = {
           isLE,
           isUnsigned,
         };
-        returnValue = this.protocolConverter.convertReadBuf(parsingData, option);
+        returnValue = this.protocolConverter.convertBufToReadInt(parsingData, option);
       } else {
-        returnValue = this.protocolConverter[callMethod](parsingData);
+        returnValue = this.protocolConverter[callMethod](parsingData, callMethodParam);
       }
 
       // 배율 및 소수점 처리를 사용한다면 적용

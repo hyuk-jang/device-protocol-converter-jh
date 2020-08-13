@@ -108,7 +108,7 @@ class Model extends BaseModel {
    * @return {number}
    */
   getResponseAddr(responseBuf) {
-    return this.protocolConverter.convertReadBuf(responseBuf.slice(2, 3));
+    return this.protocolConverter.convertBufToReadInt(responseBuf.slice(2, 3));
   }
 
   /**

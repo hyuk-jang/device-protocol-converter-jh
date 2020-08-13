@@ -14,7 +14,7 @@ class Converter extends XbeeConverter {
     this.decodingTable = protocol.decodingProtocolTable(protocolInfo.deviceId);
     this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
     /** BaseModel */
-    this.model = new Model();
+    this.model = new Model(protocolInfo);
   }
 
   /**
@@ -79,7 +79,8 @@ module.exports = Converter;
 
 if (require !== undefined && require.main === module) {
   const converter = new Converter({
-    deviceId: '0013A2004190EC70',
+    // deviceId: '0013A20012345678',
+    deviceId: '0013A2004190EC54',
     mainCategory: 'S2W',
     subCategory: 'sm',
     protocolOptionInfo: {
@@ -98,7 +99,7 @@ if (require !== undefined && require.main === module) {
 
   const testReqMsg = '025301040000000c03';
 
-  const addr = Buffer.from('0013A2004190EC70');
+  const addr = Buffer.from('0013A2004190EC54');
 
   BU.CLI(protocolConverter.convertBufToHx(addr));
 
@@ -127,9 +128,9 @@ if (require !== undefined && require.main === module) {
     // BU.CLI(realBuffer.toString());
     // const result = converter.testParsingData(realBuffer);
     // BU.CLI(result);
-    const dataMap = converter.concreteParsingData(d);
+    // const dataMap = converter.concreteParsingData(d);
     // const dataMap = converter.refineZigbeeReceivePacket(d);
-    BU.CLI(dataMap);
+    // BU.CLI(dataMap);
   });
 
   // converter.testParsingData(Buffer.from(dataList, 'ascii'));
