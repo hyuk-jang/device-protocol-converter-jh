@@ -19,17 +19,9 @@ class MainConverter {
 
   /** protocolConverter 설정함 */
   setProtocolConverter() {
-    // const path = `../${this.protocol_info.mainCategory}/${this.protocol_info.subCategory}/Converter`;
-    // BU.CLI(path);
-    try {
-      const { Converter } = dpcRouter(this.protocol_info);
-      // const DeviceProtocolConverter = require(path);
-      // BU.CLIN(DeviceProtocolConverter, 4);
-      this.deviceCommandConverter = new Converter(this.protocol_info);
-      return true;
-    } catch (error) {
-      throw error;
-    }
+    const { Converter } = dpcRouter(this.protocol_info);
+    this.deviceCommandConverter = new Converter(this.protocol_info);
+    return true;
   }
 
   /** 해당 Converter DeepClone Base Model */
@@ -49,20 +41,15 @@ class MainConverter {
    * @return {commandInfo[]} 장치를 조회하기 위한 명령 리스트 반환
    */
   generationCommand(generationInfo) {
-    // BU.CLI(generationInfo);
     const { value = this.reqDeviceControlType.MEASURE } = generationInfo;
     if (!this.deviceCommandConverter) {
       throw new Error('protocolConverter가 설정되지 않았습니다.');
     }
-    try {
-      // singleControlType가 문자 일 경우 숫자로 변환
-      BU.isNumberic(value) && _.set(generationInfo, 'value', Number(value));
-      // BU.CLI(generationInfo);
 
-      return this.deviceCommandConverter.generationCommand(generationInfo);
-    } catch (error) {
-      throw error;
-    }
+    // singleControlType가 문자 일 경우 숫자로 변환
+    BU.isNumberic(value) && _.set(generationInfo, 'value', Number(value));
+
+    return this.deviceCommandConverter.generationCommand(generationInfo);
   }
 
   /**
@@ -70,11 +57,7 @@ class MainConverter {
    * @param {Buffer[]} commandBuffer
    */
   designationCommand(commandBuffer) {
-    try {
-      return this.deviceCommandConverter.designationCommand(commandBuffer);
-    } catch (error) {
-      throw error;
-    }
+    return this.deviceCommandConverter.designationCommand(commandBuffer);
   }
 
   /**
@@ -83,16 +66,11 @@ class MainConverter {
    * @return {parsingResultFormat}
    */
   parsingUpdateData(dcData) {
-    // BU.CLIS(requestData, responseData);
     if (!this.deviceCommandConverter) {
       throw new Error('protocolConverter가 설정되지 않았습니다.');
     }
 
-    try {
-      return this.deviceCommandConverter.parsingUpdateData(dcData);
-    } catch (error) {
-      throw error;
-    }
+    return this.deviceCommandConverter.parsingUpdateData(dcData);
   }
 
   /**

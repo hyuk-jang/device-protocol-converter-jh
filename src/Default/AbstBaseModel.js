@@ -105,10 +105,8 @@ class AbstBaseModel {
    * @return {Object}
    */
   static GET_BASE_KEY(protocolInfo) {
-    // const path = `../${protocolInfo.mainCategory}/baseFormat`;
-    // // const baseFormat = require(path);
     const { baseFormat } = dpcRouter(protocolInfo);
-    const baseKey = Object.assign({}, baseFormat);
+    const baseKey = { ...baseFormat };
     _.forEach(baseKey, (v, k) => _.set(baseKey, k, k));
     return baseKey;
   }

@@ -88,7 +88,7 @@ class Model extends BaseModel {
    * @return {number}
    */
   getResponseAddr(responseBuf) {
-    return this.protocolConverter.convertBufToHexToNum(responseBuf.slice(2, 3));
+    return this.protocolConverter.convertBufToStrToNum(responseBuf.slice(2, 3));
   }
 
   /**
@@ -154,7 +154,7 @@ class Model extends BaseModel {
       const checksumBuf = responseBuf.slice(
         _.subtract(responseBuf.length, this.HEADER_INFO.BYTE.CHECKSUM),
       );
-      const expectChecksum = this.protocolConverter.convertBufToHexToNum(checksumBuf);
+      const expectChecksum = this.protocolConverter.convertBufToStrToNum(checksumBuf);
 
       // 체크섬이 다르다면 예외 처리
       if (calcChecksum !== expectChecksum) {

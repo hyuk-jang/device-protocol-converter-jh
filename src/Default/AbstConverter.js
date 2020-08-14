@@ -144,9 +144,7 @@ class AbstConverter {
       throw new Error(`${key}는 존재하지 않습니다.`);
     }
 
-    // BU.CLI(generationInfo);
     const commandInfo = _.get(foundIt, 'COMMAND', {});
-    // BU.CLI(commandInfo);
 
     let command;
 
@@ -190,7 +188,6 @@ class AbstConverter {
    * @return {parsingResultFormat}
    */
   parsingUpdateData(dcData) {
-    BU.CLIN(dcData);
     const returnValue = {};
     const { DONE, ERROR, WAIT, RETRY } = definedCommanderResponse;
     try {
@@ -201,14 +198,12 @@ class AbstConverter {
       if (hasTrackingData === true || wrapperCategory.length) {
         this.trackingDataBuffer = Buffer.concat([this.trackingDataBuffer, dcData.data]);
         dcData.data = this.trackingDataBuffer;
-        // BU.CLI(dcData.data.toString());
       }
       // protocolInfo.wrapperCategory 여부에 따라 frame 해제
       returnValue.data = this.concreteParsingData(
         this.peelFrame(dcData.data),
         this.peelFrame(this.getCurrTransferCmd(dcData)),
       );
-      // BU.CLI('@@@@@@@@@@');
       returnValue.eventCode = DONE;
 
       // DONE 처리가 될 경우 Buffer 비움
@@ -216,7 +211,6 @@ class AbstConverter {
 
       return returnValue;
     } catch (error) {
-      BU.CLI(error);
       // Range Error가 발생하면 데이터가 충분하지 않아 그런것으로 판단
       if (error instanceof RangeError) {
         returnValue.eventCode = WAIT;
@@ -255,16 +249,15 @@ class AbstConverter {
    * currIndex는 반복에 의해 1씩 증가 --> 해당 currIndex로 수신받은 데이터 index 추출
    */
   automaticDecoding(decodingTable, receiveData) {
-    // BU.CLI(data);
     // 데이터를 집어넣을 기본 자료형을 가져옴
     const returnModelInfo = AbstBaseModel.GET_BASE_MODEL(this.protocolInfo);
     // 수신받은 데이터에서 현재 체크 중인 값을 가져올 인덱스
     let currIndex = 0;
     decodingTable.forEach(decodingInfo => {
-      const { byte = 1, key } = decodingInfo;
+      const { byte = 1 } = decodingInfo;
       // 조회할 데이터를 가져옴
       const thisData = receiveData.slice(currIndex, currIndex + byte);
-      // BU.CLI(key, thisData);
+
       this.automaticParsingData(decodingInfo, thisData, returnModelInfo);
       // index 증가
       currIndex += byte;
@@ -294,18 +287,16 @@ class AbstConverter {
     // 시작주소부터 체크 시작
     for (let index = address; index < remainedDataListLength; index += 1) {
       // 해당 디코딩 정보 추출
-      // const decodingInfo = decodingDataList[index];
       /** @type {decodingInfo} */
       const decoding = decodingDataList[index];
-      // BU.CLI(decoding);
+
       const { byte = 1 } = decoding;
 
-      // BU.CLI(decodingInfo, receiveData);
       // 파싱 의뢰
       this.automaticParsingData(decoding, _.nth(receiveData, currIndex), returnModelInfo);
       currIndex += byte;
     }
-    // BU.CLI(returnModelInfo);
+
     return returnModelInfo;
   }
 
@@ -316,7 +307,6 @@ class AbstConverter {
    * @param {Object} modelInfo
    */
   automaticParsingData(decodingInfo, parsingData, modelInfo) {
-    // BU.CLI(parsingData, decodingInfo);
     let returnValue = null;
     if (!_.isEmpty(decodingInfo)) {
       const {
@@ -356,7 +346,6 @@ class AbstConverter {
           const tempValue = operationStauts(returnValue);
           returnValue = _.isNumber(tempValue) ? _.round(tempValue, fixed) : tempValue;
         } else {
-          // BU.CLI(returnValue)
           returnValue = _.get(operationStauts, returnValue);
         }
       }

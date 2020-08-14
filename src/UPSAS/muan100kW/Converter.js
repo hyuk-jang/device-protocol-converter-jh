@@ -107,7 +107,7 @@ class Converter extends AbstConverter {
 
       let decodingDataList;
       if (_.isBuffer(productType)) {
-        productType = this.protocolConverter.convertBufToHexToNum(productType);
+        productType = this.protocolConverter.convertBufToStrToNum(productType);
 
         switch (productType) {
           case 1:

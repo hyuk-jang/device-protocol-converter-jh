@@ -123,86 +123,81 @@ class Model extends BaseModel {
    * @return {Buffer} Data Buffer만 리턴
    */
   checkValidate(responseBuf, decodingInfo) {
-    BU.CLI(responseBuf.toString());
-    try {
-      const SOP = Buffer.from([_.nth(responseBuf, 0)]);
+    const SOP = Buffer.from([_.nth(responseBuf, 0)]);
 
-      // SOP 일치 여부 체크
-      if (!_.isEqual(SOP, this.SOP)) {
-        throw new Error(`Not Matching SOP\n expect: ${this.SOP}\t res: ${SOP}`);
-      }
-      // check Length
-      // check Length (SOP, CODE, ADDRESS 제외)
-      const lengtBodyBuf = responseBuf.slice(
-        _.sum([
-          this.HEADER_INFO.BYTE.SOP,
-          this.HEADER_INFO.BYTE.CODE,
-          this.HEADER_INFO.BYTE.ADDR,
-          this.HEADER_INFO.BYTE.LENGTH,
-        ]),
-      );
-
-      // BU.CLIS(lengtBodyBuf.toString(),decodingInfo );
-      if (lengtBodyBuf.toString().length !== decodingInfo.length) {
-        throw new Error(
-          `length가 맞지 않습니다\n expect: ${decodingInfo.length}\t res: ${
-            lengtBodyBuf.toString().length
-          }`,
-        );
-      }
-
-      // check CheckSum (SOP, CODE, CHECKSUM 제외)
-      const checksumBodyBuf = responseBuf.slice(
-        _.sum([this.HEADER_INFO.BYTE.SOP, this.HEADER_INFO.BYTE.CODE]),
-        _.subtract(responseBuf.length, this.HEADER_INFO.BYTE.CHECKSUM),
-      );
-
-      // 계산된 체크섬
-      const strChecksum = this.protocolConverter
-        .returnBufferExceptDelimiter(checksumBodyBuf, ',')
-        .toString();
-
-      let calcChecksum = 0;
-      _.forEach(strChecksum, str => {
-        let num = _.toNumber(str);
-        // 문자라면 A~Z --> 10~35로 변환
-        num = isNaN(num) ? _.head(Buffer.from(str)) - 55 : num;
-        calcChecksum += num;
-      });
-
-      // 응답받은 체크섬
-      const checksumBuf = responseBuf.slice(
-        _.subtract(responseBuf.length, this.HEADER_INFO.BYTE.CHECKSUM),
-      );
-      const expectChecksum = this.protocolConverter.convertBufToHexToNum(checksumBuf);
-
-      // 체크섬이 다르다면 예외 처리
-      if (calcChecksum !== expectChecksum) {
-        throw new Error(
-          `checksum이 맞지 않습니다\n expect: ${expectChecksum}\t res: ${calcChecksum}`,
-        );
-      }
-
-      // 실제 장치 데이터를 담은 Buffer 생성
-      let dataBodyBuf = responseBuf.slice(
-        _.sum([
-          this.HEADER_INFO.BYTE.SOP,
-          this.HEADER_INFO.BYTE.CODE,
-          this.HEADER_INFO.BYTE.ADDR,
-          this.HEADER_INFO.BYTE.LENGTH,
-          this.HEADER_INFO.BYTE.ID,
-        ]),
-        _.subtract(responseBuf.length, this.HEADER_INFO.BYTE.CHECKSUM),
-      );
-
-      // 구분자 제거
-      dataBodyBuf = this.protocolConverter.returnBufferExceptDelimiter(dataBodyBuf, ',');
-      // BU.CLI(dataBodyBuf);
-
-      return dataBodyBuf;
-    } catch (error) {
-      throw error;
+    // SOP 일치 여부 체크
+    if (!_.isEqual(SOP, this.SOP)) {
+      throw new Error(`Not Matching SOP\n expect: ${this.SOP}\t res: ${SOP}`);
     }
+    // check Length
+    // check Length (SOP, CODE, ADDRESS 제외)
+    const lengtBodyBuf = responseBuf.slice(
+      _.sum([
+        this.HEADER_INFO.BYTE.SOP,
+        this.HEADER_INFO.BYTE.CODE,
+        this.HEADER_INFO.BYTE.ADDR,
+        this.HEADER_INFO.BYTE.LENGTH,
+      ]),
+    );
+
+    // BU.CLIS(lengtBodyBuf.toString(),decodingInfo );
+    if (lengtBodyBuf.toString().length !== decodingInfo.length) {
+      throw new Error(
+        `length가 맞지 않습니다\n expect: ${decodingInfo.length}\t res: ${
+          lengtBodyBuf.toString().length
+        }`,
+      );
+    }
+
+    // check CheckSum (SOP, CODE, CHECKSUM 제외)
+    const checksumBodyBuf = responseBuf.slice(
+      _.sum([this.HEADER_INFO.BYTE.SOP, this.HEADER_INFO.BYTE.CODE]),
+      _.subtract(responseBuf.length, this.HEADER_INFO.BYTE.CHECKSUM),
+    );
+
+    // 계산된 체크섬
+    const strChecksum = this.protocolConverter
+      .returnBufferExceptDelimiter(checksumBodyBuf, ',')
+      .toString();
+
+    let calcChecksum = 0;
+    _.forEach(strChecksum, str => {
+      let num = _.toNumber(str);
+      // 문자라면 A~Z --> 10~35로 변환
+      num = Number.isNaN(num) ? _.head(Buffer.from(str)) - 55 : num;
+      calcChecksum += num;
+    });
+
+    // 응답받은 체크섬
+    const checksumBuf = responseBuf.slice(
+      _.subtract(responseBuf.length, this.HEADER_INFO.BYTE.CHECKSUM),
+    );
+    const expectChecksum = this.protocolConverter.convertBufToStrToNum(checksumBuf);
+
+    // 체크섬이 다르다면 예외 처리
+    if (calcChecksum !== expectChecksum) {
+      throw new Error(
+        `checksum이 맞지 않습니다\n expect: ${expectChecksum}\t res: ${calcChecksum}`,
+      );
+    }
+
+    // 실제 장치 데이터를 담은 Buffer 생성
+    let dataBodyBuf = responseBuf.slice(
+      _.sum([
+        this.HEADER_INFO.BYTE.SOP,
+        this.HEADER_INFO.BYTE.CODE,
+        this.HEADER_INFO.BYTE.ADDR,
+        this.HEADER_INFO.BYTE.LENGTH,
+        this.HEADER_INFO.BYTE.ID,
+      ]),
+      _.subtract(responseBuf.length, this.HEADER_INFO.BYTE.CHECKSUM),
+    );
+
+    // 구분자 제거
+    dataBodyBuf = this.protocolConverter.returnBufferExceptDelimiter(dataBodyBuf, ',');
+    // BU.CLI(dataBodyBuf);
+
+    return dataBodyBuf;
   }
 
   /**

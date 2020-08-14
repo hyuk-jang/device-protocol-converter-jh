@@ -222,8 +222,6 @@ class Converter {
    * (Dec) 65 -> (Hex)'41' -> <Buffer 30 30 34 31>
    */
   convertNumToStrToBuf(dec, convertNumOption = {}) {
-    if (!_.isNumber(dec)) return Buffer.from('');
-
     const { byteLength = 4, toStringRadix = 16 } = convertNumOption;
 
     let hex = dec.toString(toStringRadix);
@@ -245,8 +243,6 @@ class Converter {
    * <Buffer 30 30 34 31> -> (Dec) 65
    */
   convertBufToReadInt(buffer, option = {}) {
-    if (!Buffer.isBuffer(buffer)) return null;
-
     const { isLE = true, isUnsigned = true } = option;
 
     let returnNumber;
@@ -270,25 +266,27 @@ class Converter {
    * @example
    * <Buffer 30 30 34 31> -> (Hex)'0041'
    */
-  convertBufToHex(buffer) {
-    if (!Buffer.isBuffer(buffer)) return '';
+  convertBufToStr(buffer) {
     return buffer.toString();
   }
 
   /**
    * Buffer를 Ascii Char로 변환 후 반환
-   * @param {Buffer|string} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
+   * @param {Buffer|string} bufStr 변환할 Buffer ex <Buffer 30 30 34 34>
    * @returns {string}
    * @example
-   * <Buffer 30 30 34 31> -> (Hx)'30303431'
+   * <Buffer 30 30 34 31> -> (Char) --> '0041' --> (Hex)'30303431'
+   * '0041' --> (Hex)'30303431'
    */
-  convertBufToHx(buffer) {
-    if (_.isString(buffer)) {
-      buffer = Buffer.from(buffer);
+  convertToHex(bufStr) {
+    if (_.isString(bufStr)) {
+      bufStr = Buffer.from(bufStr);
     }
-    if (!Buffer.isBuffer(buffer)) return '';
+    if (!Buffer.isBuffer(bufStr)) {
+      throw new Error(`${bufStr} is not Buffer type`);
+    }
     let returnValue = '';
-    buffer.forEach(element => {
+    bufStr.forEach(element => {
       returnValue = returnValue.concat(this.converter().dec2hex(element));
     });
 
@@ -296,31 +294,17 @@ class Converter {
   }
 
   /**
-   * Buffer를 Ascii Char로 변환 후 해당 값을 Hex Number를 Dec로 계산
-   * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
-   * @returns {number} Dec
-   * @example
-   * <Buffer 30 31 30 61> -> (Hex)'010a' -> (Dec) 266
-   */
-  convertBufToHexToDec(buffer, encoding) {
-    if (!Buffer.isBuffer(buffer)) return null;
-    const strValue = encoding ? buffer.toString(encoding) : buffer.toString();
-
-    return _.isNaN(strValue) ? strValue : parseInt(strValue, 16);
-  }
-
-  /**
    * Buffer를 Ascii Char로 변환 후 해당 값을 Hex Number로 인식하고 Dec Number로 변환
    * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
-   * @param {string} encoding
+   * @param {number=} parseIntRadix default 10, 정수 변환 인코딩
    * @returns {number} Dec
    * @example
-   * <Buffer 30 30 34 31> -> (Hex)'0041' -> (Dec) 41
+   * parseIntRadix 10 >> <Buffer 30 30 34 31> -> (Char)'0041' -> (10진수 변환) 41
+   * parseIntRadix 16 >> <Buffer 30 30 34 31> -> (Char)'0041' -> (16진수 변환) 65
    */
-  convertBufToHexToNum(buffer, encoding) {
-    if (!Buffer.isBuffer(buffer)) return null;
-    const strValue = encoding ? buffer.toString(encoding) : buffer.toString();
-    return _.isNaN(strValue) ? strValue : Number(strValue);
+  convertBufToStrToNum(buffer, parseIntRadix = 10) {
+    const strValue = buffer.toString();
+    return _.isNaN(strValue) ? strValue : parseInt(strValue, parseIntRadix);
   }
 
   /**
@@ -330,10 +314,9 @@ class Converter {
    * @param {number=} binaryLength binary 단위
    * @return {string}
    * @example
-   * <Buffer 30 30 34 31> -> (Hx)'30303431' -> (string) '‭0011 0000 0011 0000 0011 0100 0011 0001‬'
+   * <Buffer 30 30 34 31> -> (Hex)'30303431' -> (string) '‭0011 0000 0011 0000 0011 0100 0011 0001‬'
    */
   convertBufToHexToBin(buffer, binaryLength = 8) {
-    if (!Buffer.isBuffer(buffer)) return '';
     let returnValue = '';
     buffer.forEach(element => {
       const hex = this.converter().dec2hex(element);
@@ -353,9 +336,7 @@ class Converter {
    * <Buffer 30 30 34 31> -> (Char)'0041' -> (string) '0000 0000 0100 0001'
    */
   convertBufToStrToBin(buffer, binaryLength = 4) {
-    if (!Buffer.isBuffer(buffer)) return '';
-
-    return this.convertStrToBin(buffer.toString(), binaryLength);
+    return this.convertToBin(buffer.toString(), binaryLength);
   }
 
   /**
@@ -368,27 +349,31 @@ class Converter {
    * <Buffer 30 30 34 31> -> (Char)'0041' -> (string) '0000 0000 0100 0001' -> (string) '1111 1111 1011 1110'
    */
   convertBufToStrToBinConverse(buffer, binaryLength = 4) {
-    if (!Buffer.isBuffer(buffer)) return '';
-
-    return _.map(this.convertStrToBin(buffer, binaryLength), strSingleBinary =>
+    return _.map(this.convertToBin(buffer, binaryLength), strSingleBinary =>
       _.eq(strSingleBinary, '0') ? '1' : '0',
     ).join('');
   }
 
   /**
    * 각 String 값을 Hex로 보고 BIN 바꿈
-   * @param {string} asciiString ascii char를 2진 바이너리로 변환하여 반환
+   * @param {string|Buffer} bufStr ascii char를 2진 바이너리로 변환하여 반환
    * @example
-   * (Hex)'0 0 4 1' -> (string) '0000 0000 0100 0001'
+   * <Buffer 30 30 34 31> -> (Char)'0041' -> (string) '0000 0000 0100 0001'
+   * (Char)'0 0 4 1' -> (string) '0000 0000 0100 0001'
    */
-  convertStrToBin(asciiString, binaryLength = 4) {
-    if (Buffer.isBuffer(asciiString)) {
-      asciiString = asciiString.toString();
+  convertToBin(bufStr, binaryLength = 4) {
+    if (Buffer.isBuffer(bufStr)) {
+      bufStr = bufStr.toString();
     }
+
+    if (!_.isString(bufStr)) {
+      throw new Error(`${bufStr} is not String type`);
+    }
+
     let returnValue = '';
 
-    for (let index = 0; index < asciiString.length; index += 1) {
-      const bin = this.converter().hex2bin(asciiString.charAt(index));
+    for (let index = 0; index < bufStr.length; index += 1) {
+      const bin = this.converter().hex2bin(bufStr.charAt(index));
       returnValue = returnValue.concat(this.pad(bin, binaryLength));
     }
     return returnValue;
@@ -400,16 +385,11 @@ class Converter {
    * @param {Number} byteLength Buffer Size를 Byte로 환산할 값, Default: 4
    */
   getBufferCheckSum(buffer, byteLength) {
-    let hx = 0;
-    buffer.forEach(element => {
-      hx += element;
-    });
-
-    return Buffer.from(this.pad(hx.toString(16), byteLength || 4));
+    return Buffer.from(this.pad(_.sum(buffer).toString(16), byteLength || 4));
   }
 
   /**
-   *
+   * Xbee API 체크섬
    * @param {Buffer} buffer
    */
   getDigiChecksum(buffer) {
@@ -434,6 +414,7 @@ class Converter {
    * @param {Buffer} buffer 계산하고자 하는 Buffer
    */
   getXorBuffer(buffer) {
+    // eslint-disable-next-line no-bitwise
     return Buffer.from([buffer.reduce((prev, next) => prev ^ next)]);
   }
 
@@ -623,11 +604,18 @@ const converter = new Converter();
 console.log('convertNumToStrToBuf', converter.convertNumToStrToBuf(0, 2));
 console.log('convertNumToWriteInt', converter.convertNumToWriteInt(20480));
 // console.log(converter.convertBufToReadInt(Buffer.from('010a')));
-// console.log(converter.convertBufToHexToDec(Buffer.from('0101', 16)));
-// console.log(converter.convertBufToHexToNum(Buffer.from('0101')));
+// console.log(converter.convertBufToStrToNum(Buffer.from('0101')));
 
 /**
+ * 숫자를 Buffer로 변환하기 위한 옵션
  * @typedef {Object} convertNumOption
  * @property {number} byteLength default: 4, 반환 데이터 길이
  * @property {number=} toStringRadix default: 16, toString(radix)
+ */
+
+/**
+ * Buffer를 변환하기 위한 옵션
+ * @typedef {Object} convertBufToNumOption
+ * @property {number} byteLength default: 4, 반환 데이터 길이
+ * @property {number=} parseIntRadix default: 16, toString(radix)
  */

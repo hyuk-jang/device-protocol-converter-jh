@@ -9,10 +9,6 @@ module.exports = protocolInfo => {
     case 'FarmParallel':
       baseFormat = require('../FarmParallel/baseFormat');
       switch (subCategory) {
-        case 'YeongSanPo':
-          Converter = require('../FarmParallel/YeongSanPo/Converter');
-          Model = require('../FarmParallel/YeongSanPo/Model');
-          break;
         case 'dmTech':
           Converter = require('../FarmParallel/dmTech/Converter');
           Model = require('../FarmParallel/dmTech/Model');

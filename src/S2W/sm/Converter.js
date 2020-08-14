@@ -37,7 +37,7 @@ class Converter extends XbeeConverter {
 
       let decodingDataList;
       if (_.isBuffer(productType)) {
-        productType = this.protocolConverter.convertBufToHexToNum(productType);
+        productType = this.protocolConverter.convertBufToStrToNum(productType);
 
         switch (productType) {
           case 11:
@@ -101,7 +101,7 @@ if (require !== undefined && require.main === module) {
 
   const addr = Buffer.from('0013A2004190EC54');
 
-  BU.CLI(protocolConverter.convertBufToHx(addr));
+  BU.CLI(protocolConverter.convertToHex(addr));
 
   const dataList = [
     `
@@ -110,12 +110,12 @@ if (require !== undefined && require.main === module) {
 
       90
 
-      ${protocolConverter.convertBufToHx('0013A2004190EC70')}
+      ${protocolConverter.convertToHex('0013A2004190EC70')}
 
       FFFE
 
       01
-      ${protocolConverter.convertBufToHx('#00010005010000000000000009.7')}
+      ${protocolConverter.convertToHex('#00010005010000000000000009.7')}
       
       `,
   ];

@@ -89,12 +89,12 @@ exports.decodingProtocolTable = dialing => {
       {
         key: BK.waterDoor,
         byte: 2,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.battery,
         byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
     ],
   };
@@ -108,12 +108,12 @@ exports.decodingProtocolTable = dialing => {
       {
         key: BK.gateValve,
         byte: 2,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.battery,
         byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
     ],
   };
@@ -127,12 +127,12 @@ exports.decodingProtocolTable = dialing => {
       {
         key: BK.pump,
         byte: 2,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.battery,
         byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
     ],
   };
@@ -146,12 +146,12 @@ exports.decodingProtocolTable = dialing => {
       {
         key: BK.waterDoor,
         byte: 2,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.battery,
         byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
     ],
   };
@@ -163,32 +163,32 @@ exports.decodingProtocolTable = dialing => {
     decodingDataList: [
       {
         key: model.device.VALVE.KEY,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: model.device.WATER_LEVEL.KEY,
         byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: model.device.SALINITY.KEY,
         byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: model.device.BRINE_TEMPERATURE.KEY,
         byte: 6,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: model.device.MODULE_REAR_TEMPERATURE.KEY,
         byte: 6,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: model.device.BATTERY.KEY,
         byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
     ],
   };
@@ -201,72 +201,72 @@ exports.decodingProtocolTable = dialing => {
     decodingDataList: [
       {
         key: BK.gateValve,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.gateValve,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.gateValve,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.gateValve,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.gateValve,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.gateValve,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.gateValve,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.gateValve,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.gateValve,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.gateValve,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.gateValve,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.gateValve,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.gateValve,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.gateValve,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.gateValve,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.gateValve,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.battery,
         byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
     ],
   };
@@ -279,72 +279,72 @@ exports.decodingProtocolTable = dialing => {
     decodingDataList: [
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.battery,
         byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
     ],
   };
@@ -357,29 +357,29 @@ exports.decodingProtocolTable = dialing => {
       {
         key: BK.battery,
         byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.salinity,
         byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
         fixed: 1,
       },
       {
         key: BK.waterLevel,
         byte: 4,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.brineTemperature,
         byte: 6,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
         fixed: 1,
       },
       {
         key: BK.moduleRearTemperature,
         byte: 6,
-        callMethod: parsingMethod.convertBufToHexToNum,
+        callMethod: parsingMethod.convertBufToStrToNum,
         fixed: 1,
       },
     ],

@@ -39,7 +39,6 @@ module.exports = {
 
     const bufferStorage = Buffer.concat([converter.STX, body, converter.ETX]);
 
-    // BU.CLI(bufferStorage.toString());
     const crcValue = crc.crc16xmodem(bufferStorage.toString());
 
     const returnValue = [
@@ -91,12 +90,8 @@ module.exports = {
     const crcValue = buf.slice(indexETX + 1, indexEOT);
     const bufBody = buf.slice(0, indexETX + 1);
 
-    // BU.CLIS(indexSTX, indexETX, indexEOT);
-
     let baseCrcValue = crc.crc16xmodem(bufBody.toString());
     baseCrcValue = protocolConverter.pad(baseCrcValue, 4);
-
-    // BU.CLIS(crcValue.toString() , baseCrcValue.toString(16) );
 
     if (crcValue.toString() === baseCrcValue.toString(16)) {
       return buf.slice(indexSTX + 1, indexETX);
