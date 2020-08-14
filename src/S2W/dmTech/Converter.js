@@ -108,9 +108,9 @@ class Converter extends AbstConverter {
 
       let decodingTable;
       // NOTE: 모듈 후면 온도, 경사 일사량이 붙어 있는 로거
-      const outsideTableList = [9];
+      const outsideTableList = [9, 24, 43];
       // NOTE: 모듈 하부 일사량이 붙어 있는 로거
-      const insideTableList = [1, 2, 3, 4];
+      const insideTableList = [1, 2, 3, 4, 41, 42];
       // NOTE: 마이크로 인버터 센서군
       const microTableList = [5, 6, 7, 8];
       // 장치 addr
