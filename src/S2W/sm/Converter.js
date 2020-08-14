@@ -105,6 +105,8 @@ if (require !== undefined && require.main === module) {
 
   const dataList = [
     `
+      0249
+      
       7e
       0011
 
@@ -117,20 +119,23 @@ if (require !== undefined && require.main === module) {
       01
       ${protocolConverter.convertToHex('#00010005010000000000000009.7')}
       
+      03
       `,
   ];
 
+  BU.CLI(protocolConverter.convertToHex('#00010005010000000000000009.7'));
+
   dataList.forEach(d => {
-    // const realBuffer = Buffer.from(
-    //   BU.replaceAll(d, '\n', '').replace(/ /g, '').slice(4, d.length),
-    //   'hex',
-    // );
-    // BU.CLI(realBuffer.toString());
+    const realBuffer = Buffer.from(
+      BU.replaceAll(d, '\n', '').replace(/ /g, '').slice(4, d.length),
+      'hex',
+    );
+    BU.CLI(realBuffer.toString());
     // const result = converter.testParsingData(realBuffer);
     // BU.CLI(result);
-    // const dataMap = converter.concreteParsingData(d);
+    const dataMap = converter.concreteParsingData(realBuffer);
     // const dataMap = converter.refineZigbeeReceivePacket(d);
-    // BU.CLI(dataMap);
+    BU.CLI(dataMap);
   });
 
   // converter.testParsingData(Buffer.from(dataList, 'ascii'));

@@ -186,6 +186,14 @@ const decodingProtocolTable = dialing => {
       },
     ],
   };
+
+  DEFAULT.decodingDataList.forEach(decodingInfo => {
+    const { callMethod } = decodingInfo;
+    if (callMethod === parsingMethod.convertBufToReadInt) {
+      decodingInfo.isLE = true;
+    }
+  });
+
   return {
     DEFAULT,
   };

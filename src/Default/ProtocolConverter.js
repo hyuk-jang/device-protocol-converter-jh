@@ -143,7 +143,7 @@ class Converter {
     if (isLE && isUnsigned) {
       switch (allocSize) {
         case 1:
-          returnBuffer.writeUInt8(dec);
+          returnBuffer.writeUIntLE(dec, 0, 1);
           break;
         case 2:
           returnBuffer.writeUInt16LE(dec);
@@ -157,7 +157,7 @@ class Converter {
     } else if (isLE && !isUnsigned) {
       switch (allocSize) {
         case 1:
-          returnBuffer.writeInt8(dec);
+          returnBuffer.writeIntLE(dec, 0, 1);
           break;
         case 2:
           returnBuffer.writeInt16LE(dec);
@@ -233,7 +233,7 @@ class Converter {
    * Buffer 본연의 API를 이용하여 데이터를 Int or UInt 형으로 읽음.
    * option 에 따라 BE or LE 읽을지 여부, Int or UInt 로 읽을지가 결정됨.
    * @default
-   * LE, Unsign
+   * BE, Unsign
    * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
    * @param {Object=} option
    * @param {boolean} option.isLE
@@ -243,7 +243,7 @@ class Converter {
    * <Buffer 30 30 34 31> -> (Dec) 65
    */
   convertBufToReadInt(buffer, option = {}) {
-    const { isLE = true, isUnsigned = true } = option;
+    const { isLE = false, isUnsigned = true } = option;
 
     let returnNumber;
     if (isLE && isUnsigned) {
@@ -600,9 +600,9 @@ class Converter {
 }
 module.exports = Converter;
 
-const converter = new Converter();
-console.log('convertNumToStrToBuf', converter.convertNumToStrToBuf(0, 2));
-console.log('convertNumToWriteInt', converter.convertNumToWriteInt(20480));
+// const converter = new Converter();
+// console.log('convertNumToStrToBuf', converter.convertNumToStrToBuf(0, 2));
+// console.log('convertNumToWriteInt', converter.convertNumToWriteInt(20480));
 // console.log(converter.convertBufToReadInt(Buffer.from('010a')));
 // console.log(converter.convertBufToStrToNum(Buffer.from('0101')));
 

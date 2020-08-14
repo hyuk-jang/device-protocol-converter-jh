@@ -1,20 +1,19 @@
 const _ = require('lodash');
+const { BU } = require('base-util-jh');
 
 const { parsingMethod } = require('../../format/moduleDefine');
 
 const Model = require('./Model');
 
-const onDeviceOperationStatus = {};
-exports.onDeviceOperationStatus = onDeviceOperationStatus;
-
 /**
  *
  * @param {protocol_info} dialing
  */
-exports.decodingProtocolTable = dialing => {
+const decodingProtocolTable = dialing => {
   /** @type {decodingProtocolInfo} */
   const DEFAULT = {
     dialing,
+    address: 0,
     decodingDataList: [
       // 선간전압 V12, V23, V31
       {
@@ -106,7 +105,104 @@ exports.decodingProtocolTable = dialing => {
     ],
   };
 
-  _.forEach(DEFAULT.decodingDataList, decodingInfo => _.set(decodingInfo, 'isLE', false));
+  /** @type {decodingProtocolInfo} */
+  const RESET_DATA_UNIT = {
+    dialing,
+    address: 45,
+    decodingDataList: [
+      // 선간전압 V12, V23, V31
+      {
+        decodingKey: 'resetDataUnit',
+        callMethodParam: DEFAULT.decodingDataList,
+        byte: 4,
+        scale: 0.1,
+        fixed: 1,
+      },
+    ],
+  };
 
-  return DEFAULT;
+  return { DEFAULT, RESET_DATA_UNIT };
 };
+exports.decodingProtocolTable = decodingProtocolTable;
+
+const onDeviceOperationStatus = {
+  /**
+   * @param {Buffer} resetBuffer 4 Byte
+   * @param {decodingInfo[]} decodingDataList
+   */
+  resetDataUnit: (resetBuffer, decodingDataList) => {
+    // Buffer[10 20 21 21] --> '10202121'
+    BU.log('resetDataUnit', resetBuffer);
+
+    // const decodingTb = decodingProtocolTable().DEFAULT.decodingDataList;
+    const decodingTb = decodingDataList;
+    // BU.CLI(decodingTb);
+
+    resetBuffer.forEach((num, index) => {
+      const hex = num.toString(16);
+      let toFixed = 0;
+
+      const dataUnit = hex.charAt(1);
+      BU.CLI(hex, dataUnit);
+
+      // 소수점
+      switch (hex.charAt(0)) {
+        case '1':
+          toFixed = 1;
+          break;
+        case '2':
+          toFixed = 2;
+          break;
+        case '3':
+          toFixed = 3;
+          break;
+        default:
+          break;
+      }
+
+      const volKeys = [Model.BASE_KEY.gridRsVol];
+
+      const ampKeys = [Model.BASE_KEY.gridRAmp];
+
+      const kwKeys = [Model.BASE_KEY.powerGridKw];
+
+      const powerKeys = [Model.BASE_KEY.powerCpKwh];
+
+      const resetKeyList = [volKeys, ampKeys, kwKeys, powerKeys];
+
+      const baseScale = {
+        // 전압
+        0: 1,
+        // 전류
+        1: 1,
+        // 출력
+        2: 1000,
+        // 전력
+        3: 1000,
+      };
+
+      const unitScaleTable = {
+        '0': 1,
+        '1': 1000,
+        '2': 10000000,
+      };
+
+      console.log('wtf');
+      resetKeyList[index].forEach(resetKey => {
+        const decodingInfo = _.find(decodingTb, { key: resetKey });
+        console.dir(decodingInfo);
+
+        BU.CLI('tofixed', toFixed);
+        BU.CLI('unitScaleTable', unitScaleTable[dataUnit]);
+
+        decodingInfo.scale = 1 / 10 ** toFixed / unitScaleTable[dataUnit];
+        decodingInfo.fixed = toFixed + unitScaleTable[dataUnit].toString().length - 1;
+        console.dir(decodingInfo);
+      });
+    });
+  },
+};
+exports.onDeviceOperationStatus = onDeviceOperationStatus;
+
+// onDeviceOperationStatus.resetDataUnit(Buffer.from([20, 20, 21, 21]));
+// console.dir(decodingProtocolTable().DEFAULT);

@@ -16,6 +16,12 @@ class Model extends BaseModel {
       {
         unitId: this.dialing,
         fnCode: 4,
+        address: 45,
+        dataLength: 2,
+      },
+      {
+        unitId: this.dialing,
+        fnCode: 4,
         address: 0,
         dataLength: 30,
       },

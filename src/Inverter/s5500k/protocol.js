@@ -125,134 +125,143 @@ exports.onDeviceOperationStatus = onDeviceOperationStatus;
  * @param {protocol_info} dialing
  */
 const decodingProtocolTable = dialing => {
-  const returnValue = {
-    DEFAULT: {
-      dialing,
-      length: 36, // 수신할 데이터 Byte,
-      decodingDataList: [
-        {
-          key: Model.BASE_KEY.pvVol,
-          byte: 2,
-          callMethod: parsingMethod.convertBufToReadInt,
-          scale: 0.1,
-          fixed: 1,
-        },
-        {
-          key: Model.BASE_KEY.pvAmp,
-          byte: 2,
-          callMethod: parsingMethod.convertBufToReadInt,
-          scale: 0.01,
-          fixed: 2,
-        },
-        {
-          key: Model.BASE_KEY.pvKw,
-          byte: 2,
-          callMethod: parsingMethod.convertBufToReadInt,
-          scale: 0.001,
-          fixed: 3,
-        },
-        {
-          key: Model.BASE_KEY.pvVol,
-          byte: 2,
-          callMethod: parsingMethod.convertBufToReadInt,
-          scale: 0.1,
-          fixed: 1,
-        },
-        {
-          key: Model.BASE_KEY.pvAmp,
-          byte: 2,
-          callMethod: parsingMethod.convertBufToReadInt,
-          scale: 0.01,
-          fixed: 2,
-        },
-        {
-          key: Model.BASE_KEY.pvKw,
-          byte: 2,
-          callMethod: parsingMethod.convertBufToReadInt,
-          scale: 0.001,
-          fixed: 3,
-        },
-        {
-          key: Model.BASE_KEY.gridRsVol,
-          byte: 2,
-          callMethod: parsingMethod.convertBufToReadInt,
-          scale: 0.1,
-          fixed: 1,
-        },
-        {
-          key: Model.BASE_KEY.gridRAmp,
-          byte: 2,
-          callMethod: parsingMethod.convertBufToReadInt,
-          scale: 0.01,
-          fixed: 2,
-        },
-        {
-          key: Model.BASE_KEY.powerGridKw,
-          byte: 2,
-          callMethod: parsingMethod.convertBufToReadInt,
-          scale: 0.001,
-          fixed: 3,
-        },
-        {
-          key: Model.BASE_KEY.gridLf,
-          byte: 2,
-          callMethod: parsingMethod.convertBufToReadInt,
-          scale: 0.1,
-          fixed: 1,
-        },
-        {
-          key: Model.BASE_KEY.powerCpKwh,
-          byte: 3,
-          callMethod: parsingMethod.convertBufToReadInt,
-        },
-        {
-          key: Model.BASE_KEY.powerDailyKwh,
-          byte: 2,
-          callMethod: parsingMethod.convertBufToReadInt,
-          scale: 0.01,
-          fixed: 2,
-        },
-        {
-          key: Model.BASE_KEY.operTemperature,
-          byte: 2,
-          callMethod: parsingMethod.convertBufToReadInt,
-          scale: 0.1,
-          fixed: 1,
-        },
-        {
-          key: null,
-        },
-        {
-          key: null,
-          byte: 3,
-        },
-        {
-          key: null,
-          decodingKey: Model.CALC_KEY.INV_Status,
-        },
-        {
-          key: Model.BASE_KEY.operTroubleList,
-          decodingKey: Model.CALC_KEY.Grid_Fault,
-          callMethod: parsingMethod.convertBufToHexToBin,
-        },
-        {
-          key: Model.BASE_KEY.operTroubleList,
-          decodingKey: Model.CALC_KEY.Fault1,
-          callMethod: parsingMethod.convertBufToHexToBin,
-        },
-        {
-          key: Model.BASE_KEY.operTroubleList,
-          decodingKey: Model.CALC_KEY.Fault2,
-          callMethod: parsingMethod.convertBufToHexToBin,
-        },
-        {
-          key: Model.BASE_KEY.operTroubleList,
-          decodingKey: Model.CALC_KEY.Warring,
-          callMethod: parsingMethod.convertBufToHexToBin,
-        },
-      ],
-    },
+  /** @type {decodingProtocolInfo} */
+  const DEFAULT = {
+    dialing,
+    length: 36, // 수신할 데이터 Byte,
+    decodingDataList: [
+      {
+        key: Model.BASE_KEY.pvVol,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToReadInt,
+        scale: 0.1,
+        fixed: 1,
+      },
+      {
+        key: Model.BASE_KEY.pvAmp,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToReadInt,
+        scale: 0.01,
+        fixed: 2,
+      },
+      {
+        key: Model.BASE_KEY.pvKw,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToReadInt,
+        scale: 0.001,
+        fixed: 3,
+      },
+      {
+        key: Model.BASE_KEY.pvVol,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToReadInt,
+        scale: 0.1,
+        fixed: 1,
+      },
+      {
+        key: Model.BASE_KEY.pvAmp,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToReadInt,
+        scale: 0.01,
+        fixed: 2,
+      },
+      {
+        key: Model.BASE_KEY.pvKw,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToReadInt,
+        scale: 0.001,
+        fixed: 3,
+      },
+      {
+        key: Model.BASE_KEY.gridRsVol,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToReadInt,
+        scale: 0.1,
+        fixed: 1,
+      },
+      {
+        key: Model.BASE_KEY.gridRAmp,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToReadInt,
+        scale: 0.01,
+        fixed: 2,
+      },
+      {
+        key: Model.BASE_KEY.powerGridKw,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToReadInt,
+        scale: 0.001,
+        fixed: 3,
+      },
+      {
+        key: Model.BASE_KEY.gridLf,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToReadInt,
+        scale: 0.1,
+        fixed: 1,
+      },
+      {
+        key: Model.BASE_KEY.powerCpKwh,
+        byte: 3,
+        callMethod: parsingMethod.convertBufToReadInt,
+      },
+      {
+        key: Model.BASE_KEY.powerDailyKwh,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToReadInt,
+        scale: 0.01,
+        fixed: 2,
+      },
+      {
+        key: Model.BASE_KEY.operTemperature,
+        byte: 2,
+        callMethod: parsingMethod.convertBufToReadInt,
+        scale: 0.1,
+        fixed: 1,
+      },
+      {
+        key: null,
+      },
+      {
+        key: null,
+        byte: 3,
+      },
+      {
+        key: null,
+        decodingKey: Model.CALC_KEY.INV_Status,
+      },
+      {
+        key: Model.BASE_KEY.operTroubleList,
+        decodingKey: Model.CALC_KEY.Grid_Fault,
+        callMethod: parsingMethod.convertBufToHexToBin,
+      },
+      {
+        key: Model.BASE_KEY.operTroubleList,
+        decodingKey: Model.CALC_KEY.Fault1,
+        callMethod: parsingMethod.convertBufToHexToBin,
+      },
+      {
+        key: Model.BASE_KEY.operTroubleList,
+        decodingKey: Model.CALC_KEY.Fault2,
+        callMethod: parsingMethod.convertBufToHexToBin,
+      },
+      {
+        key: Model.BASE_KEY.operTroubleList,
+        decodingKey: Model.CALC_KEY.Warring,
+        callMethod: parsingMethod.convertBufToHexToBin,
+      },
+    ],
   };
-  return returnValue;
+
+  DEFAULT.decodingDataList.forEach(decodingInfo => {
+    const { callMethod } = decodingInfo;
+    if (callMethod === parsingMethod.convertBufToReadInt) {
+      decodingInfo.isLE = true;
+    }
+  });
+
+  return {
+    DEFAULT,
+  };
 };
 exports.decodingProtocolTable = decodingProtocolTable;

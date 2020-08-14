@@ -314,7 +314,7 @@ class AbstConverter {
         callMethodParam,
         key,
         decodingKey = key,
-        isLE = true,
+        isLE = false,
         isUnsigned = true,
         fixed = 0,
         scale,
@@ -334,7 +334,7 @@ class AbstConverter {
       }
 
       // 배율 및 소수점 처리를 사용한다면 적용
-      if (_.isNumber(scale)) {
+      if (_.isNumber(returnValue) && _.isNumber(scale)) {
         returnValue = _.round(returnValue * scale, fixed);
       }
 
@@ -343,7 +343,7 @@ class AbstConverter {
         const operationStauts = this.onDeviceOperationStatus[decodingKey];
         // 찾은 Decoding이 Function 이라면 값을 넘겨줌
         if (operationStauts instanceof Function) {
-          const tempValue = operationStauts(returnValue);
+          const tempValue = operationStauts(returnValue, callMethodParam);
           returnValue = _.isNumber(tempValue) ? _.round(tempValue, fixed) : tempValue;
         } else {
           returnValue = _.get(operationStauts, returnValue);

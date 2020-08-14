@@ -35,13 +35,6 @@ module.exports = class extends AbstConverter {
     cmdList.forEach(cmdInfo => {
       const { cmd } = cmdInfo;
 
-      const bufHeader = Buffer.concat([
-        // Start Delimiter
-        Buffer.from('7E', 'hex'),
-        // Length(2byte),
-        Buffer.from('0012', 'hex'),
-      ]);
-
       const bufBody = Buffer.concat([
         // Frame Type
         Buffer.from('10', 'hex'),
@@ -57,6 +50,16 @@ module.exports = class extends AbstConverter {
         Buffer.from('00', 'hex'),
         // RF Data
         Buffer.from(cmd),
+      ]);
+
+      const frameLength = Buffer.alloc(2, 0);
+      frameLength.writeUInt16BE(bufBody.length);
+
+      const bufHeader = Buffer.concat([
+        // Start Delimiter
+        Buffer.from('7E', 'hex'),
+        // Length(2byte),
+        frameLength,
       ]);
 
       const checkSum = this.protocolConverter.getDigiChecksum(bufBody, 2);
@@ -84,12 +87,12 @@ module.exports = class extends AbstConverter {
     const recFrameType = deviceData.readInt8(REC_FRAME_TYPE_INDEX);
     const recFrameSpecData = deviceData.slice(REC_FRAME_TYPE_INDEX, REC_LAST_INDEX);
 
-    const resId = deviceData.slice(4, 8);
+    const recId = deviceData.slice(4, 12);
 
     // 지그비 64-bit Address 일치 확인
-    if (!_.isEqual(resId, this.protocolInfo.deviceId)) {
+    if (!_.isEqual(recId, this.protocolInfo.deviceId)) {
       throw new Error(
-        `Not Matching ReqAddr: ${this.protocolInfo.deviceId.toString()}, ResAddr: ${resId.toString()}`,
+        `Not Matching ReqAddr: ${this.protocolInfo.deviceId.toString()}, RecAddr: ${recId.toString()}`,
       );
     }
 

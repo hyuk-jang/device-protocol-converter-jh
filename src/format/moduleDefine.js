@@ -26,6 +26,8 @@ const parsingMethod = {
   /**
    * Buffer 본연의 API를 이용하여 데이터를 Int or UInt 형으로 읽음.
    * option 에 따라 BE or LE 읽을지 여부, Int or UInt 로 읽을지가 결정됨.
+   * @default
+   * BE, Unsign
    * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
    * @param {Object=} option
    * @param {boolean} option.isLE
