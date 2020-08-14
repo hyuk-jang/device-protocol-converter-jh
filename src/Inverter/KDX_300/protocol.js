@@ -132,18 +132,13 @@ const onDeviceOperationStatus = {
    */
   resetDataUnit: (resetBuffer, decodingDataList) => {
     // Buffer[10 20 21 21] --> '10202121'
-    BU.log('resetDataUnit', resetBuffer);
-
-    // const decodingTb = decodingProtocolTable().DEFAULT.decodingDataList;
-    const decodingTb = decodingDataList;
-    // BU.CLI(decodingTb);
 
     resetBuffer.forEach((num, index) => {
       const hex = num.toString(16);
+      // 소수점 자리수
       let toFixed = 0;
 
       const dataUnit = hex.charAt(1);
-      BU.CLI(hex, dataUnit);
 
       // 소수점
       switch (hex.charAt(0)) {
@@ -171,38 +166,39 @@ const onDeviceOperationStatus = {
       const resetKeyList = [volKeys, ampKeys, kwKeys, powerKeys];
 
       const baseScale = {
-        // 전압
+        // 전압 (V)
         0: 1,
-        // 전류
+        // 전류 (A)
         1: 1,
-        // 출력
-        2: 1000,
-        // 전력
-        3: 1000,
+        // 출력 (kW)
+        2: 0.001,
+        // 전력 (kWh)
+        3: 0.001,
       };
 
       const unitScaleTable = {
+        // V, A, W, Wh
         '0': 1,
+        // KV, KA, KW, KWh
         '1': 1000,
+        // MV, MA, MW, MWh
         '2': 10000000,
       };
 
-      console.log('wtf');
       resetKeyList[index].forEach(resetKey => {
-        const decodingInfo = _.find(decodingTb, { key: resetKey });
-        console.dir(decodingInfo);
+        const decodingInfo = _.find(decodingDataList, { key: resetKey });
 
-        BU.CLI('tofixed', toFixed);
-        BU.CLI('unitScaleTable', unitScaleTable[dataUnit]);
+        // 소수점 반영
+        decodingInfo.scale = toFixed > 0 ? 1 / 10 ** toFixed : 1;
 
-        decodingInfo.scale = 1 / 10 ** toFixed / unitScaleTable[dataUnit];
-        decodingInfo.fixed = toFixed + unitScaleTable[dataUnit].toString().length - 1;
-        console.dir(decodingInfo);
+        // 데이터 단위에 따른 Scale, fixed 변경
+        // 기존 Scale * 현재적용 중인 가중치 * 단위에 따른 가중치
+        decodingInfo.scale *= baseScale[index] * unitScaleTable[dataUnit];
+
+        decodingInfo.fixed =
+          decodingInfo.scale < 1 ? _.split(decodingInfo.scale, '.')[1].toString().length : 0;
       });
     });
   },
 };
 exports.onDeviceOperationStatus = onDeviceOperationStatus;
-
-// onDeviceOperationStatus.resetDataUnit(Buffer.from([20, 20, 21, 21]));
-// console.dir(decodingProtocolTable().DEFAULT);

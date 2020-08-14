@@ -82,19 +82,13 @@ class Converter extends AbstConverter {
     const registerAddr = requestData.readInt16BE(2);
     const dataLength = requestData.readInt16BE(4);
 
-    BU.CLI(registerAddr);
-
     // 데이터 끝부분에 ff 들어오는 부분 제거 (dataLength * 2, mbap Header, ff(1byte))
     if (deviceData.length === _.sum([_.multiply(dataLength, 2), 5, 1])) {
       deviceData = deviceData.slice(0, deviceData.length - 1);
     }
 
-    // BU.CLI(requestData);
-
     /** @type {Buffer} */
     const resBuffer = deviceData;
-
-    BU.CLI(resBuffer);
 
     // 수신받은 데이터 2 Byte Hi-Lo 형식으로 파싱
     const recSlaveAddr = resBuffer.readIntBE(0, 1);
@@ -103,22 +97,18 @@ class Converter extends AbstConverter {
     const recDataLength = resBuffer.slice(RES_DATA_START_POINT, crcIndexOf).length;
     const recCrcCode = resBuffer.slice(crcIndexOf, resBuffer.length); // 응답 buffer의 crc코드
     const calcCrcCode = this.model.makeCrcCode(resBuffer.slice(0, crcIndexOf));
-    // BU.CLI(resCrcCode);
-
-    // BU.CLI(resBuffer);
-    // BU.CLIS(dataLength, resDataLength);
 
     const realExpectDataLength = _.multiply(dataLength, 2);
 
-    // FIXME: 수신받은 데이터의 길이가 다를 경우 (수신데이터는 2 * N 이므로 기대 값의 길이에 2를 곱함)
-    // if (recDataLength !== realExpectDataLength) {
-    //   const msg = `The expected dataLength: ${realExpectDataLength}. but received dataLength: ${recDataLength}`;
-    //   // 데이터가 다 오지 않은 것으로 판단. DBS에 에러코드를 보내지 않고 데이터 기다림
-    //   if (recDataLength < realExpectDataLength) {
-    //     throw new RangeError(msg);
-    //   }
-    //   throw new Error(msg);
-    // }
+    // 수신받은 데이터의 길이가 다를 경우 (수신데이터는 2 * N 이므로 기대 값의 길이에 2를 곱함)
+    if (recDataLength !== realExpectDataLength) {
+      const msg = `The expected dataLength: ${realExpectDataLength}. but received dataLength: ${recDataLength}`;
+      // 데이터가 다 오지 않은 것으로 판단. DBS에 에러코드를 보내지 않고 데이터 기다림
+      if (recDataLength < realExpectDataLength) {
+        throw new RangeError(msg);
+      }
+      throw new Error(msg);
+    }
 
     // 같은 slaveId가 아닐 경우
     if (!_.isEqual(slaveAddr, recSlaveAddr)) {
@@ -147,23 +137,16 @@ class Converter extends AbstConverter {
       decodingTable = this.decodingTable.DEFAULT;
     }
 
+    // 데이터 해석을 할 dataBody length
     const sliceLength = decodingTable.decodingDataList.reduce((totalByte, decodingInfo) => {
       return totalByte + _.get(decodingInfo, 'byte', 1);
     }, 0);
-
-    // 자릿수 단위
-    const dataUnitStartIndex = 45;
-    const dataUnitBuffer = resBuffer.slice(RES_DATA_START_POINT + dataUnitStartIndex);
 
     /** @type {BASE_MODEL} */
     const returnValue = this.automaticDecoding(
       decodingTable.decodingDataList,
       resBuffer.slice(RES_DATA_START_POINT, RES_DATA_START_POINT + sliceLength),
-      // resBuffer.slice(RES_DATA_START_POINT, resBuffer.length - 2),
     );
-    // 계측 시간을 포함할 경우
-
-    BU.CLI(this.decodingTable.DEFAULT);
 
     return returnValue;
   }
@@ -173,7 +156,7 @@ module.exports = Converter;
 // 테스트
 if (require !== undefined && require.main === module) {
   const converter = new Converter({
-    deviceId: 8,
+    deviceId: 1,
     mainCategory: 'Inverter',
     subCategory: 'KDX_300',
   });
@@ -182,16 +165,44 @@ if (require !== undefined && require.main === module) {
     key: converter.model.device.DEFAULT.KEY,
   });
 
-  console.log('requestMsg', requestMsg);
-  const data = Buffer.from(
-    '08040410203131b3ca',
-    // '024908043c097b0000097c097c0000000002620000000005c30000000005c3009200000000009205ca0000000005ca03e20000000003e21772001bb22200000000bcf703',
-    // '02490104041020212126c603',
-    // '024901043c090e0000090e090e0000000003720000000000cb0000000000cb001900000000001900cc0000000000cc03e00000000003e017730000306300000001b09a03',
-    'hex',
-  );
+  const dataList = [
+    // '0249050404102031316f0aff03',
+    // '024905043c090f0000090f090f0000000000dc0031003101c30000000001c300f10000000000f102000000000002000336ffeb00010336177000128b2d00000369643bff03',
+    // '024905043c09440000094409440000000001820000000003930000000003930043000000000043039500000000039503e30000000003e3176f0012793f000003694b98ff03',
 
-  const dataMap = converter.concreteParsingData(data, _.head(converter.generationCommand()).data);
+    // '0249060404102031315c0aff03',
+    // '024906043c090f0000090f090f0000000000e60000000002150000000002150035000000000035021700000000021703e20000000003e2177000190f2b000001959bfcff03',
+
+    // '0249070404102031314cca03',
+    // '024907043c091e0000091e091e0000000000e10031003101c90000000001c90105000000000105020e00000000020e033d0005000f033d17700015045f00000000d6ff03',
+
+    // '024908040410203131b3ca03',
+    // '024908043c091d0000091d091d000000000100000000000253000000000253003f00000000003f025600000000025603e10000000003e11770001bb61d0000000057ff03',
+
+    '02490104041020212126c603',
+    '024901043c090e0000090e090e0000000003720000000000cb0000000000cb001900000000001900cc0000000000cc03e00000000003e017730000306300000001b09a03',
+  ];
+
+  dataList.forEach((d, index) => {
+    // const realBuffer = Buffer.from(d, 'hex');
+    const realBuffer = Buffer.from(d.slice(4, d.length - 2), 'hex');
+
+    // const result = converter.testParsingData(realBuffer);
+    // BU.CLI(result);
+    const dataMap = converter.concreteParsingData(realBuffer, requestMsg[index].data);
+    BU.CLI(dataMap);
+  });
+
+  // console.log('requestMsg', requestMsg);
+  // const data = Buffer.from(
+  //   '08040410203131b3ca',
+  //   '024908043c097b0000097c097c0000000002620000000005c30000000005c3009200000000009205ca0000000005ca03e20000000003e21772001bb22200000000bcf703',
+  //   // '02490104041020212126c603',
+  //   // '024901043c090e0000090e090e0000000003720000000000cb0000000000cb001900000000001900cc0000000000cc03e00000000003e017730000306300000001b09a03',
+  //   'hex',
+  // );
+
+  // const dataMap = converter.concreteParsingData(data, _.head(converter.generationCommand()).data);
   // BU.CLI('dataMap', dataMap);
 }
 
