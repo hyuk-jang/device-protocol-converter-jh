@@ -241,22 +241,24 @@ class AbstConverter {
 
   /**
    * decodingInfo 리스트 만큼 Data 파싱을 진행
-   * @param {Array.<decodingInfo>} decodingTable
+   * @param {Array.<decodingInfo>} decodingDataList
    * @param {Buffer} receiveData
    * @example
    * addr: 3, length 5 --> 수신받은 데이터 [x, x, x, x, x] 5개
    * decodingTable.decodingDataList --> 3번 index ~ 7번 인덱스(addr + length - 1) 반복 체크
    * currIndex는 반복에 의해 1씩 증가 --> 해당 currIndex로 수신받은 데이터 index 추출
    */
-  automaticDecoding(decodingTable, receiveData) {
+  automaticDecoding(decodingDataList, receiveData) {
     // 데이터를 집어넣을 기본 자료형을 가져옴
     const returnModelInfo = AbstBaseModel.GET_BASE_MODEL(this.protocolInfo);
     // 수신받은 데이터에서 현재 체크 중인 값을 가져올 인덱스
     let currIndex = 0;
-    decodingTable.forEach(decodingInfo => {
+    decodingDataList.forEach(decodingInfo => {
       const { byte = 1 } = decodingInfo;
       // 조회할 데이터를 가져옴
       const thisData = receiveData.slice(currIndex, currIndex + byte);
+
+      // BU.CLI(thisData);
 
       this.automaticParsingData(decodingInfo, thisData, returnModelInfo);
       // index 증가
@@ -269,34 +271,47 @@ class AbstConverter {
    * 수신받은 데이터가 Array 형태 일 경우
    * @desc Modbus에서 수신받은 데이터 파싱할 때 사용
    * @param {decodingProtocolInfo} decodingTable
-   * @param {number[]} receiveData 수신 받은 배열 데이터
+   * @param {Buffer|number[]} receiveData 수신 받은 데이터
    * @example
    * addr: 3, length 5 --> 수신받은 데이터 [x, x, x, x, x] 5개
    * decodingTable.decodingDataList --> 3번 index ~ 7번 인덱스(addr + length - 1) 반복 체크
    * currIndex는 반복에 의해 1씩 증가 --> 해당 currIndex로 수신받은 데이터 index 추출
    */
-  automaticDecodingForArray(decodingTable, receiveData) {
+  automaticDecodingIndex(decodingTable, receiveData) {
     const { address = 0, decodingDataList } = decodingTable;
     // 데이터를 집어넣을 기본 자료형을 가져옴
     const returnModelInfo = AbstBaseModel.GET_BASE_MODEL(this.protocolInfo);
     // 수신받은 데이터에서 현재 체크 중인 값을 가져올 인덱스
-    let currIndex = 0;
+    let dataStartIndex = 0;
 
-    // 총 체크해야할 데이터 범위를 계산 (시작주소 + 수신 데이터 길이)
-    const remainedDataListLength = _.sum([receiveData.length, address]);
-    // 시작주소부터 체크 시작
-    for (let index = address; index < remainedDataListLength; index += 1) {
-      // 해당 디코딩 정보 추출
-      /** @type {decodingInfo} */
-      const decoding = decodingDataList[index];
+    // 조회는 receiveData가 끝나거나 decodingTable이 끝날 때까지 순회
+    decodingDataList.slice(address).forEach((decodingInfo, index) => {
+      const { byte = 1 } = decodingInfo;
 
-      const { byte = 1 } = decoding;
+      const dataEndPoint = dataStartIndex + byte;
 
-      // 파싱 의뢰
-      this.automaticParsingData(decoding, _.nth(receiveData, currIndex), returnModelInfo);
-      currIndex += byte;
-    }
+      // slice 만큼의 길이를 확보하지 못할 경우 decoding 취소
+      // 배열이 10개일 경우 slice(start, 10) 2번째 파람이 10 이상일 경우에 완전한 데이터 추출 가능
+      if (receiveData.length < dataEndPoint) {
+        return false;
+      }
 
+      // receiveData는 decodingInfo에서 정의한 byte만큼 slice
+      /** @type {Buffer|number} */
+      let thisData;
+
+      // Buffer 일 경우 slice
+      if (Buffer.isBuffer(receiveData)) {
+        thisData = receiveData.slice(dataStartIndex, dataEndPoint);
+      } else {
+        // number[] 일 경우 get
+        thisData = receiveData[index];
+      }
+      // 다음 자를 위치 지정
+      dataStartIndex = dataEndPoint;
+
+      this.automaticParsingData(decodingInfo, thisData, returnModelInfo);
+    });
     return returnModelInfo;
   }
 
@@ -333,6 +348,7 @@ class AbstConverter {
         returnValue = this.protocolConverter[callMethod](parsingData, callMethodParam);
       }
 
+      // BU.CLI(returnValue);
       // 배율 및 소수점 처리를 사용한다면 적용
       if (_.isNumber(returnValue) && _.isNumber(scale)) {
         returnValue = _.round(returnValue * scale, fixed);

@@ -17,6 +17,11 @@ module.exports = {
    * @type {number[]=} ON, OFF
    */
   pump: [],
+  /**
+   * 제어타입
+   * @type {string[]=} Manual, Auto
+   */
+  controlType: [],
 
   /**
    * 토양 온도, 단위[℃]

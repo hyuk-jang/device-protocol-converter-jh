@@ -1,10 +1,11 @@
 const _ = require('lodash');
 const { BU } = require('base-util-jh');
+
+const Model = require('./Model');
+
 const { parsingMethod } = require('../../format/moduleDefine');
 
 const { makeTroubleList } = require('../../utils/troubleConverter');
-
-const Model = require('./Model');
 
 const onDeviceOperationStatus = {
   /** @param {Buffer} buf -> LSB 로 비트 index 계산 */

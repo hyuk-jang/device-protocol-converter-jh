@@ -201,8 +201,24 @@ module.exports = Converter;
 
 if (require !== undefined && require.main === module) {
   const converter = new Converter({
-    deviceId: '\u002e',
+    deviceId: 58,
     mainCategory: 'Inverter',
     subCategory: 'ESP3K5',
+  });
+
+  const requestMsg = converter.generationCommand({
+    key: converter.model.device.DEFAULT.KEY,
+  });
+
+  const dataList = ['0249b1b73a510a3500510a4a093900cf018b0040070000000000015702ae006317ff03'];
+
+  dataList.forEach((d, index) => {
+    // const realBuffer = Buffer.from(d, 'hex');
+    const realBuffer = Buffer.from(d.slice(4, d.length - 2), 'hex');
+
+    // const result = converter.testParsingData(realBuffer);
+    // BU.CLI(result);
+    const dataMap = converter.concreteParsingData(realBuffer, requestMsg[index].data);
+    BU.CLI(dataMap);
   });
 }

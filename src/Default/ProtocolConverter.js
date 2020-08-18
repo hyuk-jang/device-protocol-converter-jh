@@ -294,17 +294,19 @@ class Converter {
   }
 
   /**
+   * FIXME: 단위 안맞음
    * Buffer를 Ascii Char로 변환 후 해당 값을 Hex Number로 인식하고 Dec Number로 변환
    * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
-   * @param {number=} parseIntRadix default 10, 정수 변환 인코딩
+   * @param {number=} parseFloatRadix default 10, 정수 변환 인코딩
    * @returns {number} Dec
    * @example
    * parseIntRadix 10 >> <Buffer 30 30 34 31> -> (Char)'0041' -> (10진수 변환) 41
    * parseIntRadix 16 >> <Buffer 30 30 34 31> -> (Char)'0041' -> (16진수 변환) 65
    */
-  convertBufToStrToNum(buffer, parseIntRadix = 10) {
+  convertBufToStrToNum(buffer, parseFloatRadix = 10) {
     const strValue = buffer.toString();
-    return _.isNaN(strValue) ? strValue : parseInt(strValue, parseIntRadix);
+    // BU.CLI(strValue);
+    return _.isNaN(strValue) ? strValue : parseFloat(strValue, parseFloatRadix);
   }
 
   /**

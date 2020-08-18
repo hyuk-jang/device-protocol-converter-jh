@@ -59,7 +59,6 @@ class Converter extends AbstConverter {
    * @param {xbeeApi_0x10} currTransferCmd 현재 요청한 명령
    */
   concreteParsingData(deviceData, currTransferCmd) {
-    // BU.CLIS(deviceData, currTransferCmd);
     // string 형식이 다를 수 있으므로 대문자로 모두 변환
     const reqId = _.toUpper(currTransferCmd.destination64);
     const resId = _.toUpper(deviceData.remote64);
@@ -94,61 +93,57 @@ class Converter extends AbstConverter {
    * @param {xbeeApi_0x90} xbeeApi0x90
    */
   processDataReceivePacketZigBee(xbeeApi0x90) {
-    // BU.CLI(xbeeApi0x90);
     const { data } = xbeeApi0x90;
 
     const STX = _.nth(data, 0);
     // STX 체크 (# 문자 동일 체크)
-    if (_.isEqual(STX, 0x23)) {
-      // let boardId = data.slice(1, 5);
-      // BU.CLI(data.toString());
-      let productType = data.slice(5, 9);
-      const dataBody = data.slice(9);
-
-      let decodingDataList;
-      if (_.isBuffer(productType)) {
-        productType = this.protocolConverter.convertBufToStrToNum(productType);
-
-        switch (productType) {
-          case 1:
-            decodingDataList = this.decodingTable.waterDoor;
-            break;
-          case 4:
-            decodingDataList = this.decodingTable.gateValve;
-            break;
-          case 5:
-            decodingDataList = this.decodingTable.pump;
-            break;
-          case 11:
-            decodingDataList = this.decodingTable.env;
-            break;
-          default:
-            throw new Error(`productType: ${productType}은 Parsing 대상이 아닙니다.`);
-        }
-
-        const hasValid = _.chain(decodingDataList.decodingDataList)
-          .map(row => _.get(row, 'byte', 1))
-          .sum()
-          .isEqual(dataBody.length)
-          .value();
-        if (!hasValid) {
-          throw new Error(
-            `The expected length(${decodingDataList.bodyLength}) 
-              of the data body is different from the length(${dataBody.length}) received.`,
-          );
-        }
-
-        const resultAutomaticDecoding = this.automaticDecoding(
-          decodingDataList.decodingDataList,
-          dataBody,
-        );
-
-        return resultAutomaticDecoding;
-      }
-      throw new Error(`productType: ${productType}이 이상합니다.`);
-    } else {
+    if (!_.isEqual(STX, 0x23)) {
       throw new Error('STX가 일치하지 않습니다.');
     }
+    let productType = data.slice(5, 9);
+    const dataBody = data.slice(9);
+
+    let decodingDataList;
+    if (_.isBuffer(productType)) {
+      productType = this.protocolConverter.convertBufToStrToNum(productType);
+
+      switch (productType) {
+        case 1:
+          decodingDataList = this.decodingTable.waterDoor;
+          break;
+        case 4:
+          decodingDataList = this.decodingTable.gateValve;
+          break;
+        case 5:
+          decodingDataList = this.decodingTable.pump;
+          break;
+        case 11:
+          decodingDataList = this.decodingTable.env;
+          break;
+        default:
+          throw new Error(`productType: ${productType}은 Parsing 대상이 아닙니다.`);
+      }
+
+      const hasValid = _.chain(decodingDataList.decodingDataList)
+        .map(row => _.get(row, 'byte', 1))
+        .sum()
+        .isEqual(dataBody.length)
+        .value();
+      if (!hasValid) {
+        throw new Error(
+          `The expected length(${decodingDataList.bodyLength}) 
+              of the data body is different from the length(${dataBody.length}) received.`,
+        );
+      }
+
+      const resultAutomaticDecoding = this.automaticDecoding(
+        decodingDataList.decodingDataList,
+        dataBody,
+      );
+
+      return resultAutomaticDecoding;
+    }
+    throw new Error(`productType: ${productType}이 이상합니다.`);
   }
 }
 module.exports = Converter;

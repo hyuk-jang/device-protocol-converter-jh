@@ -35,19 +35,19 @@ exports.decodingProtocolTable = dialing => {
       {
         key: BK.battery,
         byte: 4,
-        callMethod: parsingMethod.convertBufToStrToNum,
+      },
+      {
+        key: BK.controlType,
+        callMethod: parsingMethod.convertBufToStr,
       },
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.pump,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
     ],
   };
@@ -60,71 +60,58 @@ exports.decodingProtocolTable = dialing => {
       {
         key: BK.battery,
         byte: 4,
-        callMethod: parsingMethod.convertBufToStrToNum,
+      },
+      {
+        key: BK.controlType,
+        callMethod: parsingMethod.convertBufToStr,
       },
       {
         key: BK.shutter,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.shutter,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.shutter,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.shutter,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.shutter,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.shutter,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.shutter,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.shutter,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.shutter,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.shutter,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.shutter,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.shutter,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.shutter,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.shutter,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.shutter,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
       {
         key: BK.shutter,
-        callMethod: parsingMethod.convertBufToStrToNum,
       },
     ],
   };

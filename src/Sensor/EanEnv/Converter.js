@@ -38,33 +38,29 @@ class Converter extends AbstConverter {
    * @param {Buffer} currTransferCmd 현재 요청한 명령
    */
   concreteParsingData(deviceData) {
-    try {
-      // BU.CLI(deviceData.toString());
+    // BU.CLI(deviceData.toString());
 
-      let decodingTable = this.decodingTable.MAIN_SITE;
+    let decodingTable = this.decodingTable.MAIN_SITE;
 
-      if (_.get(this.protocolInfo, 'option.isNormal')) {
-        decodingTable = this.decodingTable.MAIN_SITE;
-      } else {
-        decodingTable = this.decodingTable.PV_SITE;
-      }
-
-      const strData = deviceData.toString();
-
-      const splitedStrData = _.split(strData, ' ');
-
-      // 총 4센서 데이터 체크
-      const validIndex = [3, 5, 7, 9];
-      const sensorList = validIndex.map(index => _.toNumber(splitedStrData[index]));
-
-      /** @type {BASE_MODEL} */
-      const returnValue = this.automaticDecodingForArray(decodingTable, sensorList);
-      // 계측 시간을 포함할 경우
-
-      return returnValue;
-    } catch (error) {
-      throw error;
+    if (_.get(this.protocolInfo, 'option.isNormal')) {
+      decodingTable = this.decodingTable.MAIN_SITE;
+    } else {
+      decodingTable = this.decodingTable.PV_SITE;
     }
+
+    const strData = deviceData.toString();
+
+    const splitedStrData = _.split(strData, ' ');
+
+    // 총 4센서 데이터 체크
+    const validIndex = [3, 5, 7, 9];
+    const sensorList = validIndex.map(index => _.toNumber(splitedStrData[index]));
+
+    /** @type {BASE_MODEL} */
+    const returnValue = this.automaticDecodingIndex(decodingTable, sensorList);
+    // 계측 시간을 포함할 경우
+
+    return returnValue;
   }
 
   /**
@@ -83,7 +79,7 @@ class Converter extends AbstConverter {
     const sensorList = validIndex.map(index => _.toNumber(splitedStrData[index]));
 
     /** @type {BASE_MODEL} */
-    const returnValue = this.automaticDecodingForArray(decodingTable, sensorList);
+    const returnValue = this.automaticDecodingIndex(decodingTable, sensorList);
     // 계측 시간을 포함할 경우
 
     return returnValue;

@@ -49,8 +49,6 @@ class Converter extends AbstConverter {
    */
   concreteParsingData(deviceData, currTransferCmd) {
     // 0: SlaveAddr 1: FunctionCode, 2: DataLength, 3: Res Data (N*2)
-    const RES_DATA_START_POINT = 3;
-
     /** @type {modbusReadFormat} */
     const requestData = currTransferCmd;
 
@@ -65,8 +63,8 @@ class Converter extends AbstConverter {
     const dataBody = deviceData.slice(0, dataLength);
 
     /** @type {BASE_MODEL} */
-    const returnValue = this.automaticDecodingForArray(this.decodingTable, dataBody);
-    // BU.CLI(returnValue);
+    const returnValue = this.automaticDecodingIndex(this.decodingTable, dataBody);
+
     return returnValue;
   }
 }
@@ -79,6 +77,8 @@ if (require !== undefined && require.main === module) {
     mainCategory: 'Sensor',
     subCategory: 'CNT_DK_v2.2',
   });
+
+  BU.CLI(converter.generationCommand());
 
   const data = [3, 450, 65534, 450, 65533, 450, 65530, 450, 65534, 450, 65535, 450];
 
