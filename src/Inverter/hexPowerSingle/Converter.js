@@ -51,7 +51,7 @@ class Converter extends AbstConverter {
     }
 
     // 수신 받은 데이터 체크섬 계산
-    const calcChkSum = this.protocolConverter.getBufferCheckSum(
+    const calcChkSum = this.protocolConverter.getBufferChecksum(
       deviceData.slice(1, deviceData.length - 5),
     );
     //   BU.CLI('calcChkSum', calcChkSum);
@@ -152,5 +152,5 @@ if (require !== undefined && require.main === module) {
 
   const data = Buffer.from('06303152303030343030303834306132303032313030303030', 'hex');
   const dataMap = converter.testParsingData(data);
-  BU.CLI(dataMap);
+  console.log(dataMap);
 }

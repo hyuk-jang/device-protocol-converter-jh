@@ -155,10 +155,6 @@ const decodingProtocolTable = dialing => {
       {
         key: Model.BASE_KEY.operTroubleList,
         byte: 4,
-        // callMethod: parsingMethod.convertBufToReadInt,
-        // callMethod: parsingMethod.,
-        // scale: 0.1,
-        // fixed: 1,
       },
       {
         key: Model.BASE_KEY.operIsRun,
@@ -181,9 +177,6 @@ const decodingProtocolTable = dialing => {
         key: Model.BASE_KEY.powerPf,
         byte: 1,
         callMethod: parsingMethod.convertBufToReadInt,
-      },
-      {
-        key: null,
       },
     ],
   };

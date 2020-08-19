@@ -118,84 +118,6 @@ class Converter extends AbstConverter {
 
     return dataMap;
   }
-
-  /**
-   *
-   * @param {Buffer} deviceData
-   */
-  testParsingData(deviceData) {
-    BU.CLI(deviceData);
-    const RES_DATA_START_POINT = 3;
-    let returnValue = this.model.BASE_MODEL;
-    const decodingTable = this.decodingTable.DEFAULT;
-    // BU.CLI(decodingTable);
-    const { decodingDataList } = decodingTable;
-
-    // 시작주소부터 체크 시작
-    const dataList = [];
-    let currIndex = RES_DATA_START_POINT;
-    for (let index = 0; index < decodingDataList.length; index += 1) {
-      // 해당 디코딩 정보 추출
-      const decodingInfo = decodingDataList[index];
-      const {
-        byte = 1,
-        key,
-        decodingKey = key,
-        callMethod,
-        isLE = true,
-        isUnsigned = true,
-        fixed = 0,
-        scale,
-      } = decodingInfo;
-      const thisBuf = deviceData.slice(currIndex, currIndex + byte);
-      let convertValue;
-
-      // BU.CLI(thisBuf);
-
-      // 사용하는 메소드를 호출
-      if (_.isString(callMethod)) {
-        if (_.eq(callMethod, 'convertBufToReadInt')) {
-          const option = {
-            isLE,
-            isUnsigned,
-          };
-          convertValue = this.protocolConverter.convertBufToReadInt(thisBuf, option);
-        } else {
-          convertValue = this.protocolConverter[callMethod](thisBuf);
-        }
-
-        if (_.isNumber(scale)) {
-          convertValue = _.round(convertValue * scale, fixed);
-        }
-
-        // 변환키가 정의되어있는지 확인
-        if (_.includes(_.keys(this.onDeviceOperationStatus), decodingKey)) {
-          const operationStauts = this.onDeviceOperationStatus[decodingKey];
-          // 찾은 Decoding이 Function 이라면 값을 넘겨줌
-          if (operationStauts instanceof Function) {
-            const tempValue = operationStauts(convertValue);
-            convertValue = _.isNumber(tempValue) ? _.round(tempValue, fixed) : tempValue;
-          } else {
-            convertValue = _.get(operationStauts, convertValue);
-          }
-        }
-
-        dataList.push(convertValue);
-        returnValue[key].push(convertValue);
-        // returnValue[key] = convertValue;
-      }
-
-      currIndex += byte;
-    }
-
-    // 만약 인버터가 운영중인 데이터가 아니라면 현재 데이터를 무시한다.
-    if (_.eq(_.head(returnValue.operIsRun), 0)) {
-      returnValue = this.model.BASE_MODEL;
-    }
-
-    // BU.CLI(dataList);
-    BU.CLI(returnValue);
-  }
 }
 module.exports = Converter;
 
@@ -210,15 +132,14 @@ if (require !== undefined && require.main === module) {
     key: converter.model.device.DEFAULT.KEY,
   });
 
+  // BU.CLI(requestMsg);
+
   const dataList = ['0249b1b73a510a3500510a4a093900cf018b0040070000000000015702ae006317ff03'];
 
   dataList.forEach((d, index) => {
-    // const realBuffer = Buffer.from(d, 'hex');
     const realBuffer = Buffer.from(d.slice(4, d.length - 2), 'hex');
 
-    // const result = converter.testParsingData(realBuffer);
-    // BU.CLI(result);
     const dataMap = converter.concreteParsingData(realBuffer, requestMsg[index].data);
-    BU.CLI(dataMap);
+    console.log(dataMap);
   });
 }

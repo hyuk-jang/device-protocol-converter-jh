@@ -69,7 +69,7 @@ class Model extends BaseModel {
     const addr = Buffer.from(addrAscii);
     const dataLen = this.makeDataLen(addrAscii);
     const dataBody = Buffer.concat([this.dialing, cmd, addr, dataLen]);
-    const checkSum = this.protocolConverter.getBufferCheckSum(dataBody, 4);
+    const checkSum = this.protocolConverter.getBufferChecksum(dataBody, 4);
 
     return Buffer.concat([this.ENQ, this.dialing, cmd, addr, dataLen, checkSum, this.EOT]);
   }

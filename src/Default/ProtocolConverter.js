@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const crc = require('crc');
 
 const { BU } = require('base-util-jh');
 
@@ -129,7 +130,7 @@ class Converter {
     let { allocSize = 0 } = option;
 
     let isZeroFilter = 0;
-
+    // allocSize가 0이라면 Buffer 4개 할당 후 ZeroFilter Flag: true
     if (allocSize === 0) {
       isZeroFilter = 1;
       allocSize = 4;
@@ -294,7 +295,6 @@ class Converter {
   }
 
   /**
-   * FIXME: 단위 안맞음
    * Buffer를 Ascii Char로 변환 후 해당 값을 Hex Number로 인식하고 Dec Number로 변환
    * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
    * @param {number=} parseFloatRadix default 10, 정수 변환 인코딩
@@ -306,7 +306,24 @@ class Converter {
   convertBufToStrToNum(buffer, parseFloatRadix = 10) {
     const strValue = buffer.toString();
     // BU.CLI(strValue);
-    return _.isNaN(strValue) ? strValue : parseFloat(strValue, parseFloatRadix);
+
+    let returnNumber = Number(strValue);
+
+    switch (parseFloatRadix) {
+      // OCT, HEX
+      case 8:
+      case 16:
+        returnNumber = parseInt(strValue, parseFloatRadix);
+        break;
+      // DEC
+      case 10:
+        returnNumber = parseFloat(strValue);
+        break;
+      default:
+        break;
+    }
+
+    return returnNumber;
   }
 
   /**
@@ -386,7 +403,7 @@ class Converter {
    * @param {Buffer} buffer Buffer
    * @param {Number} byteLength Buffer Size를 Byte로 환산할 값, Default: 4
    */
-  getBufferCheckSum(buffer, byteLength) {
+  getBufferChecksum(buffer, byteLength) {
     return Buffer.from(this.pad(_.sum(buffer).toString(16), byteLength || 4));
   }
 
@@ -400,6 +417,18 @@ class Converter {
     const crcNum = Buffer.from('ff', 'hex').readInt8() - lower8Bit.readInt8();
 
     return Buffer.from([crcNum]);
+  }
+
+  /**
+   * Modbus API 체크섬
+   * @param {Buffer} buffer
+   */
+  getModbusChecksum(buffer) {
+    const crcValue = crc.crc16modbus(buffer);
+    // 4 Length Buffer
+    const lower = this.convertNumToStrToBuf(crcValue);
+
+    return Buffer.from(lower.toString(), 'hex').reverse();
   }
 
   /**
@@ -607,6 +636,11 @@ module.exports = Converter;
 // console.log('convertNumToWriteInt', converter.convertNumToWriteInt(20480));
 // console.log(converter.convertBufToReadInt(Buffer.from('010a')));
 // console.log(converter.convertBufToStrToNum(Buffer.from('0101')));
+// console.log(converter.convertBufToStrToNum(Buffer.from('01.1')));
+// console.log(converter.convertBufToStrToNum(Buffer.from('0101'), 16));
+// console.log(converter.convertBufToStrToNum(Buffer.from('01.1'), 16));
+// console.log(converter.convertBufToStrToNum(Buffer.from('0e05'), 16));
+// console.log(converter.convertBufToStrToNum(Buffer.from('0e.e'), 16));
 
 /**
  * 숫자를 Buffer로 변환하기 위한 옵션

@@ -37,6 +37,7 @@ class Model extends BaseModel {
     const crcValue = crc.crc16modbus(buffer);
 
     const lower = this.protocolConverter.convertNumToStrToBuf(crcValue);
+    console.log(lower);
 
     return Buffer.from(lower.toString(), 'hex').reverse();
   }

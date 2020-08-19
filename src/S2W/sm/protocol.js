@@ -1,12 +1,13 @@
 const { BU } = require('base-util-jh');
-const { parsingMethod } = require('../../format/moduleDefine');
-const Model = require('./Model');
 
-const model = new Model();
+const Model = require('./Model');
+const { parsingMethod } = require('../../format/moduleDefine');
+
+const { BASE_KEY: BK } = Model;
+
 const {
   device: { SHUTTER, PUMP },
-} = model;
-const { BASE_KEY: BK } = Model;
+} = new Model();
 
 const onDeviceOperationStatus = {
   /** @type {Object} 펌프 */

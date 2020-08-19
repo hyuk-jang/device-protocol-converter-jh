@@ -40,20 +40,16 @@ class Converter extends AbstConverter {
    * @param {Buffer} currTransferCmd 현재 요청한 명령
    */
   concreteParsingData(deviceData, currTransferCmd) {
-    // BU.CLI(dcData);
     // 요청한 명령 추출
-    const requestData = currTransferCmd;
+    const reqBuffer = currTransferCmd;
     // 응답 받은 데이터 추출
-    const responseData = deviceData;
-
-    // BU.CLIS(deviceData, currTransferCmd);
+    const resBuffer = deviceData;
 
     // 요청한 주소 추출
-    const reqAddr = this.model.getRequestAddr(requestData);
+    const reqAddr = this.model.getRequestAddr(reqBuffer);
     // 응답받은 주소 추출
-    const resAddr = this.model.getResponseAddr(responseData);
+    const resAddr = this.model.getResponseAddr(resBuffer);
 
-    // BU.CLIS(reqAddr, resAddr);
     // 비교
     if (reqAddr !== resAddr) {
       throw new Error(`Not Matching ReqAddr: ${reqAddr}, ResAddr: ${resAddr}`);
@@ -84,7 +80,7 @@ class Converter extends AbstConverter {
     }
 
     // 응답받은 데이터가 정상적인지 검증하고 유효하다면 데이터 바디 추출
-    const dataBody = this.model.getValidateData(responseData, decodingTable);
+    const dataBody = this.model.getValidateData(resBuffer, decodingTable);
     // BU.CLI(dataBody);
     return this.automaticDecoding(decodingTable.decodingDataList, dataBody);
   }
@@ -98,30 +94,31 @@ if (require !== undefined && require.main === module) {
     subCategory: 'das_1.3',
   });
 
-  // const requestData = Buffer.from([0x0a, 0x96, 0x01, 0x54, 0x18, 0x05, 0x6d]);
-
   const requestMsg = converter.generationCommand({
     key: converter.model.device.DEFAULT.KEY,
   });
 
-  const testReqMsg = '02495e5030303253543603';
-  const realTestReqMsg = Buffer.from(testReqMsg.slice(4, testReqMsg.length - 2), 'hex');
+  // BU.CLI(requestMsg);
 
-  const dataList = [
-    '02495e443631323030322c302c312c4d2c333403',
-    '02495e443631323030322c302c312c4d2c343103',
+  const reqDataList = [
+    '02495e5030303253543103',
+    '02495e5030303253543203',
+    '02495e5030303253543303',
+    '02495e5030303253543403',
   ];
 
-  dataList.forEach(d => {
-    const realBuffer = Buffer.from(d.slice(4, d.length - 2), 'hex');
+  const dataList = [
+    '02495e443132303030322c3438302c303533382c303235362c343603',
+    '02495e443232323030322c3430332c3430352c3430322c3630302c333603',
+    '02495e443332313030322c303337302c303336332c303336342c343303',
+    '02495e443431393030322c303235332c303033323936342c353003',
+  ];
 
-    // const result = converter.testParsingData(realBuffer);
-    // BU.CLI(result);
-    const dataMap = converter.concreteParsingData(realBuffer, realTestReqMsg);
-    BU.CLI(dataMap);
+  dataList.forEach((d, idx) => {
+    const reqBuffer = Buffer.from(reqDataList[idx].slice(4, reqDataList[idx].length - 2), 'hex');
+    const resBuffer = Buffer.from(d.slice(4, d.length - 2), 'hex');
+
+    const dataMap = converter.concreteParsingData(resBuffer, reqBuffer);
+    console.log(dataMap);
   });
-
-  // BU.CLIN(converter.model);
-
-  // converter.testParsingData(Buffer.from(dataList, 'ascii'));
 }

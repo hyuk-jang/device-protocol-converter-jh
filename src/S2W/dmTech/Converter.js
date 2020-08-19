@@ -16,16 +16,20 @@ class Converter extends ModbusRtuConverter {
 
     this.decodingTable = protocol.decodingProtocolTable(protocolInfo);
     this.onDeviceOperationStatus = protocol.onDeviceOperationStatus;
+
+    // SM Modbus 형식인지 여부, SM Converter라면 Req, Res CRC는 존재하지 않음
+    this.isExistCrc = false;
   }
 
   /**
-   * FnCode 04, Read Input Register
-   * @param {Buffer} resBuffer Read Input Register
+   * FnCode 04, Read Input Register. 순수 Spec Data 반환
+   * @param {Buffer} resBuffer CRC 제거된 Read Input Register
    * @param {Buffer} reqBuffer 현재 요청한 명령
    */
   refineReadInputRegister(resBuffer, reqBuffer) {
     const { dataBody, registerAddr } = super.refineReadInputRegister(resBuffer, reqBuffer);
 
+    /** @type {decodingProtocolInfo} */
     let decodingTable;
     // NOTE: 모듈 후면 온도, 경사 일사량이 붙어 있는 로거
     const outsideTableList = [9];
@@ -49,7 +53,7 @@ class Converter extends ModbusRtuConverter {
     decodingTable.address = registerAddr;
 
     // FIXME: 실제 현장에서의 간헐적인 00000000000000 데이터 처리를 위함. 해당 데이터는 사용하지 않음
-    if (_.every(dataBody, v => _.isEqual(v, Buffer.from([0])))) {
+    if (_.every(dataBody, v => _.isEqual(v, Buffer.alloc(1, 0)))) {
       return BASE_MODEL;
     }
 
@@ -82,6 +86,6 @@ if (require !== undefined && require.main === module) {
     const realBuffer = Buffer.from(d.slice(4, d.length - 2), 'hex');
 
     const dataMap = converter.concreteParsingData(realBuffer, realTestReqMsg);
-    BU.CLI(dataMap);
+    console.log(dataMap);
   });
 }

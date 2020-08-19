@@ -167,9 +167,7 @@ if (require !== undefined && require.main === module) {
     },
   });
 
-  // BU.CLI(cmdInfo);
-
-  // BU.CLIN(converter.model);
+  // console.log(cmdInfo);
 
   const testReqMsg = '025301040000000c03';
 
@@ -190,7 +188,7 @@ if (require !== undefined && require.main === module) {
     // const result = converter.testParsingData(realBuffer);
     // BU.CLI(result);
     const dataMap = converter.processDataReceivePacketZigBee(d);
-    BU.CLI(dataMap);
+    console.log(dataMap);
   });
 
   // converter.testParsingData(Buffer.from(dataList, 'ascii'));

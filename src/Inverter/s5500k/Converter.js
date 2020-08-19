@@ -116,7 +116,7 @@ if (require !== undefined && require.main === module) {
     // const result = converter.testParsingData(realBuffer);
     // BU.CLI(result);
     const dataMap = converter.concreteParsingData(realBuffer, realTestReqMsg);
-    BU.CLI(dataMap);
+    console.log(dataMap);
   });
 
   // BU.CLIN(converter.model);

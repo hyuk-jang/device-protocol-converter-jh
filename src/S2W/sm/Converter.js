@@ -76,7 +76,7 @@ if (require !== undefined && require.main === module) {
     },
   });
 
-  BU.CLI(cmdInfo);
+  console.log(cmdInfo);
 
   const dataList = [
     `
@@ -84,7 +84,7 @@ if (require !== undefined && require.main === module) {
     0012
     00.0
     M
-    01000000
+    01001000
     11111111
     `,
   ].map(specData => {
@@ -116,12 +116,12 @@ if (require !== undefined && require.main === module) {
       converter.protocolConverter.getDigiChecksum(buffer.slice(4)),
     ]);
 
-    BU.CLI(realBuffer);
+    // BU.CLI(realBuffer);
     // const result = converter.testParsingData(realBuffer);
     // BU.CLI(result);
     const dataMap = converter.concreteParsingData(realBuffer);
     // const dataMap = converter.refineZigbeeReceivePacket(d);
-    BU.CLI(dataMap);
+    console.log(dataMap);
   });
 
   // converter.testParsingData(Buffer.from(dataList, 'ascii'));

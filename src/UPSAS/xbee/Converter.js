@@ -98,82 +98,70 @@ class Converter extends AbstConverter {
 
     const STX = _.nth(data, 0);
     // STX 체크 (# 문자 동일 체크)
-    if (_.isEqual(STX, 0x23)) {
-      // let boardId = data.slice(1, 5);
-      // BU.CLI(data.toString());
-      let productType = data.slice(5, 9);
-      const dataBody = data.slice(9);
-
-      let decodingDataList;
-      if (_.isBuffer(productType)) {
-        productType = this.protocolConverter.convertBufToStrToNum(productType);
-
-        switch (productType) {
-          case 1:
-            decodingDataList =
-              dataBody.toString().length === 12
-                ? this.decodingTable.gateLevelSalinity
-                : this.decodingTable.newGateLevelSalinity;
-            break;
-          case 2:
-            decodingDataList =
-              dataBody.toString().length === 20
-                ? this.decodingTable.valve
-                : this.decodingTable.salternBlockValve;
-            // BU.CLI(dataBody.toString().length, decodingDataList);
-            // decodingDataList = this.decodingTable.valve;
-            break;
-          case 3:
-            decodingDataList = this.decodingTable.pump;
-            break;
-          case 5:
-            decodingDataList = this.decodingTable.earthModule;
-            break;
-          case 6:
-            decodingDataList = this.decodingTable.connectorGroundRelay;
-            break;
-          case 12:
-            decodingDataList = this.decodingTable.envModuleTemp;
-            break;
-          default:
-            throw new Error(`productType: ${productType}은 Parsing 대상이 아닙니다.`);
-        }
-        // BU.CLI(decodingDataList);
-        const hasValid = _.chain(decodingDataList.decodingDataList)
-          .map(row => _.get(row, 'byte', 1))
-          .sum()
-          .isEqual(dataBody.length)
-          .value();
-        if (!hasValid) {
-          throw new Error(
-            `The expected length(${decodingDataList.bodyLength}) 
-              of the data body is different from the length(${dataBody.length}) received.`,
-          );
-        }
-
-        const resultAutomaticDecoding = this.automaticDecoding(
-          decodingDataList.decodingDataList,
-          dataBody,
-        );
-        // if (productType === 6) {
-        //   BU.CLI(dataBody);
-        //   BU.CLI(resultAutomaticDecoding);
-        // }
-        return resultAutomaticDecoding;
-      }
-      throw new Error(`productType: ${productType}이 이상합니다.`);
-    } else {
+    if (!_.isEqual(STX, 0x23)) {
       throw new Error('STX가 일치하지 않습니다.');
     }
-  }
+    // let boardId = data.slice(1, 5);
+    // BU.CLI(data.toString());
+    let productType = data.slice(5, 9);
+    const dataBody = data.slice(9);
 
-  /**
-   * decodingInfo 리스트 만큼 Data 파싱을 진행
-   * @param {Array.<decodingInfo>} decodingTable
-   * @param {Buffer} data
-   */
-  automaticDecoding(decodingTable, data) {
-    return super.automaticDecoding(decodingTable, data);
+    let decodingDataList;
+    if (!_.isBuffer(productType)) {
+      throw new Error(`productType: ${productType}이 이상합니다.`);
+    }
+    productType = this.protocolConverter.convertBufToStrToNum(productType);
+
+    switch (productType) {
+      case 1:
+        decodingDataList =
+          dataBody.toString().length === 12
+            ? this.decodingTable.gateLevelSalinity
+            : this.decodingTable.newGateLevelSalinity;
+        break;
+      case 2:
+        decodingDataList =
+          dataBody.toString().length === 20
+            ? this.decodingTable.valve
+            : this.decodingTable.salternBlockValve;
+        // BU.CLI(dataBody.toString().length, decodingDataList);
+        // decodingDataList = this.decodingTable.valve;
+        break;
+      case 3:
+        decodingDataList = this.decodingTable.pump;
+        break;
+      case 5:
+        decodingDataList = this.decodingTable.earthModule;
+        break;
+      case 6:
+        decodingDataList = this.decodingTable.connectorGroundRelay;
+        break;
+      case 12:
+        decodingDataList = this.decodingTable.envModuleTemp;
+        break;
+      default:
+        throw new Error(`productType: ${productType}은 Parsing 대상이 아닙니다.`);
+    }
+
+    const hasValid = _.chain(decodingDataList.decodingDataList)
+      .map(row => _.get(row, 'byte', 1))
+      .sum()
+      .isEqual(dataBody.length)
+      .value();
+
+    if (!hasValid) {
+      throw new Error(
+        `The expected length(${decodingDataList.bodyLength}) 
+              of the data body is different from the length(${dataBody.length}) received.`,
+      );
+    }
+
+    const resultAutomaticDecoding = this.automaticDecoding(
+      decodingDataList.decodingDataList,
+      dataBody,
+    );
+
+    return resultAutomaticDecoding;
   }
 }
 module.exports = Converter;
@@ -197,11 +185,7 @@ if (require !== undefined && require.main === module) {
     },
   });
 
-  // BU.CLI(cmdInfo);
-
-  // BU.CLIN(converter.model);
-
-  const testReqMsg = '025301040000000c03';
+  console.dir(cmdInfo);
 
   /** @type {xbeeApi_0x90[]} */
   const dataList = [
@@ -212,7 +196,7 @@ if (require !== undefined && require.main === module) {
     //   data: Buffer.from('#00010002022351000.00999.909.6'),
     // },
     {
-      data: Buffer.from('#0001001222311.0029.9'),
+      data: Buffer.from('#00010012223111.029.9'),
     },
     // {
     //   data: Buffer.from('#000100030101010101010101'),
@@ -220,10 +204,8 @@ if (require !== undefined && require.main === module) {
   ];
 
   dataList.forEach(d => {
-    // const result = converter.testParsingData(realBuffer);
-    // BU.CLI(result);
     const dataMap = converter.processDataReceivePacketZigBee(d);
-    BU.CLI(dataMap);
+    console.log(dataMap);
   });
 
   // converter.testParsingData(Buffer.from(dataList, 'ascii'));
