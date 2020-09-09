@@ -18,11 +18,15 @@ module.exports = {
    */
   pump: [],
   /**
-   * 제어타입
+   * 펌프 제어타입
    * @type {string[]=} Manual, Auto
    */
-  controlType: [],
-
+  pumpControlType: [],
+  /**
+   * 개폐기 제어타입
+   * @type {string[]=} Manual, Auto
+   */
+  shutterControlType: [],
   /**
    * 토양 온도, 단위[℃]
    * @description T_S

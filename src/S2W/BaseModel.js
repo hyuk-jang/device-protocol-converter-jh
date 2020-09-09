@@ -40,12 +40,12 @@ class BaseModel extends AbstBaseModel {
         KEY: baseKey.shutter,
         NAME: '전동 개폐기',
         STATUS: {
-          ON: 'ON',
-          OFF: 'OFF',
+          OPEN: 'OPEN',
+          CLOSE: 'CLOSE',
         },
         COMMAND: {
-          ON: [],
-          OFF: [],
+          OPEN: [],
+          CLOSE: [],
           STATUS: [],
         },
       },

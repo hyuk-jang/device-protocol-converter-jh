@@ -31,8 +31,7 @@ module.exports = class extends AbstConverter {
     /** @type {Array.<commandInfoModel>} */
     const cmdList = this.defaultGenCMD(generationInfo);
 
-    /** @type {Array.<commandInfo>} */
-    cmdList.forEach(cmdInfo => {
+    const returnBufferList = cmdList.map(cmdInfo => {
       const { cmd } = cmdInfo;
 
       const bufBody = Buffer.concat([
@@ -62,14 +61,12 @@ module.exports = class extends AbstConverter {
         frameLength,
       ]);
 
-      const checkSum = this.protocolConverter.getDigiChecksum(bufBody, 2);
+      const checkSum = this.protocolConverter.getDigiChecksum(bufBody);
 
-      cmdInfo.cmd = Buffer.concat([bufHeader, bufBody, checkSum]);
-
-      return cmdInfo;
+      return Buffer.concat([bufHeader, bufBody, checkSum]);
     });
 
-    return cmdList;
+    return this.makeAutoGenerationCommand(returnBufferList);
   }
 
   /**
@@ -85,7 +82,7 @@ module.exports = class extends AbstConverter {
     const RES_LAST_INDEX = deviceData.length - 1;
 
     const resFrameType = deviceData.readUInt8(RES_FRAME_TYPE_INDEX);
-    const resFrameSpecData = deviceData.slice(RES_64BIT_ADDR, RES_LAST_INDEX);
+    const resFrameSpecData = deviceData.slice(RES_FRAME_TYPE_INDEX, RES_LAST_INDEX);
 
     const resId = deviceData.slice(4, 12);
 
@@ -133,6 +130,7 @@ module.exports = class extends AbstConverter {
   refineZigbeeReceivePacket(zigbeeReceivePacket) {
     // BU.CLI(zigbeeReceivePacket);
     const LENGTH_IDX = 1;
+    const FRAME_TYPE_IDX = 3;
     const SPEC_DATA_IDX = 15;
     const CRC_IDX = zigbeeReceivePacket.length - 1;
 
@@ -141,18 +139,20 @@ module.exports = class extends AbstConverter {
       throw new Error(`Failure to meet minimum length: ${zigbeeReceivePacket.length}`);
     }
 
-    const specData = zigbeeReceivePacket.slice(SPEC_DATA_IDX, CRC_IDX);
+    // BU.CLI(zigbeeReceivePacket);
 
     // 프로토콜에 명시된 Length
     const recBodyLength = zigbeeReceivePacket.readUInt16BE(LENGTH_IDX);
-    // 실제 수신받은 데이터의 길이
-    const recSpecDataLength = specData.length;
+    // 실제 데이터 길이
+    const recRealBodyLength = zigbeeReceivePacket.slice(FRAME_TYPE_IDX, CRC_IDX).length;
     // 수신받은 데이터 길이와 실제 데이터 길이가 같은지 체크
-    if (recBodyLength !== recSpecDataLength) {
+    if (recBodyLength !== recRealBodyLength) {
       throw new Error(
-        `expected data length(${recBodyLength}). but receive data length(${recSpecDataLength})`,
+        `expected data length(${recBodyLength}). but receive data length(${recRealBodyLength})`,
       );
     }
+    // 실제 수신받은 데이터의 길이
+    const specData = zigbeeReceivePacket.slice(SPEC_DATA_IDX, CRC_IDX);
 
     return specData;
   }

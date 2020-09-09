@@ -87,6 +87,16 @@ class Converter extends AbstConverter {
     _.set(dataMap, 'pvVol', [_.mean(dataMap.pvVol)]);
     _.set(dataMap, 'pvKw', [_.sum(dataMap.pvKw)]);
 
+    // FIXME: 보성 오른쪽 인버터
+    if (_.isNumber(dataMap.powerCpKwh[0])) {
+      if (_.isEqual(this.model.dialing, Buffer.from([16]))) {
+        dataMap.powerCpKwh[0] += 1922;
+      } else if (_.isEqual(this.model.dialing, Buffer.from([17]))) {
+        // 보성 왼쪽 인버터
+        dataMap.powerCpKwh[0] += 3010;
+      }
+    }
+
     // Trobule 목록을 하나로 합침
     dataMap.operTroubleList = [_.flatten(dataMap.operTroubleList)];
 

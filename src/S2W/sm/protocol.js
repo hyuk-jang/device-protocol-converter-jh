@@ -17,12 +17,12 @@ const onDeviceOperationStatus = {
     /** @type {number} 켜짐 */
     1: PUMP.STATUS.ON,
   },
-  /** @type {Object} 펌프 */
+  /** @type {Object} 개폐기 */
   [SHUTTER.KEY]: {
-    /** @type {number} 꺼짐 */
-    0: SHUTTER.STATUS.OFF,
-    /** @type {number} 켜짐 */
-    1: SHUTTER.STATUS.ON,
+    /** @type {number} 닫힘 */
+    0: SHUTTER.STATUS.CLOSE,
+    /** @type {number} 펼침 */
+    1: SHUTTER.STATUS.OPEN,
   },
 };
 exports.onDeviceOperationStatus = onDeviceOperationStatus;
@@ -38,7 +38,7 @@ exports.decodingProtocolTable = dialing => {
         byte: 4,
       },
       {
-        key: BK.controlType,
+        key: BK.pumpControlType,
         callMethod: parsingMethod.convertBufToStr,
       },
       {
@@ -63,7 +63,7 @@ exports.decodingProtocolTable = dialing => {
         byte: 4,
       },
       {
-        key: BK.controlType,
+        key: BK.shutterControlType,
         callMethod: parsingMethod.convertBufToStr,
       },
       {

@@ -68,9 +68,12 @@ const defaultWrapper = {
    * @param {Buffer} bufData
    */
   defaultWrapFrame: (protocolInfo, bufData) => {
+    const { mainCategory, subCategory } = protocolInfo;
+
     const protocolConverter = new ProtocolConverter();
     let cmd = '';
-    switch (protocolInfo.mainCategory) {
+
+    switch (mainCategory) {
       case 'Inverter':
         cmd = 'I';
         break;
@@ -82,6 +85,10 @@ const defaultWrapper = {
       default:
         cmd = 'A';
         break;
+    }
+
+    if (mainCategory === 'S2W' && subCategory === 'sm') {
+      cmd = 'I';
     }
 
     const bufCmd = protocolConverter.makeMsg2Buffer(cmd);

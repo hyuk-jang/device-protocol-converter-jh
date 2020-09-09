@@ -1,9 +1,10 @@
 const _ = require('lodash');
 const { BU } = require('base-util-jh');
 
-const XbeeConverter = require('../../Default/Converter/XbeeConverter');
 const Model = require('./Model');
 const protocol = require('./protocol');
+
+const XbeeConverter = require('../../Default/Converter/XbeeConverter');
 const { protocolConverter } = require('../../Default/DefaultModel');
 
 class Converter extends XbeeConverter {
@@ -70,7 +71,7 @@ if (require !== undefined && require.main === module) {
 
   const cmdInfo = converter.generationCommand({
     key: 'shutter',
-    value: 0,
+    value: 1,
     nodeInfo: {
       data_logger_index: 4,
     },
@@ -82,7 +83,7 @@ if (require !== undefined && require.main === module) {
     `
     #0001
     0012
-    00.0
+    10.2
     M
     01001000
     11111111
@@ -92,11 +93,9 @@ if (require !== undefined && require.main === module) {
       BU.replaceAll(specData, '\n', '').replace(/ /g, ''),
     );
 
-    BU.CLI(realSpecData.length, realSpecData);
-
     return `
     7e
-    00${_.padStart((realSpecData.length / 2).toString(16), 2, '0')}
+    00${_.padStart((realSpecData.length / 2 + 12).toString(16), 2, '0')}
 
     90
 
@@ -113,16 +112,27 @@ if (require !== undefined && require.main === module) {
     const buffer = Buffer.from(BU.replaceAll(d, '\n', '').replace(/ /g, ''), 'hex');
     const realBuffer = Buffer.concat([
       buffer,
-      converter.protocolConverter.getDigiChecksum(buffer.slice(4)),
+      converter.protocolConverter.getDigiChecksum(buffer.slice(3)),
     ]);
 
     // BU.CLI(realBuffer);
-    // const result = converter.testParsingData(realBuffer);
-    // BU.CLI(result);
     const dataMap = converter.concreteParsingData(realBuffer);
-    // const dataMap = converter.refineZigbeeReceivePacket(d);
-    console.log(dataMap);
+    // console.log(dataMap);
   });
 
-  // converter.testParsingData(Buffer.from(dataList, 'ascii'));
+  const testReqMsg = '02497e001210010013a2004190ed67fffe0000407374737d03';
+  const realTestReqMsg = Buffer.from(testReqMsg.slice(4, testReqMsg.length - 2), 'hex');
+
+  const onDataList = [
+    '02537e002a900013a2004190ed67fffe0123303030313030313231302e324131313131303131313131303131303031e203',
+  ];
+
+  onDataList.forEach(d => {
+    const realBuffer = Buffer.from(d.slice(4, d.length - 2), 'hex');
+    // BU.CLI(realBuffer);
+
+    converter.protocolInfo.deviceId = Buffer.from('0013a2004190ed67', 'hex');
+    const dataMap = converter.concreteParsingData(realBuffer, realTestReqMsg);
+    console.log(dataMap);
+  });
 }

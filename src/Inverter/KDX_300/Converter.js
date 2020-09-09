@@ -49,6 +49,17 @@ class Converter extends ModbusRtuConverter {
     /** @type {BASE_MODEL} */
     const returnValue = this.automaticDecodingIndex(decodingTable, dataBody);
 
+    // FIXME: 영산포 왼쪽 전력량계부터
+    if (_.isEqual(this.model.dialing, 5)) {
+      returnValue.powerCpKwh[0] -= 16.811;
+    } else if (_.isEqual(this.model.dialing, 6)) {
+      returnValue.powerCpKwh[0] -= 24.415;
+    } else if (_.isEqual(this.model.dialing, 7)) {
+      returnValue.powerCpKwh[0] -= 20.802;
+    } else if (_.isEqual(this.model.dialing, 8)) {
+      returnValue.powerCpKwh[0] -= 23.367;
+    }
+
     return returnValue;
   }
 }
