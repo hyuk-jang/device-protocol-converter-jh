@@ -65,7 +65,9 @@ class Converter extends AbstConverter {
 
     // 체크섬 비교
     if (!_.isEqual(calcChkSum, resChkSum)) {
-      throw new Error(`Not Matching Check Sum: ${calcChkSum}, Res Check Sum: ${resChkSum}`);
+      throw new Error(
+        `Not Matching Check Sum: ${calcChkSum}, Res Check Sum: ${resChkSum}`,
+      );
     }
 
     // 헤더와 체크섬을 제외한 데이터 계산
@@ -74,7 +76,10 @@ class Converter extends AbstConverter {
 
     // 데이터 자동 산정
     /** @type {BASE_KEY} */
-    let dataMap = this.automaticDecoding(this.decodingTable.DEFAULT.decodingDataList, dataBody);
+    let dataMap = this.automaticDecoding(
+      this.decodingTable.DEFAULT.decodingDataList,
+      dataBody,
+    );
 
     // 인버터에서 PV출력 및 GRID 출력을 주지 않으므로 계산하여 집어넣음
     // PV 전압
@@ -145,7 +150,9 @@ if (require !== undefined && require.main === module) {
 
   // BU.CLI(requestMsg);
 
-  const dataList = ['0249b1b73a510a3500510a4a093900cf018b0040070000000000015702ae006317ff03'];
+  const dataList = [
+    '0249b1b73a510a3500510a4a093900cf018b0040070000000000015702ae006317ff03',
+  ];
 
   dataList.forEach((d, index) => {
     const realBuffer = Buffer.from(d.slice(4, d.length - 2), 'hex');

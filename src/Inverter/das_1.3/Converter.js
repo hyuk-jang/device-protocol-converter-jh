@@ -115,7 +115,10 @@ if (require !== undefined && require.main === module) {
   ];
 
   dataList.forEach((d, idx) => {
-    const reqBuffer = Buffer.from(reqDataList[idx].slice(4, reqDataList[idx].length - 2), 'hex');
+    const reqBuffer = Buffer.from(
+      reqDataList[idx].slice(4, reqDataList[idx].length - 2),
+      'hex',
+    );
     const resBuffer = Buffer.from(d.slice(4, d.length - 2), 'hex');
 
     const dataMap = converter.concreteParsingData(resBuffer, reqBuffer);

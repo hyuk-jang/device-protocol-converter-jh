@@ -13,16 +13,16 @@ class Model extends BaseModel {
         cmd: '@sts',
       },
     ];
-
-    this.device.SHUTTER.COMMAND.ON = nodeInfo => {
+    // Open
+    this.device.SHUTTER.COMMAND[1] = nodeInfo => {
       return [
         {
           cmd: `@cro${this.convertNodeNumber(nodeInfo)}`,
         },
       ];
     };
-
-    this.device.SHUTTER.COMMAND.OFF = nodeInfo => {
+    // Close
+    this.device.SHUTTER.COMMAND[0] = nodeInfo => {
       return [
         {
           cmd: `@crc${this.convertNodeNumber(nodeInfo)}`,
@@ -35,16 +35,16 @@ class Model extends BaseModel {
         cmd: '@sts',
       },
     ];
-
-    this.device.PUMP.COMMAND.ON = nodeInfo => {
+    // On
+    this.device.PUMP.COMMAND[1] = nodeInfo => {
       return [
         {
           cmd: `@cro${this.convertNodeNumber(nodeInfo)}`,
         },
       ];
     };
-
-    this.device.PUMP.COMMAND.OFF = nodeInfo => {
+    // Off
+    this.device.PUMP.COMMAND[0] = nodeInfo => {
       return [
         {
           cmd: `@crc${this.convertNodeNumber(nodeInfo)}`,

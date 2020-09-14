@@ -83,7 +83,10 @@ class Converter extends AbstConverter {
         let TargetValue = bufferData[i].toString(16);
         if (TargetValue === 'ff') {
           TargetValue = '00';
-          if (protocolInfo.key === 'OutsideTemperature' || protocolInfo.key === 'SolarRadiation') {
+          if (
+            protocolInfo.key === 'OutsideTemperature' ||
+            protocolInfo.key === 'SolarRadiation'
+          ) {
             hasError = true;
           }
         }

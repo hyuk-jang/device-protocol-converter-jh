@@ -66,7 +66,9 @@ class Converter extends AbstConverter {
 
     // 체크섬 비교
     if (!_.isEqual(calcChkSum, resChkSum)) {
-      throw new Error(`Not Matching Check Sum: ${calcChkSum}, Res Check Sum: ${resChkSum}`);
+      throw new Error(
+        `Not Matching Check Sum: ${calcChkSum}, Res Check Sum: ${resChkSum}`,
+      );
     }
 
     // 헤더와 체크섬을 제외한 데이터 계산
@@ -75,7 +77,10 @@ class Converter extends AbstConverter {
 
     // 데이터 자동 산정
     // /** @type {Model.BASE_KEY} */
-    const dataMap = this.automaticDecoding(this.decodingTable.DEFAULT.decodingDataList, dataBody);
+    const dataMap = this.automaticDecoding(
+      this.decodingTable.DEFAULT.decodingDataList,
+      dataBody,
+    );
 
     // 동양 s5500k 누적 발전량 이상 문제 제거
     if (_.head(dataMap.powerCpKwh) === 0) {

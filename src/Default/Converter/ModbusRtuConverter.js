@@ -103,12 +103,16 @@ module.exports = class extends AbstConverter {
 
     // 같은 slaveId가 아닐 경우
     if (!_.isEqual(slaveAddr, resSlaveAddr)) {
-      throw new Error(`The expected slaveId: ${slaveAddr}. but received slaveId: ${resSlaveAddr} `);
+      throw new Error(
+        `The expected slaveId: ${slaveAddr}. but received slaveId: ${resSlaveAddr} `,
+      );
     }
 
     // 수신받은 Function Code가 다를 경우
     if (!_.isEqual(fnCode, resFnCode)) {
-      throw new Error(`The expected fnCode: ${fnCode}. but received fnCode: ${resFnCode}`);
+      throw new Error(
+        `The expected fnCode: ${fnCode}. but received fnCode: ${resFnCode}`,
+      );
     }
 
     // CRC를 사용할 경우 직접 계산한 CRC 값과 수신받은 데이터에서 제시하는 CRC 값 비교
@@ -123,7 +127,9 @@ module.exports = class extends AbstConverter {
       // 수신받은 데이터에 입력되어있는 CRC 값
       const resCrcCode = resBuffer.slice(crcIndexOf, resBuffer.length); // 응답 buffer의 crc코드
       // 수신받은 데이터의 CRC를 산출 공식에 대입하여 추출
-      const calcCrcCode = this.protocolConverter.getModbusChecksum(resBuffer.slice(0, crcIndexOf));
+      const calcCrcCode = this.protocolConverter.getModbusChecksum(
+        resBuffer.slice(0, crcIndexOf),
+      );
       // CRC를 제거하고 반환 (SM Modbus 프로토콜과의 병행을 고려하여 처리)
       resBuffer = resBuffer.slice(0, crcIndexOf);
 

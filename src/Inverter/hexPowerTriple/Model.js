@@ -73,7 +73,15 @@ class Model extends BaseModel {
     const dataBody = Buffer.concat([this.dialing, cmd, addr, dataLen]);
     const checkSum = this.protocolConverter.getBufferChecksum(dataBody, 4);
 
-    return Buffer.concat([this.ENQ, this.dialing, cmd, addr, dataLen, checkSum, this.EOT]);
+    return Buffer.concat([
+      this.ENQ,
+      this.dialing,
+      cmd,
+      addr,
+      dataLen,
+      checkSum,
+      this.EOT,
+    ]);
   }
 
   static get CALC_KEY() {

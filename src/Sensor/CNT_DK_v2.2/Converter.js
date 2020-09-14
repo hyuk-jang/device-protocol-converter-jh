@@ -82,6 +82,9 @@ if (require !== undefined && require.main === module) {
 
   const data = [3, 450, 65534, 450, 65533, 450, 65530, 450, 65534, 450, 65535, 450];
 
-  const dataMap = converter.concreteParsingData(data, _.head(converter.generationCommand()).data);
+  const dataMap = converter.concreteParsingData(
+    data,
+    _.head(converter.generationCommand()).data,
+  );
   BU.CLI('dataMap', dataMap);
 }

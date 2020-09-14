@@ -24,7 +24,10 @@ class Converter extends ModbusRtuConverter {
    * @param {Buffer} reqBuffer 현재 요청한 명령
    */
   refineReadInputRegister(resBuffer, reqBuffer) {
-    const { dataBody, registerAddr } = super.refineReadInputRegister(resBuffer, reqBuffer);
+    const { dataBody, registerAddr } = super.refineReadInputRegister(
+      resBuffer,
+      reqBuffer,
+    );
 
     /** @type {decodingProtocolInfo} */
     let decodingTable;

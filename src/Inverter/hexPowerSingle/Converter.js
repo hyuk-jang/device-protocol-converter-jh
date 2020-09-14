@@ -58,7 +58,9 @@ class Converter extends AbstConverter {
 
     // 체크섬 비교
     if (!_.isEqual(calcChkSum, resChkSum)) {
-      throw new Error(`Not Matching Check Sum: ${calcChkSum}, Res Check Sum: ${resChkSum}`);
+      throw new Error(
+        `Not Matching Check Sum: ${calcChkSum}, Res Check Sum: ${resChkSum}`,
+      );
     }
 
     // 비교

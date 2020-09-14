@@ -109,6 +109,9 @@ if (require !== undefined && require.main === module) {
     'R001,02,00000000000000000051002000000000,000000000000000000510020000000000176',
   );
 
-  const dataMap = converter.concreteParsingData(data, _.head(converter.generationCommand()).data);
+  const dataMap = converter.concreteParsingData(
+    data,
+    _.head(converter.generationCommand()).data,
+  );
   BU.CLI('dataMap', dataMap);
 }

@@ -346,18 +346,20 @@ exports.decodingProtocolTable = protocolInfo => {
   };
 
   // byte는 명시되지 않을 경우 기본 2byte로함, 기본 파서는 convertBufToReadInt
-  [INCLINED_SITE, HORIZONTAL_SITE, PRT_SITE, PUS_SITE, FOUR_SOLAR_SITE].forEach(decodingTable => {
-    decodingTable.decodingDataList.forEach(decodingInfo => {
-      const { byte, callMethod } = decodingInfo;
-      if (byte === undefined) {
-        decodingInfo.byte = 2;
-      }
+  [INCLINED_SITE, HORIZONTAL_SITE, PRT_SITE, PUS_SITE, FOUR_SOLAR_SITE].forEach(
+    decodingTable => {
+      decodingTable.decodingDataList.forEach(decodingInfo => {
+        const { byte, callMethod } = decodingInfo;
+        if (byte === undefined) {
+          decodingInfo.byte = 2;
+        }
 
-      if (callMethod === undefined) {
-        decodingInfo.callMethod = parsingMethod.convertBufToReadInt;
-      }
-    });
-  });
+        if (callMethod === undefined) {
+          decodingInfo.callMethod = parsingMethod.convertBufToReadInt;
+        }
+      });
+    },
+  );
 
   return {
     INCLINED_SITE,

@@ -196,7 +196,9 @@ const onDeviceOperationStatus = {
         decodingInfo.scale *= baseScale[index] * unitScaleTable[dataUnit];
 
         decodingInfo.fixed =
-          decodingInfo.scale < 1 ? _.split(decodingInfo.scale, '.')[1].toString().length : 0;
+          decodingInfo.scale < 1
+            ? _.split(decodingInfo.scale, '.')[1].toString().length
+            : 0;
       });
     });
   },

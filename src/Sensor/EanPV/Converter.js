@@ -56,46 +56,42 @@ class Converter extends AbstConverter {
    * @param {Buffer} currTransferCmd 현재 요청한 명령
    */
   concreteParsingData(deviceData, currTransferCmd) {
-    try {
-      /**
-       * 요청한 명령 추출
-       * @type {Buffer}
-       */
-      const requestData = currTransferCmd;
+    /**
+     * 요청한 명령 추출
+     * @type {Buffer}
+     */
+    const requestData = currTransferCmd;
 
-      const receiveNumData = _.toNumber(_.toString(deviceData));
+    const receiveNumData = _.toNumber(_.toString(deviceData));
 
-      // BU.CLIS(requestData, receiveNumData);
+    // BU.CLIS(requestData, receiveNumData);
 
-      const { STATUS_POWER, STATUS } = this.model.device.DEFAULT.COMMAND;
+    const { STATUS_POWER, STATUS } = this.model.device.DEFAULT.COMMAND;
 
-      const dataStorage = Model.BASE_MODEL;
+    const dataStorage = Model.BASE_MODEL;
 
-      // 전력 계측 명령이었다면
-      if (_.findIndex(STATUS, buf => _.isEqual(buf, requestData)) >= 0) {
-        const foundIndex = _.findIndex(STATUS, buf => _.isEqual(buf, requestData));
-        switch (foundIndex) {
-          case 0:
-            dataStorage.pvVol.push(receiveNumData);
-            break;
-          case 1:
-            dataStorage.pvAmp.push(receiveNumData);
-            break;
-          case 2:
-            dataStorage.pvW.push(receiveNumData);
-            break;
-          default:
-            dataStorage.operIsRun.push(receiveNumData);
-            break;
-        }
-      } else if (_.findIndex(STATUS_POWER, buf => _.isEqual(buf, requestData)) >= 0) {
-        dataStorage.operIsRun.push(receiveNumData);
+    // 전력 계측 명령이었다면
+    if (_.findIndex(STATUS, buf => _.isEqual(buf, requestData)) >= 0) {
+      const foundIndex = _.findIndex(STATUS, buf => _.isEqual(buf, requestData));
+      switch (foundIndex) {
+        case 0:
+          dataStorage.pvVol.push(receiveNumData);
+          break;
+        case 1:
+          dataStorage.pvAmp.push(receiveNumData);
+          break;
+        case 2:
+          dataStorage.pvW.push(receiveNumData);
+          break;
+        default:
+          dataStorage.operIsRun.push(receiveNumData);
+          break;
       }
-
-      return dataStorage;
-    } catch (error) {
-      throw error;
+    } else if (_.findIndex(STATUS_POWER, buf => _.isEqual(buf, requestData)) >= 0) {
+      dataStorage.operIsRun.push(receiveNumData);
     }
+
+    return dataStorage;
   }
 }
 module.exports = Converter;
@@ -111,7 +107,9 @@ if (require !== undefined && require.main === module) {
   );
 
   BU.CLI(cmdStatusPower.map(info => _.toString(info.data)));
-  const cmdWakeUp = converter.designationCommand(converter.model.device.DEFAULT.COMMAND.WAKEUP);
+  const cmdWakeUp = converter.designationCommand(
+    converter.model.device.DEFAULT.COMMAND.WAKEUP,
+  );
   BU.CLI(cmdWakeUp.map(info => _.toString(info.data)));
   const cmdStatus = converter.generationCommand({ key: 'DEFAULT', value: 2 });
   BU.CLI(cmdStatus);

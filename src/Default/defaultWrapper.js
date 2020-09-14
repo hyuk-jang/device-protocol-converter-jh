@@ -35,7 +35,10 @@ const defaultWrapper = {
     if (_.get(protocolInfo, 'wrapperCategory', undefined) !== undefined) {
       protocolConverter.setCurrTransferCmd(
         dcData,
-        defaultWrapper.peelFrameMsg(protocolInfo, protocolConverter.getCurrTransferCmd(dcData)),
+        defaultWrapper.peelFrameMsg(
+          protocolInfo,
+          protocolConverter.getCurrTransferCmd(dcData),
+        ),
       );
       _.set(dcData, 'data', defaultWrapper.peelFrameMsg(protocolInfo, dcData.data));
     }

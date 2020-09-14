@@ -71,7 +71,15 @@ class Model extends BaseModel {
     const dataBody = Buffer.concat([this.dialing, cmd, addr, dataLen]);
     const checkSum = this.protocolConverter.getBufferChecksum(dataBody, 4);
 
-    return Buffer.concat([this.ENQ, this.dialing, cmd, addr, dataLen, checkSum, this.EOT]);
+    return Buffer.concat([
+      this.ENQ,
+      this.dialing,
+      cmd,
+      addr,
+      dataLen,
+      checkSum,
+      this.EOT,
+    ]);
   }
 
   /**
@@ -81,25 +89,20 @@ class Model extends BaseModel {
    */
   getValidateData(responseBuf, decodingInfo) {
     // BU.CLI(responseBuf.toString(), decodingInfo);
-    try {
-      const ACK = Buffer.from([_.nth(responseBuf, 0)]);
+    const ACK = Buffer.from([_.nth(responseBuf, 0)]);
 
-      if (!_.isEqual(ACK, this.ACK)) {
-        throw new Error(`Not Matching ACK\n expect: ${this.SOP}\t res: ${ACK}`);
-      }
-
-      // 실제 장치 데이터를 담은 Buffer 생성
-      let dataBodyBuf = responseBuf.slice(8, responseBuf.length - 5);
-
-      // 구분자 제거
-      dataBodyBuf = this.protocolConverter.returnBufferExceptDelimiter(dataBodyBuf, ',');
-      // BU.CLI(dataBodyBuf);
-
-      return dataBodyBuf;
-    } catch (error) {
-      // BU.CLI('Error');
-      throw error;
+    if (!_.isEqual(ACK, this.ACK)) {
+      throw new Error(`Not Matching ACK\n expect: ${this.SOP}\t res: ${ACK}`);
     }
+
+    // 실제 장치 데이터를 담은 Buffer 생성
+    let dataBodyBuf = responseBuf.slice(8, responseBuf.length - 5);
+
+    // 구분자 제거
+    dataBodyBuf = this.protocolConverter.returnBufferExceptDelimiter(dataBodyBuf, ',');
+    // BU.CLI(dataBodyBuf);
+
+    return dataBodyBuf;
   }
 
   static get CALC_KEY() {

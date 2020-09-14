@@ -44,8 +44,6 @@ class BaseModel extends AbstBaseModel {
           CLOSE: 'CLOSE',
         },
         COMMAND: {
-          OPEN: [],
-          CLOSE: [],
           STATUS: [],
         },
       },
@@ -57,8 +55,6 @@ class BaseModel extends AbstBaseModel {
           OFF: 'OFF',
         },
         COMMAND: {
-          ON: [],
-          OFF: [],
           STATUS: [],
         },
       },

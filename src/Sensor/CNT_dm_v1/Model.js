@@ -24,7 +24,9 @@ class Model extends BaseModel {
    */
   makeMsg() {
     const cmd = Buffer.from('R');
-    const crcCode = this.makeCrcCode(Buffer.concat([this.STX, cmd, this.dialing, this.ETX]));
+    const crcCode = this.makeCrcCode(
+      Buffer.concat([this.STX, cmd, this.dialing, this.ETX]),
+    );
 
     return Buffer.concat([this.STX, cmd, this.dialing, this.ETX, crcCode, this.EOT]);
   }

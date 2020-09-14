@@ -76,7 +76,8 @@ class Converter {
    */
   pad(n, width) {
     n += '';
-    let returnValue = n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
+    let returnValue =
+      n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
 
     if (width < returnValue.length) {
       const sliceLength = returnValue.length - width;
@@ -460,7 +461,9 @@ class Converter {
       : this.makeMsg2Buffer(buffer).toString();
 
     delimiter.forEach(del => {
-      const strDel = Buffer.isBuffer(del) ? del.toString() : this.makeMsg2Buffer(del).toString();
+      const strDel = Buffer.isBuffer(del)
+        ? del.toString()
+        : this.makeMsg2Buffer(del).toString();
       const rep = new RegExp(strDel, 'g');
       strBuf = strBuf.replace(rep, '');
     });
@@ -563,7 +566,9 @@ class Converter {
    */
   applyValueCalculateScale(value, scale, toFixed) {
     return typeof value === 'number'
-      ? Number((parseFloat(value) * scale).toFixed(typeof toFixed === 'number' ? toFixed : 1))
+      ? Number(
+          (parseFloat(value) * scale).toFixed(typeof toFixed === 'number' ? toFixed : 1),
+        )
       : value;
   }
 
@@ -613,7 +618,10 @@ class Converter {
    * @param {dcData} dcData
    */
   getCurrTransferCmd(dcData) {
-    return _.get(_.nth(dcData.commandSet.cmdList, dcData.commandSet.currCmdIndex), 'data');
+    return _.get(
+      _.nth(dcData.commandSet.cmdList, dcData.commandSet.currCmdIndex),
+      'data',
+    );
   }
 
   /**

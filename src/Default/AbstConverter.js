@@ -51,17 +51,17 @@ class AbstConverter {
   /**
    * 명령을 보낼 배열을 생성
    * @param {Array.<*>} cmdDataList 실제 수행할 명령
-   * @param {number=} commandExecutionTimeoutMs 해당 전송 후 명령 완료 처리될때까지 대기 시간 (ms)
-   * @param {number=} delayExecutionTimeoutMs 해당 명령을 수행하기 전 timeout 대기 시간(ms)
+   * @param {number=} executeTimeoutMs 해당 전송 후 명령 완료 처리될때까지 대기 시간 (ms)
+   * @param {number=} delayTimeoutMs 해당 명령을 수행하기 전 timeout 대기 시간(ms)
    * @return {Array.<commandInfo>}
    */
-  makeDefaultCommandInfo(cmdDataList, commandExecutionTimeoutMs = 1000, delayExecutionTimeoutMs) {
+  makeDefaultCommandInfo(cmdDataList, executeTimeoutMs = 1000, delayTimeoutMs) {
     /** @type {Array.<commandInfo>} */
     const returnValue = [];
 
     // wrapCategory를 사용한다면 중계기를 거치므로 각 1초를 추가로 할애
     if (_.get(this.protocolInfo, 'wrapperCategory', '').length) {
-      commandExecutionTimeoutMs += 1000;
+      executeTimeoutMs += 1000;
     }
 
     cmdDataList = Array.isArray(cmdDataList) ? cmdDataList : [cmdDataList];
@@ -70,8 +70,8 @@ class AbstConverter {
       /** @type {commandInfo} */
       const command = {
         data: this.coverFrame(bufData),
-        commandExecutionTimeoutMs,
-        delayExecutionTimeoutMs,
+        commandExecutionTimeoutMs: executeTimeoutMs,
+        delayExecutionTimeoutMs: delayTimeoutMs,
       };
 
       returnValue.push(command);
@@ -118,11 +118,9 @@ class AbstConverter {
    * dcData에서 현재 요청한 명령을 가져옴
    * @param {dcData} dcData
    */
-  getCurrTransferCmd(dcData) {
-    return _.get(
-      _.nth(_.get(dcData, 'commandSet.cmdList'), _.get(dcData, 'commandSet.currCmdIndex')),
-      'data',
-    );
+  getCurrTransferCmd(dcData = {}) {
+    const { commandSet: { cmdList = [], currCmdIndex = 0 } = {} } = dcData;
+    return _.get(_.nth(cmdList, currCmdIndex), 'data');
   }
 
   /**
@@ -132,54 +130,34 @@ class AbstConverter {
    * @param {generationInfo} generationInfo 각 Protocol Converter에 맞는 데이터
    */
   defaultGenCMD(generationInfo = {}) {
-    const { TRUE, FALSE, MEASURE, SET } = reqDeviceControlType;
+    const { MEASURE } = reqDeviceControlType;
     const { key = 'DEFAULT', value = MEASURE, setValue, nodeInfo } = generationInfo;
 
     /** @type {baseModelDeviceStructure} */
-    const foundIt = _.find(this.model.device, deviceModel =>
+    const baseModel = _.find(this.model.device, deviceModel =>
       _.isEqual(_.get(deviceModel, 'KEY'), key),
     );
 
-    if (_.isEmpty(foundIt)) {
+    if (_.isEmpty(baseModel)) {
       throw new Error(`${key}는 존재하지 않습니다.`);
     }
 
-    const commandInfo = _.get(foundIt, 'COMMAND', {});
+    const commandInfo = _.get(baseModel, 'COMMAND', {});
 
-    let command;
+    // value가 MEASURE라면 STATUS 요청
+    // SingleControlValue 값에 따라 명령 호출
+    const command = value === MEASURE ? commandInfo.STATUS : commandInfo[value];
 
-    // 컨트롤 밸류가 0이나 False라면 장치 작동을 Close, Off
-    if (value === FALSE) {
-      if (_.keys(commandInfo).includes('CLOSE')) {
-        command = commandInfo.CLOSE;
-      } else if (_.keys(commandInfo).includes('OFF')) {
-        command = commandInfo.OFF;
-      }
-    } else if (value === TRUE) {
-      if (_.keys(commandInfo).includes('OPEN')) {
-        command = commandInfo.OPEN;
-      } else if (_.keys(commandInfo).includes('ON')) {
-        command = commandInfo.ON;
-      }
-    } else if (value === MEASURE) {
-      if (_.keys(commandInfo).includes('STATUS')) {
-        command = commandInfo.STATUS;
-      }
-    } else if (value === SET) {
-      // Set 은 메소드로 이루어져 있어야하며 set 값을 반영한 결과를 돌려줌
-      if (_.keys(commandInfo).includes('SET')) {
-        command = commandInfo.SET(setValue);
-      }
-    } else {
+    if (command === undefined) {
       throw new Error(`singleControlType: ${value}는 유효한 값이 아닙니다.`);
     }
+    // 명령식 Function 일 경우 parametor로 노드 정보와 설정 값을 넘겨줌
+    const resultCommand =
+      command instanceof Function ? command(nodeInfo, setValue) : command;
 
-    command = command instanceof Function ? command(nodeInfo) : command;
+    // console.log(resultCommand);
 
-    if (command === undefined || _.isEmpty(command)) {
-      throw new Error(`${key}에는 Value: ${value} 존재하지 않습니다.`);
-    }
-    return command;
+    return resultCommand;
   }
 
   /**
