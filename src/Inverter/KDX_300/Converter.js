@@ -31,18 +31,13 @@ class Converter extends ModbusRtuConverter {
 
     /** @type {decodingProtocolInfo} */
     let decodingTable;
-    // NOTE: 모듈 후면 온도, 경사 일사량이 붙어 있는 로거
-    const resetDataUnitList = [45];
-    // 장치 addr
-    const numDeviceId = this.protocolInfo.deviceId;
 
-    if (_.includes(resetDataUnitList, numDeviceId)) {
+    // 장치 addr
+    if (registerAddr === 45) {
       decodingTable = this.decodingTable.RESET_DATA_UNIT;
     } else {
       decodingTable = this.decodingTable.DEFAULT;
     }
-    // 요청 시작 주소를 가져옴 (실제 시작하는 주소 세팅)
-    decodingTable.address = registerAddr;
 
     // FIXME: 실제 현장에서의 간헐적인 00000000000000 데이터 처리를 위함. 해당 데이터는 사용하지 않음
     if (_.every(dataBody, v => _.isEqual(v, Buffer.alloc(1, 0)))) {
@@ -98,8 +93,11 @@ if (require !== undefined && require.main === module) {
     // '024908043c091d0000091d091d000000000100000000000253000000000253003f00000000003f025600000000025603e10000000003e11770001bb61d0000000057ff03',
 
     // '02490104041020212126c6ff03',
+    // '02490104041020212126c603',
+    // '024901043c090e0000090e090e0000000003720000000000cb0000000000cb001900000000001900cc0000000000cc03e00000000003e017730000306300000001b09a03',
+
     '02490104041020212126c603',
-    '024901043c090e0000090e090e0000000003720000000000cb0000000000cb001900000000001900cc0000000000cc03e00000000003e017730000306300000001b09a03',
+    '024901043c090800000909090900000000044a0000000000fc0000000000fc001d00000000001d00fe0000000000fe03e20000000003e217710000c78000000002e1fa03',
   ];
 
   dataList.forEach((d, index) => {

@@ -108,7 +108,7 @@ const decodingProtocolTable = dialing => {
   /** @type {decodingProtocolInfo} */
   const RESET_DATA_UNIT = {
     dialing,
-    address: 45,
+    address: 0,
     decodingDataList: [
       // 선간전압 V12, V23, V31
       {
@@ -178,11 +178,11 @@ const onDeviceOperationStatus = {
 
       const unitScaleTable = {
         // V, A, W, Wh
-        '0': 1,
+        0: 1,
         // KV, KA, KW, KWh
-        '1': 1000,
+        1: 1000,
         // MV, MA, MW, MWh
-        '2': 10000000,
+        2: 10000000,
       };
 
       resetKeyList[index].forEach(resetKey => {
