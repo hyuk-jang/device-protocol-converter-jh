@@ -6,7 +6,7 @@ const { parsingMethod } = require('../../format/moduleDefine');
 const { BASE_KEY: BK } = Model;
 
 const {
-  device: { SHUTTER, PUMP },
+  device: { SHUTTER, PUMP, VALVE },
 } = new Model();
 
 const onDeviceOperationStatus = {
@@ -16,6 +16,13 @@ const onDeviceOperationStatus = {
     0: PUMP.STATUS.OFF,
     /** @type {number} 켜짐 */
     1: PUMP.STATUS.ON,
+  },
+  /** @type {Object} 펌프 */
+  VALVE: {
+    /** @type {number} 꺼짐 */
+    0: VALVE.STATUS.CLOSE,
+    /** @type {number} 켜짐 */
+    1: VALVE.STATUS.OPEN,
   },
   /** @type {Object} 개폐기 */
   [SHUTTER.KEY]: {
@@ -45,10 +52,20 @@ exports.decodingProtocolTable = dialing => {
         key: BK.pump,
       },
       {
-        key: BK.pump,
+        key: BK.nutrientValve,
+        decodingKey: 'VALVE',
       },
       {
-        key: BK.pump,
+        key: BK.nutrientValve,
+        decodingKey: 'VALVE',
+      },
+      {
+        key: BK.wateringValve,
+        decodingKey: 'VALVE',
+      },
+      {
+        key: BK.wateringValve,
+        decodingKey: 'VALVE',
       },
     ],
   };

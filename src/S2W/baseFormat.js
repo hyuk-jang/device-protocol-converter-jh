@@ -18,6 +18,16 @@ module.exports = {
    */
   pump: [],
   /**
+   * 양액 밸브
+   * @type {number[]=} Open, Close
+   */
+  nutrientValve: [],
+  /**
+   * 관수 밸브
+   * @type {number[]=} Open, Close
+   */
+  wateringValve: [],
+  /**
    * 펌프 제어타입
    * @type {string[]=} Manual, Auto
    */

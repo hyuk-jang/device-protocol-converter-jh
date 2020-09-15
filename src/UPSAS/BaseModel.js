@@ -10,7 +10,7 @@ class BaseModel extends AbstBaseModel {
     super();
     this.baseFormat = _.clone(baseFormat);
 
-    const baseKey = Object.assign({}, baseFormat);
+    const baseKey = { ...baseFormat };
     _.forEach(baseKey, (v, k) => _.set(baseKey, k, k));
 
     this.device = {

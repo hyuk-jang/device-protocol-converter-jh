@@ -134,9 +134,11 @@ class AbstConverter {
     const { key = 'DEFAULT', value = MEASURE, setValue, nodeInfo } = generationInfo;
 
     /** @type {baseModelDeviceStructure} */
-    const baseModel = _.find(this.model.device, deviceModel =>
-      _.isEqual(_.get(deviceModel, 'KEY'), key),
-    );
+    const baseModel = _.find(this.model.device, deviceModel => {
+      const nodeDefId = _.get(deviceModel, 'KEY');
+
+      return Array.isArray(nodeDefId) ? _.includes(nodeDefId, key) : nodeDefId === key;
+    });
 
     if (_.isEmpty(baseModel)) {
       throw new Error(`${key}는 존재하지 않습니다.`);

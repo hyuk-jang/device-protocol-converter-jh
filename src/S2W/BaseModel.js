@@ -58,6 +58,17 @@ class BaseModel extends AbstBaseModel {
           STATUS: [],
         },
       },
+      VALVE: {
+        KEY: [baseKey.nutrientValve, baseKey.wateringValve],
+        NAME: '밸브',
+        STATUS: {
+          OPEN: 'OPEN',
+          CLOSE: 'CLOSE',
+        },
+        COMMAND: {
+          STATUS: [],
+        },
+      },
 
       // Sensor
       SOIL_TEMPERATURE: {
