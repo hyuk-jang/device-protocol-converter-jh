@@ -5,14 +5,8 @@ const Model = require('./Model');
 const protocol = require('./protocol');
 
 const AbstConverter = require('../../Default/AbstConverter');
-// const XbeeConverter = require('../../Default/Converter/XbeeConverter');
+const XbeeConverter = require('../../Default/Converter/XbeeConverter');
 const { protocolConverter } = require('../../Default/DefaultModel');
-
-const {
-  di: {
-    dcmConfigModel: { reqDeviceControlType },
-  },
-} = require('../../module');
 
 class Converter extends AbstConverter {
   /** @param {protocol_info} protocolInfo */
@@ -26,46 +20,20 @@ class Converter extends AbstConverter {
   }
 
   /**
-   * 장치를 조회 및 제어하기 위한 명령 생성.
-   * cmd가 있다면 cmd에 맞는 특정 명령을 생성하고 아니라면 기본 명령을 생성
-   * @param {generationInfo} generationInfo 각 Protocol Converter에 맞는 데이터
-   * @return {commandInfo[]} 장치를 조회하기 위한 명령 리스트 반환
+   * Zigbee Receive Packet
+   * @param {Buffer} zigbeeReceivePacket Zigbee Receive Packet 프로토콜에 맞는 데이터
    */
-  generationCommand(generationInfo) {
-    const { MEASURE } = reqDeviceControlType;
-    const { key = 'DEFAULT', value = MEASURE } = generationInfo;
-    const { deviceId } = this.protocolInfo;
+  refineZigbeeReceivePacket(zigbeeReceivePacket) {
+    const specData = super.refineZigbeeReceivePacket(zigbeeReceivePacket);
 
-    let cmdList;
-    // 일반 계측일 경우
-    if (key === 'DEFAULT' && value === MEASURE) {
-      if (deviceId === '0013A2004190ED67') {
-        cmdList = this.model.device.SHUTTER.COMMAND.STATUS;
-      } else if (deviceId === '0013A2004190EDB7') {
-        cmdList = this.model.device.PUMP.COMMAND.STATUS;
-      }
-    } else {
-      cmdList = this.defaultGenCMD(generationInfo);
-    }
-    // BU.CLI(generationInfo);
-    // BU.CLI(cmdList);
-    return this.makeAutoGenerationCommand(cmdList);
-  }
-
-  /**
-   * 데이터 분석 요청
-   * @param {Buffer} deviceData 장치로 요청한 명령
-   * @param {Buffer} currTransferCmd 현재 요청한 명령
-   */
-  concreteParsingData(deviceData, currTransferCmd) {
     // STX 체크 (# 문자 동일 체크)
-    const STX = _.nth(deviceData, 0);
+    const STX = _.nth(specData, 0);
     if (STX !== 0x23) {
       throw new Error('STX가 일치하지 않습니다.');
     }
 
-    const productType = deviceData.slice(5, 9).toString();
-    const dataBody = deviceData.slice(9);
+    const productType = specData.slice(5, 9).toString();
+    const dataBody = specData.slice(9);
 
     let decodingDataList;
     switch (productType) {

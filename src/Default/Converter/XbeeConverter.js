@@ -70,6 +70,54 @@ module.exports = class extends AbstConverter {
   }
 
   /**
+   * 장치를 조회 및 제어하기 위한 명령 생성.
+   * cmd가 있다면 cmd에 맞는 특정 명령을 생성하고 아니라면 기본 명령을 생성
+   * @param {generationInfo} generationInfo 각 Protocol Converter에 맞는 데이터
+   * @return {Array.<commandInfo>} 장치를 조회하기 위한 명령 리스트 반환
+   */
+  generationCmdAT(generationInfo) {
+    /** @type {Array.<commandInfoModel>} */
+    const cmdList = this.defaultGenCMD(generationInfo);
+
+    const returnBufferList = cmdList.map(cmdInfo => {
+      const { cmd } = cmdInfo;
+
+      const bufBody = Buffer.concat([
+        // Frame Type
+        Buffer.from('10', 'hex'),
+        // Frame ID
+        Buffer.from('01', 'hex'),
+        // 64-bit Destination Address
+        this.protocolInfo.deviceId,
+        // 16-bit Destination Network Address(2byte),
+        Buffer.from('FFFE', 'hex'),
+        // Broadcast Radius
+        Buffer.from('00', 'hex'),
+        // Options
+        Buffer.from('00', 'hex'),
+        // RF Data
+        Buffer.from(cmd),
+      ]);
+
+      const frameLength = Buffer.alloc(2, 0);
+      frameLength.writeUInt16BE(bufBody.length);
+
+      const bufHeader = Buffer.concat([
+        // Start Delimiter
+        Buffer.from('7E', 'hex'),
+        // Length(2byte),
+        frameLength,
+      ]);
+
+      const checkSum = this.protocolConverter.getDigiChecksum(bufBody);
+
+      return Buffer.concat([bufHeader, bufBody, checkSum]);
+    });
+
+    return this.makeAutoGenerationCommand(returnBufferList);
+  }
+
+  /**
    * 데이터 분석 요청
    * @param {Buffer} deviceData 응답받은 데이터
    * @param {Buffer} currTransferCmd 현재 요청한 명령

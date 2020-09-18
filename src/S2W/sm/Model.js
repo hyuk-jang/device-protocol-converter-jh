@@ -32,14 +32,14 @@ class Model extends BaseModel {
 
     this.device.SHUTTER.COMMAND.STATUS = [
       {
-        cmd: '@sts',
+        cmd: '@srs',
       },
     ];
     // On
     this.device.PUMP.COMMAND[1] = nodeInfo => {
       return [
         {
-          cmd: `@cro${this.convertNodeNumber(nodeInfo)}`,
+          cmd: `@cpo${this.convertNodeNumber(nodeInfo)}`,
         },
       ];
     };
@@ -47,7 +47,7 @@ class Model extends BaseModel {
     this.device.PUMP.COMMAND[0] = nodeInfo => {
       return [
         {
-          cmd: `@crc${this.convertNodeNumber(nodeInfo)}`,
+          cmd: `@cpc${this.convertNodeNumber(nodeInfo)}`,
         },
       ];
     };
@@ -62,7 +62,7 @@ class Model extends BaseModel {
     this.device.VALVE.COMMAND[1] = nodeInfo => {
       return [
         {
-          cmd: `@cro${this.convertNodeNumber(nodeInfo)}`,
+          cmd: `@cpo${this.convertNodeNumber(nodeInfo)}`,
         },
       ];
     };
@@ -70,7 +70,7 @@ class Model extends BaseModel {
     this.device.VALVE.COMMAND[0] = nodeInfo => {
       return [
         {
-          cmd: `@crc${this.convertNodeNumber(nodeInfo)}`,
+          cmd: `@cpc${this.convertNodeNumber(nodeInfo)}`,
         },
       ];
     };
