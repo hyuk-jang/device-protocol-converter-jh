@@ -59,7 +59,9 @@ class Converter extends AbstConverter {
    */
   concreteParsingData(deviceData, currTransferCmd) {
     // STX 체크 (# 문자 동일 체크)
+    BU.CLI(deviceData);
     const STX = _.nth(deviceData, 0);
+    BU.CLI(STX);
     if (STX !== 0x23) {
       throw new Error('STX가 일치하지 않습니다.');
     }
@@ -104,55 +106,14 @@ if (require !== undefined && require.main === module) {
   });
 
   const cmdInfo = converter.generationCommand({
-    key: 'shutter',
+    // key: 'shutter',
     value: 2,
     nodeInfo: {
       data_logger_index: 4,
     },
   });
 
-  console.log(cmdInfo);
-
-  const dataList = [
-    `
-    #0001
-    0012
-    10.2
-    M
-    01001000
-    11111111
-    `,
-  ].map(specData => {
-    const realSpecData = protocolConverter.convertToHex(
-      BU.replaceAll(specData, '\n', '').replace(/ /g, ''),
-    );
-
-    return `
-    7e
-    00${_.padStart((realSpecData.length / 2 + 12).toString(16), 2, '0')}
-
-    90
-
-    ${deviceId}
-
-    FFFE
-
-    01
-    ${realSpecData}
-    `;
-  });
-
-  dataList.forEach(d => {
-    const buffer = Buffer.from(BU.replaceAll(d, '\n', '').replace(/ /g, ''), 'hex');
-    const realBuffer = Buffer.concat([
-      buffer,
-      converter.protocolConverter.getDigiChecksum(buffer.slice(3)),
-    ]);
-
-    // BU.CLI(realBuffer);
-    const dataMap = converter.concreteParsingData(realBuffer);
-    // console.log(dataMap);
-  });
+  // console.log(cmdInfo);
 
   const testReqMsg = '02497e001210010013a2004190ed67fffe0000407374737d03';
   const realTestReqMsg = Buffer.from(testReqMsg.slice(4, testReqMsg.length - 2), 'hex');
@@ -166,7 +127,6 @@ if (require !== undefined && require.main === module) {
     const realBuffer = Buffer.from(d.slice(4, d.length - 2), 'hex');
     // BU.CLI(realBuffer);
 
-    converter.protocolInfo.deviceId = Buffer.from('0013a2004190ed67', 'hex');
     const dataMap = converter.concreteParsingData(realBuffer, realTestReqMsg);
     console.log(dataMap);
   });

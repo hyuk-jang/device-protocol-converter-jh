@@ -8,78 +8,38 @@ class Model extends BaseModel {
   constructor() {
     super();
 
-    this.device.DEFAULT.COMMAND.STATUS = [
-      {
-        cmd: '@sts',
-      },
-    ];
+    this.device.DEFAULT.COMMAND.STATUS = ['@sts'];
     // Open
     this.device.SHUTTER.COMMAND[1] = nodeInfo => {
-      return [
-        {
-          cmd: `@cro${this.convertNodeNumber(nodeInfo)}`,
-        },
-      ];
+      return [`@cro${this.convertNodeNumber(nodeInfo)}`];
     };
     // Close
     this.device.SHUTTER.COMMAND[0] = nodeInfo => {
-      return [
-        {
-          cmd: `@crc${this.convertNodeNumber(nodeInfo)}`,
-        },
-      ];
+      return [`@crc${this.convertNodeNumber(nodeInfo)}`];
     };
 
-    this.device.SHUTTER.COMMAND.STATUS = [
-      {
-        cmd: '@srs',
-      },
-    ];
+    this.device.SHUTTER.COMMAND.STATUS = ['@srs'];
     // On
     this.device.PUMP.COMMAND[1] = nodeInfo => {
-      return [
-        {
-          cmd: `@cpo${this.convertNodeNumber(nodeInfo)}`,
-        },
-      ];
+      return [`@cpo${this.convertNodeNumber(nodeInfo)}`];
     };
     // Off
     this.device.PUMP.COMMAND[0] = nodeInfo => {
-      return [
-        {
-          cmd: `@cpc${this.convertNodeNumber(nodeInfo)}`,
-        },
-      ];
+      return [`@cpc${this.convertNodeNumber(nodeInfo)}`];
     };
 
-    this.device.PUMP.COMMAND.STATUS = [
-      {
-        cmd: '@sts',
-      },
-    ];
+    this.device.PUMP.COMMAND.STATUS = ['@sts'];
 
     // Open
     this.device.VALVE.COMMAND[1] = nodeInfo => {
-      return [
-        {
-          cmd: `@cpo${this.convertNodeNumber(nodeInfo)}`,
-        },
-      ];
+      return [`@cpo${this.convertNodeNumber(nodeInfo)}`];
     };
     // Close
     this.device.VALVE.COMMAND[0] = nodeInfo => {
-      return [
-        {
-          cmd: `@cpc${this.convertNodeNumber(nodeInfo)}`,
-        },
-      ];
+      return [`@cpc${this.convertNodeNumber(nodeInfo)}`];
     };
 
-    this.device.VALVE.COMMAND.STATUS = [
-      {
-        cmd: '@sts',
-      },
-    ];
+    this.device.VALVE.COMMAND.STATUS = ['@sts'];
   }
 
   /**
