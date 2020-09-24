@@ -20,16 +20,16 @@ const onDeviceOperationStatus = {
   /** @type {Object} 펌프 */
   VALVE: {
     /** @type {number} 꺼짐 */
-    1: VALVE.STATUS.CLOSE,
+    0: VALVE.STATUS.CLOSE,
     /** @type {number} 켜짐 */
-    0: VALVE.STATUS.OPEN,
+    1: VALVE.STATUS.OPEN,
   },
   /** @type {Object} 개폐기 */
   [SHUTTER.KEY]: {
     /** @type {number} 닫힘 */
-    1: SHUTTER.STATUS.CLOSE,
+    0: SHUTTER.STATUS.CLOSE,
     /** @type {number} 펼침 */
-    0: SHUTTER.STATUS.OPEN,
+    1: SHUTTER.STATUS.OPEN,
   },
 };
 exports.onDeviceOperationStatus = onDeviceOperationStatus;

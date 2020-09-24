@@ -59,9 +59,9 @@ class Converter extends AbstConverter {
    */
   concreteParsingData(deviceData, currTransferCmd) {
     // STX 체크 (# 문자 동일 체크)
-    BU.CLI(deviceData);
+    // BU.CLI(deviceData);
     const STX = _.nth(deviceData, 0);
-    BU.CLI(STX);
+    // BU.CLI(STX);
     if (STX !== 0x23) {
       throw new Error('STX가 일치하지 않습니다.');
     }
@@ -113,13 +113,13 @@ if (require !== undefined && require.main === module) {
     },
   });
 
-  // console.log(cmdInfo);
+  console.log(cmdInfo);
 
   const testReqMsg = '02497e001210010013a2004190ed67fffe0000407374737d03';
   const realTestReqMsg = Buffer.from(testReqMsg.slice(4, testReqMsg.length - 2), 'hex');
 
   const onDataList = [
-    '024923303030313030313231322e304d3131313131313131313131313131313103',
+    '024923303030313030313231322e304d3030303030303030313131313131313103',
     // '02537e002a900013a2004190ed67fffe0123303030313030313231302e324131313131303131313131303131303031e203',
   ];
 
