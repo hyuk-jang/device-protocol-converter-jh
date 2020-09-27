@@ -133,7 +133,7 @@ class AbstConverter {
     const { MEASURE } = reqDeviceControlType;
     const { key = 'DEFAULT', value = MEASURE, setValue, nodeInfo } = generationInfo;
 
-    /** @type {baseModelDeviceStructure} */
+    /** @type {baseModelDeviceStructure} device(Project Model) 에서 ndId와 일치하는 장치 모델을 가져옴   */
     const baseModel = _.find(this.model.device, deviceModel => {
       const nodeDefId = _.get(deviceModel, 'KEY');
 
@@ -143,7 +143,7 @@ class AbstConverter {
     if (_.isEmpty(baseModel)) {
       throw new Error(`${key}는 존재하지 않습니다.`);
     }
-
+    // 해당 프로젝트 모델에서 제시하는 장치 별 명령 객체 정보를 가져옴
     const commandInfo = _.get(baseModel, 'COMMAND', {});
 
     // value가 MEASURE라면 STATUS 요청
@@ -178,9 +178,10 @@ class AbstConverter {
   /**
    * 데이터 분석 요청
    * @param {dcData} dcData 장치로 요청한 명령
+   * @param {nodeInfo[]} nodeList 장치로 요청한 명령
    * @return {parsingResultFormat}
    */
-  parsingUpdateData(dcData) {
+  parsingUpdateData(dcData, nodeList) {
     const returnValue = {};
     const { DONE, ERROR, WAIT, RETRY } = definedCommanderResponse;
     try {
@@ -196,6 +197,7 @@ class AbstConverter {
       returnValue.data = this.concreteParsingData(
         this.peelFrame(dcData.data),
         this.peelFrame(this.getCurrTransferCmd(dcData)),
+        nodeList,
       );
       returnValue.eventCode = DONE;
 

@@ -88,6 +88,23 @@ class Converter {
   }
 
   /**
+   * '+12.12-12.12' >> [12.12, -12.12]
+   * @param {string|Buffer} data 변화할려는 데이터
+   * @param {number} sliceLength 자를려는 길이
+   * @param {number=} toFixed
+   */
+  convertArrayNumber(data, sliceLength, toFixed) {
+    // BU.CLIS(data, sliceLength, toFixed);
+    if (Buffer.isBuffer(data)) {
+      data = data.toString();
+    }
+
+    return data.match(new RegExp(`.{1,${sliceLength}}`, 'g')).map(strData => {
+      return typeof toFixed === 'number' ? _.round(strData, toFixed) : Number(strData);
+    });
+  }
+
+  /**
    * Buffer 시작값이 0인경우 없앰
    * @param {Buffer} buffer
    */

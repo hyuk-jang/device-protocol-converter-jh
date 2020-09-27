@@ -1,5 +1,7 @@
-import AbstBaseModel from 'module./src/Default/AbstBaseModel';
+import AbstBaseModel from './src/Default/AbstBaseModel';
+import AbstConverter from './src/Default/AbstConverter';
 
 declare global {
   const AbstBaseModel: AbstBaseModel;
+  const AbstConverter: AbstConverter;
 }

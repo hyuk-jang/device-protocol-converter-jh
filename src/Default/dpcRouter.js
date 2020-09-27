@@ -49,6 +49,21 @@ module.exports = protocolInfo => {
           break;
       }
       break;
+    case 'NI':
+      baseFormat = require('../NI/baseFormat');
+      switch (subCategory) {
+        case '9201':
+          Converter = require('../NI/9201/Converter');
+          Model = require('../NI/9201/Model');
+          break;
+        case '9482':
+          Converter = require('../NI/9482/Converter');
+          Model = require('../NI/9482/Model');
+          break;
+        default:
+          break;
+      }
+      break;
     case 'S2W':
       baseFormat = require('../S2W/baseFormat');
       switch (subCategory) {
