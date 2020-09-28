@@ -48,15 +48,20 @@ class Converter extends cDaqConverter {
       const dataModel = { ...baseFormat };
       // 데이터 목록을 순회하면서 채널(data_index)과 일치하는 Node를 찾고 Model에 데이터를 정제하여 정의
       currDataList.forEach((vol, ch) => {
-        const {
-          nd_target_id: ndId,
-          data_logger_index: dlIndex = 0,
-          node_type: nType,
-        } = _.find(nodeList, {
+        const nodeInfo = _.find(nodeList, {
           data_index: ch,
         });
-        // 데이터를 변환은 Node Define Id를 기준으로 수행하여 Data Logger Index와 일치하는 배열 인덱스에 정의
-        dataModel[ndId][dlIndex] = this.onDeviceOperationStatus[nType](vol, toFixed);
+
+        // 노드가 존재한다면 입력
+        if (nodeInfo) {
+          const {
+            nd_target_id: ndId,
+            data_logger_index: dlIndex = 0,
+            node_type: nType,
+          } = nodeInfo;
+          // 데이터를 변환은 Node Define Id를 기준으로 수행하여 Data Logger Index와 일치하는 배열 인덱스에 정의
+          dataModel[ndId][dlIndex] = this.onDeviceOperationStatus[nType](vol, toFixed);
+        }
       });
 
       return dataModel;
@@ -69,16 +74,15 @@ class Converter extends cDaqConverter {
 module.exports = Converter;
 
 if (require !== undefined && require.main === module) {
-  // const deviceId = '0013A2004190ED67';
-  const deviceId = '01EE8DE7';
-  const slotId = '01EED6EF';
+  // Slot Serial
+  const deviceId = '01EED6EF';
+  //   cDaq Serial
+  const subDeviceId = '01EE8DE7';
   const converter = new Converter({
     mainCategory: 'NI',
     subCategory: '9201',
     deviceId,
-    option: {
-      ni: { slotId },
-    },
+    subDeviceId,
   });
 
   const cmdInfo = converter.generationCommand({
@@ -141,6 +145,13 @@ if (require !== undefined && require.main === module) {
       data_logger_index: 6,
       node_type: 'PXM309',
     },
+    // {
+    //   node_id: 'p_008',
+    //   nd_target_id: 'absPressure',
+    //   data_index: 7,
+    //   data_logger_index: 7,
+    //   node_type: 'PXM309',
+    // },
   ];
 
   console.log(cmdInfo);
@@ -150,16 +161,20 @@ if (require !== undefined && require.main === module) {
 
   const onDataList = [
     // sendFrame: #(A) + cDaqSerial(B[4]) + modelType(A) + slotSerial(B[4]) + dataBody(B) + checksum(B) + EOT(B)
-    Buffer.concat([
-      Buffer.from('#'),
-      converter.cDaqSerial,
-      converter.cDaqSlotType,
-      converter.cDaqSlotSerial,
-      Buffer.from('+0.123+0.333+0.666-0.999+2.222+3.333+11.11'),
-      Buffer.from('0b', 'hex'),
-      converter.protocolConverter.EOT,
-    ]),
-    // '02537e002a900013a2004190ed67fffe0123303030313030313231302e324131313131303131313131303131303031e203',
+    // Buffer.concat([
+    //   Buffer.from(
+    //     `#${converter.cDaqSerial}${converter.cDaqSlotType}${converter.cDaqSlotSerial}`,
+    //   ),
+    //   //   converter.cDaqSerial,
+    //   //   converter.cDaqSlotType,
+    //   //   converter.cDaqSlotSerial,
+    //   Buffer.from('+0.123+0.333+0.666-0.999+2.222+3.333+11.11'),
+    //   Buffer.from('c7', 'hex'),
+    //   converter.protocolConverter.EOT,
+    // ]),
+    `#01EE8DE7920101EED6EF+00.08+00.01+00.01+00.00+00.00+00.00+00.00+00.00${Buffer.from([
+      0x94,
+    ])}\u0004`,
   ];
 
   onDataList.forEach(d => {

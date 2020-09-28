@@ -38,28 +38,36 @@ class Converter extends cDaqConverter {
     try {
       // '00' ~ '15'
       const data = super.concreteParsingData(deviceData, currTransferCmd, nodeList);
+      //   BU.CLI(data);
       // '12' >> [0, 0, 1, 1] 변환
       this.currDataList = this.protocolConverter
         .converter()
         // '12' >> '1100'
         .dec2bin(Number(data.toString()))
+        // 8이하의 수일 경우 4자리가 안되므로 앞자리부터 0 채움
+        .padStart(4, '0')
         // '1100' >> [1, 1, 0, 0]
         .split('')
         // MSB >> LSB 변환, [1, 1, 0, 0] >> [0, 0, 1, 1]
         .reverse();
 
-      // BU.CLI(this.relayDataList);
+      //   BU.CLI(this.currDataList);
 
+      //   BU.CLIN(nodeList);
       // 데이터를 저장할 모델 생성(얕은 복사)
       const dataModel = { ...baseFormat };
       // 릴레이 데이터 목록을 순회하면서 채널(data_index)과 일치하는 Node를 찾고 Model에 데이터를 정제하여 정의
-      // 해당에티
       this.currDataList.forEach((isOn, ch) => {
-        const { nd_target_id: ndId, data_logger_index: dlIndex = 0 } = _.find(nodeList, {
+        const nodeInfo = _.find(nodeList, {
           data_index: ch,
         });
-        // 데이터를 변환은 Node Define Id를 기준으로 수행하여 Data Logger Index와 일치하는 배열 인덱스에 정의
-        dataModel[ndId][dlIndex] = this.onDeviceOperationStatus[ndId][isOn];
+
+        if (nodeInfo) {
+          const { nd_target_id: ndId, data_logger_index: dlIndex = 0 } = nodeInfo;
+          //   BU.CLIN(nodeInfo);
+          // 데이터를 변환은 Node Define Id를 기준으로 수행하여 Data Logger Index와 일치하는 배열 인덱스에 정의
+          dataModel[ndId][dlIndex] = this.onDeviceOperationStatus[ndId][isOn];
+        }
       });
 
       return dataModel;
@@ -72,16 +80,16 @@ class Converter extends cDaqConverter {
 module.exports = Converter;
 
 if (require !== undefined && require.main === module) {
-  // const deviceId = '0013A2004190ED67';
-  const deviceId = '01EE8DE7';
-  const slotId = '01EE1809';
+  // Slot Serial
+  //   const deviceId = '01EE1809';
+  const deviceId = '01EE1869';
+  //   cDaq Serial
+  const subDeviceId = '01EE8DE7';
   const converter = new Converter({
     mainCategory: 'NI',
     subCategory: '9482',
     deviceId,
-    option: {
-      ni: { slotId },
-    },
+    subDeviceId,
   });
 
   converter.currDataList = [0, 1, 1, 1];
@@ -130,16 +138,15 @@ if (require !== undefined && require.main === module) {
 
   const onDataList = [
     // sendFrame: #(A) + cDaqSerial(B[4]) + modelType(A) + slotSerial(B[4]) + dataBody(B) + checksum(B) + EOT(B)
-    Buffer.concat([
-      Buffer.from('#'),
-      converter.cDaqSerial,
-      converter.cDaqSlotType,
-      converter.cDaqSlotSerial,
-      Buffer.from('12'),
-      Buffer.from('d0', 'hex'),
-      converter.protocolConverter.EOT,
-    ]),
-    // '02537e002a900013a2004190ed67fffe0123303030313030313231302e324131313131303131313131303131303031e203',
+    // Buffer.concat([
+    //   Buffer.from(
+    //     `#${converter.cDaqSerial}${converter.cDaqSlotType}${converter.cDaqSlotSerial}`,
+    //   ),
+    //   Buffer.from('12'),
+    //   Buffer.from('fd', 'hex'),
+    //   converter.protocolConverter.EOT,
+    // ]),
+    `#01EE8DE7948201EE186900${Buffer.from([0x00, 0x04])}`,
   ];
 
   onDataList.forEach(d => {

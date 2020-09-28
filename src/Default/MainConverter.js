@@ -63,14 +63,15 @@ class MainConverter {
   /**
    * 데이터 분석 요청
    * @param {dcData} dcData 장치로 요청한 명령
+   * @param {nodeInfo[]} nodeList 데이터 로거가 보유한 nodeList
    * @return {parsingResultFormat}
    */
-  parsingUpdateData(dcData) {
+  parsingUpdateData(dcData, nodeList) {
     if (!this.deviceCommandConverter) {
       throw new Error('protocolConverter가 설정되지 않았습니다.');
     }
 
-    return this.deviceCommandConverter.parsingUpdateData(dcData);
+    return this.deviceCommandConverter.parsingUpdateData(dcData, nodeList);
   }
 
   /**
