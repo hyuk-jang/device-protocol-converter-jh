@@ -7,6 +7,7 @@ const Inverter = require('./src/Inverter/BaseModel');
 const Weathercast = require('./src/Weathercast/BaseModel');
 const UPSAS = require('./src/UPSAS/BaseModel');
 const Sensor = require('./src/Sensor/BaseModel');
+const NI = require('./src/NI/BaseModel');
 
 const MainConverter = require('./src/Default/MainConverter');
 
@@ -21,6 +22,7 @@ const BaseModel = {
   Weathercast,
   UPSAS,
   Sensor,
+  NI,
 };
 
 module.exports = {

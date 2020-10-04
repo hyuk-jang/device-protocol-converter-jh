@@ -190,7 +190,10 @@ class AbstConverter {
       const { wrapperCategory = '' } = this.protocolInfo;
       // 수신 데이터를 추적하거나 래핑타입을 사용할 경우 데이터 추적모드
       if (hasTrackingData === true || wrapperCategory.length) {
-        this.trackingDataBuffer = Buffer.concat([this.trackingDataBuffer, dcData.data]);
+        const dcBufData = Buffer.isBuffer(dcData.data)
+          ? dcData.data
+          : Buffer.from(dcData.data);
+        this.trackingDataBuffer = Buffer.concat([this.trackingDataBuffer, dcBufData]);
         dcData.data = this.trackingDataBuffer;
       }
       // protocolInfo.wrapperCategory 여부에 따라 frame 해제

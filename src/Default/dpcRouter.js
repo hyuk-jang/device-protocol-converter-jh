@@ -1,5 +1,8 @@
+const { BU } = require('base-util-jh');
+
 /** @param {protocol_info} protocolInfo */
 module.exports = protocolInfo => {
+  // BU.CLI(protocolInfo);
   const { mainCategory, subCategory } = protocolInfo;
   let Converter;
   let Model;
@@ -52,13 +55,9 @@ module.exports = protocolInfo => {
     case 'NI':
       baseFormat = require('../NI/baseFormat');
       switch (subCategory) {
-        case '9201':
-          Converter = require('../NI/9201/Converter');
-          Model = require('../NI/9201/Model');
-          break;
-        case '9482':
-          Converter = require('../NI/9482/Converter');
-          Model = require('../NI/9482/Model');
+        case 'cDaq':
+          Converter = require('../NI/cDaq/Converter');
+          Model = require('../NI/cDaq/Model');
           break;
         default:
           break;

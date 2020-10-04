@@ -12,16 +12,9 @@ class Model extends BaseModel {
 
     this.converter = converter;
 
-    this.device.RELAY.COMMAND.STATUS = [
-      {
-        fnCode: this.FN_CODE.MEASURE,
-        cmd: '00',
-      },
-    ];
-
     // Off
     this.device.RELAY.COMMAND[0] = nodeInfo => {
-      if (!this.converter.currDataList.length) {
+      if (!this.converter.currRelayDataList.length) {
         throw new Error(
           `슬롯 Serial(${this.converter.cDaqSlotSerial})의 계측 데이터에 이상이 있습니다.`,
         );
@@ -32,7 +25,7 @@ class Model extends BaseModel {
       return [
         {
           fnCode: this.FN_CODE.SET,
-          cmd: _.chain(this.converter.currDataList)
+          cmd: _.chain(this.converter.currRelayDataList)
             .clone()
             .set(dIndex, 0)
             .reverse()
@@ -47,7 +40,7 @@ class Model extends BaseModel {
 
     // On
     this.device.RELAY.COMMAND[1] = nodeInfo => {
-      if (!this.converter.currDataList.length) {
+      if (!this.converter.currRelayDataList.length) {
         throw new Error(
           `슬롯 Serial(${this.converter.cDaqSlotSerial})의 계측 데이터에 이상이 있습니다.`,
         );
@@ -58,7 +51,7 @@ class Model extends BaseModel {
       return [
         {
           fnCode: this.FN_CODE.SET,
-          cmd: _.chain(this.converter.currDataList)
+          cmd: _.chain(this.converter.currRelayDataList)
             .clone()
             .set(dIndex, 1)
             .reverse()

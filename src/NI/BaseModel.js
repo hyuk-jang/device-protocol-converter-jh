@@ -42,7 +42,12 @@ class BaseModel extends AbstBaseModel {
         NAME: '전압',
         STATUS: {},
         COMMAND: {
-          STATUS: [],
+          STATUS: [
+            {
+              fnCode: this.FN_CODE.MEASURE,
+              cmd: '00',
+            },
+          ],
         },
       },
       RELAY: {
@@ -53,7 +58,12 @@ class BaseModel extends AbstBaseModel {
           OFF: 'OFF',
         },
         COMMAND: {
-          STATUS: [],
+          STATUS: [
+            {
+              fnCode: this.FN_CODE.MEASURE,
+              cmd: '00',
+            },
+          ],
         },
       },
     };

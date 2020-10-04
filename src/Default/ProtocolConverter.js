@@ -455,6 +455,7 @@ class Converter {
    * @return {Buffer}
    */
   getSumBuffer(buffer) {
+    buffer = _.isString(buffer) ? Buffer.from(buffer) : buffer;
     return Buffer.from([_.sum(buffer)]);
   }
 
