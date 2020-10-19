@@ -9,6 +9,21 @@ module.exports = protocolInfo => {
   let baseFormat;
 
   switch (mainCategory) {
+    case 'ETC':
+      baseFormat = require('../ETC/baseFormat');
+      switch (subCategory) {
+        case 'JK_NR_2':
+          Converter = require('../ETC/JK_NR_2/Converter');
+          Model = require('../ETC/JK_NR_2/Model');
+          break;
+        case 'Temp':
+          Converter = require('../ETC/Temp/Converter');
+          Model = require('../ETC/Temp/Model');
+          break;
+        default:
+          break;
+      }
+      break;
     case 'FarmParallel':
       baseFormat = require('../FarmParallel/baseFormat');
       switch (subCategory) {
