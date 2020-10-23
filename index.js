@@ -1,6 +1,7 @@
 const defaultModule = require('./src/Default/DefaultModel');
 const defaultWrapper = require('./src/Default/defaultWrapper');
 const ESS = require('./src/ESS/BaseModel');
+const ETC = require('./src/ETC/BaseModel');
 const FarmParallel = require('./src/FarmParallel/BaseModel');
 const S2W = require('./src/S2W/BaseModel');
 const Inverter = require('./src/Inverter/BaseModel');
@@ -16,6 +17,7 @@ const BaseModel = {
   defaultModule,
   defaultWrapper,
   ESS,
+  ETC,
   FarmParallel,
   S2W,
   Inverter,
