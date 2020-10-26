@@ -1,7 +1,4 @@
-const { BU } = require('base-util-jh');
-
 const Model = require('./Model');
-const { parsingMethod } = require('../../format/moduleDefine');
 
 const { BASE_KEY: BK } = Model;
 

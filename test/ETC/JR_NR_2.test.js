@@ -86,11 +86,9 @@ describe('↓↓↓↓ JK_NR_2 ↓↓↓↓', () => {
         relayCmdList[index],
       );
 
-      // 채널 데이터와 일치 여부 확인
-      expect(relayCurrDataList[index]).to.deep.equal(converter.currRelayDataList);
       // onDeviceOperationStatus.Relay 동작 여부 확인
       expect(_.map(result.relay, rData => conv[rData])).to.deep.equal(
-        converter.currRelayDataList,
+        relayCurrDataList[index],
       );
     });
 
