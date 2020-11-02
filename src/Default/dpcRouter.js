@@ -16,9 +16,9 @@ module.exports = protocolInfo => {
           Converter = require('../ETC/JK_NR_2/Converter');
           Model = require('../ETC/JK_NR_2/Model');
           break;
-        case 'Temp':
-          Converter = require('../ETC/Temp/Converter');
-          Model = require('../ETC/Temp/Model');
+        case 'BatSm':
+          Converter = require('../ETC/BatSm/Converter');
+          Model = require('../ETC/BatSm/Model');
           break;
         default:
           break;

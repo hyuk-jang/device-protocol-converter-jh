@@ -4,7 +4,7 @@ const { expect } = require('chai');
 const { BU } = require('base-util-jh');
 
 const Converter = require('../../src/ETC/JK_NR_2/Converter');
-const TempConverter = require('../../src/ETC/Temp/Converter');
+const TempConverter = require('../../src/ETC/BatSm/Converter');
 
 const {
   di: {

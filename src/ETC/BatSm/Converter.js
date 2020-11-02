@@ -23,8 +23,8 @@ class Converter extends AbstConverter {
    * @param {Buffer} currTransferCmd 현재 요청한 명령
    */
   concreteParsingData(deviceData, currTransferCmd) {
+    deviceData = Buffer.isBuffer(deviceData) ? deviceData : Buffer.from(deviceData);
     // BU.CLI(deviceData);
-
     const STX = deviceData.slice(0, 1);
     const ETX = deviceData.slice(deviceData.length - 1, deviceData.length);
     const dataBody = deviceData.slice(1, deviceData.length - 1);
