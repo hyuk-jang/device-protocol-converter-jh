@@ -349,8 +349,11 @@ class AbstConverter {
 
       // BU.CLI(returnValue);
       // 배율 및 소수점 처리를 사용한다면 적용
-      if (_.isNumber(returnValue) && _.isNumber(scale)) {
-        returnValue = _.round(returnValue * scale, fixed);
+      if (_.isNumber(returnValue)) {
+        if (_.isNumber(scale)) {
+          returnValue *= scale;
+        }
+        returnValue = _.round(returnValue, fixed);
       }
 
       // 변환키가 정의되어있는지 확인

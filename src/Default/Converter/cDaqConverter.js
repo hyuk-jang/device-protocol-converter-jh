@@ -185,7 +185,7 @@ module.exports = class extends AbstConverter {
    * 데이터 분석 요청
    * @param {string} deviceData 장치로 요청한 명령
    * @param {Buffer} currTransferCmd 현재 요청한 명령
-   * @param {nodeInfo[]} nodeList 장치로 요청한 명령
+   * @param {nodeInfo[]} nodeList 데이터 로거에 물려있는 Node 목록
    */
   concreteParsingData(deviceData, currTransferCmd, nodeList) {
     deviceData = Buffer.isBuffer(deviceData) ? deviceData.toString() : deviceData;

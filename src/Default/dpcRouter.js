@@ -16,6 +16,10 @@ module.exports = protocolInfo => {
           Converter = require('../ETC/JK_NR_2/Converter');
           Model = require('../ETC/JK_NR_2/Model');
           break;
+        case 'Kincony':
+          Converter = require('../ETC/Kincony/Converter');
+          Model = require('../ETC/Kincony/Model');
+          break;
         case 'BatSm':
           Converter = require('../ETC/BatSm/Converter');
           Model = require('../ETC/BatSm/Model');
@@ -113,6 +117,17 @@ module.exports = protocolInfo => {
           Model = require('../Sensor/EanPV/Model');
           break;
 
+        default:
+          break;
+      }
+      break;
+    case 'STP':
+      baseFormat = require('../STP/baseFormat');
+      switch (subCategory) {
+        case 'JungHan':
+          Converter = require('../STP/JungHan/Converter');
+          Model = require('../STP/JungHan/Model');
+          break;
         default:
           break;
       }

@@ -253,29 +253,44 @@ class Converter {
    * option 에 따라 BE or LE 읽을지 여부, Int or UInt 로 읽을지가 결정됨.
    * @default
    * BE, Unsign
-   * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
-   * @param {Object=} option
+   * @param {Buffer} bufData 변환할 Buffer ex <Buffer 30 30 34 34>
+   * @param {Object} option
    * @param {boolean} option.isLE
    * @param {boolean} option.isUnsigned
+   * @param {number} option.intBufLen 정수부 Buffer 길이
    * @returns {number} Dec
    * @example
    * <Buffer 30 30 34 31> -> (Dec) 65
    */
-  convertBufToReadInt(buffer, option = {}) {
-    const { isLE = false, isUnsigned = true } = option;
+  convertBufToReadInt(bufData, option = {}) {
+    const bufLen = bufData.length;
+    const { isLE = false, isUnsigned = true, intBufLen = bufLen } = option;
+    const decimalBufLen = bufLen - intBufLen;
 
-    let returnNumber;
+    let returnInteger = 0;
+    let returnDecimal = 0;
+
     if (isLE && isUnsigned) {
-      returnNumber = buffer.readUIntLE(0, buffer.length);
+      returnInteger = bufData.readUIntLE(0, intBufLen);
+      returnDecimal =
+        intBufLen !== bufLen ? bufData.readUIntLE(intBufLen, decimalBufLen) : 0;
     } else if (isLE && !isUnsigned) {
-      returnNumber = buffer.readIntLE(0, buffer.length);
+      returnInteger = bufData.readIntLE(0, intBufLen);
+      returnDecimal =
+        intBufLen !== bufLen ? bufData.readIntLE(intBufLen, decimalBufLen) : 0;
     } else if (!isLE && isUnsigned) {
-      returnNumber = buffer.readUIntBE(0, buffer.length);
+      returnInteger = bufData.readUIntBE(0, intBufLen);
+      returnDecimal =
+        intBufLen !== bufLen ? bufData.readUIntBE(intBufLen, decimalBufLen) : 0;
     } else if (!isLE && !isUnsigned) {
-      returnNumber = buffer.readIntBE(0, buffer.length);
+      returnInteger = bufData.readIntBE(0, intBufLen);
+      returnDecimal =
+        intBufLen !== bufLen ? bufData.readIntBE(intBufLen, decimalBufLen) : 0;
     }
 
-    return returnNumber;
+    return returnDecimal === 0
+      ? returnInteger
+      : Number(`${returnInteger}.${returnDecimal}`);
   }
 
   /**
@@ -287,6 +302,19 @@ class Converter {
    */
   convertBufToStr(buffer) {
     return buffer.toString();
+  }
+
+  /**
+   * 지정된 오프셋의 buf에서 32 비트 빅 or 리틀 엔디안 부동 소수점을 읽습니다.
+   * @param {Buffer} bufData
+   * @param {Object} option
+   * @param {boolean} option.isLE default false
+   * @param {boolean} option.offset default false
+   */
+  convertBufToFloat(bufData, option = {}) {
+    const { isLE = false, offset = 0 } = option;
+
+    return isLE ? bufData.readFloatLE(offset) : bufData.readFloatBE(offset);
   }
 
   /**
@@ -414,6 +442,57 @@ class Converter {
       returnValue = returnValue.concat(this.pad(bin, binaryLength));
     }
     return returnValue;
+  }
+
+  /**
+   * data -> bit -> arr -> reverse
+   * @param {Buffer|string} data 변환하고자 하는 데이터
+   * @param {number} bitLength (default: 4) data를 bit로 표현할 개수
+   * @return {string[]}
+   * @example
+   * '12' > (dec2bin) '1100' > split('') [1, 1, 0, 0] > (reverse) [0, 0, 1, 1]
+   */
+  convertDataToBitArray(data, bitLength = 4) {
+    return (
+      this.converter()
+        // '12' >> '1100'
+        .dec2bin(Number(data.toString()))
+        // 8이하의 수일 경우 4자리가 안되므로 앞자리부터 0 채움
+        .padStart(bitLength, '0')
+        // '1100' >> [1, 1, 0, 0]
+        .split('')
+        // MSB >> LSB 변환, [1, 1, 0, 0] >> [0, 0, 1, 1]
+        .reverse()
+    );
+  }
+
+  /**
+   * bitNum[] -> str -> split -> reverse -> Buffer
+   * @param {string[]} data 변환하고자 하는 데이터
+   * @param {number} bitLength (default: 4) data를 bit로 표현할 개수
+   * @return {number[]}
+   * @example
+   * ['1', '1', '0', '1', '0', '0', '0', '1'] > (split length) [[1, 1, 0, 1], [0, 0, 0, 1]]
+   * > (reverse) [1, 0, 1, 1],[1, 0, 0, 0] > parseInt(2) [13, 8]
+   */
+  convertBitArrayToData(data, bitLength = 4) {
+    return _.chain(data)
+      .join('')
+      .thru(strNum => {
+        // 문자 개수로 짜름
+        const chunkArr = strNum.match(new RegExp(`.{1,${bitLength}}`, 'g'));
+
+        const refineNumArr = chunkArr.map(chunkStr => {
+          // 8자리로 맞춤
+          const refineChunkStr = _.padEnd(chunkStr, bitLength, '0');
+          // 문자 역순(LE)
+          const binValue = refineChunkStr.split('').reverse().join('');
+          return parseInt(binValue, 2);
+        });
+
+        return refineNumArr;
+      })
+      .value();
   }
 
   /**
@@ -667,6 +746,11 @@ module.exports = Converter;
 // console.log(converter.convertBufToStrToNum(Buffer.from('01.1'), 16));
 // console.log(converter.convertBufToStrToNum(Buffer.from('0e05'), 16));
 // console.log(converter.convertBufToStrToNum(Buffer.from('0e.e'), 16));
+// console.log(
+//   converter.convertBufToReadInt(Buffer.from('12345678', 'hex'), {
+//     intBufLen: 3,
+//   }),
+// );
 
 /**
  * 숫자를 Buffer로 변환하기 위한 옵션

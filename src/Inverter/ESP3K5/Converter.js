@@ -116,13 +116,15 @@ class Converter extends AbstConverter {
     // Trobule 목록을 하나로 합침
     dataMap.operTroubleList = [_.flatten(dataMap.operTroubleList)];
 
+    BU.CLI(dataMap);
+
     // FIXME: 영산포 오른쪽 인버터 부터
     if (_.isEqual(this.model.dialing, Buffer.from([47]))) {
       dataMap.powerCpKwh[0] -= 2237;
     } else if (_.isEqual(this.model.dialing, Buffer.from([85]))) {
       dataMap.powerCpKwh[0] -= 1048;
     } else if (_.isEqual(this.model.dialing, Buffer.from([46]))) {
-      dataMap.powerCpKwh[0] -= 2870;
+      dataMap.powerCpKwh[0] += 2085;
     } else if (_.isEqual(this.model.dialing, Buffer.from([86]))) {
       dataMap.powerCpKwh[0] -= 3421;
     }
@@ -139,7 +141,7 @@ module.exports = Converter;
 
 if (require !== undefined && require.main === module) {
   const converter = new Converter({
-    deviceId: 58,
+    deviceId: 46,
     mainCategory: 'Inverter',
     subCategory: 'ESP3K5',
   });
@@ -151,7 +153,12 @@ if (require !== undefined && require.main === module) {
   // BU.CLI(requestMsg);
 
   const dataList = [
-    '0249b1b73a510a3500510a4a093900cf018b0040070000000000015702ae006317ff03',
+    // '0249b1b73a510a3500510a4a093900cf018b0040070000000000015702ae006317ff03',
+    '0249b1b72ed4063800d4064309270054015c00000000000000000158024b0063131403',
+    '0249b1b72e9206260092062e091a006a015b0008000000000000015802c8006313e803',
+    // '0249b1b72e8c0644008c064a092e006c010e0150130000000000015802020163130803',
+    // '0249b1b72ed4063800d406430927005401 5c00 000000 000000000158024b0063131403',
+    // '0249b1b72e8c0644008c064a092e006c01 0e01 501300 00000000015802020163130803',
   ];
 
   dataList.forEach((d, index) => {

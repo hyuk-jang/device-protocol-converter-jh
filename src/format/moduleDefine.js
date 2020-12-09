@@ -46,6 +46,17 @@ const parsingMethod = {
    */
   convertBufToStr: 'convertBufToStr',
   /**
+   * 지정된 오프셋의 buf에서 32 비트 빅 or 리틀 엔디안 부동 소수점을 읽습니다.
+   * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
+   * @param {Object} option
+   * @param {boolean} option.isLE default false
+   * @param {boolean} option.offset default false
+   * @returns {number}
+   * @example
+   * <Buffer 41 a0 14 7b> -> 20.01
+   */
+  convertBufToFloat: 'convertBufToFloat',
+  /**
    * Buffer를 Ascii Char로 변환 후 해당 값을 Hex Number로 인식하고 Dec Number로 변환
    * @param {Buffer} buffer 변환할 Buffer ex <Buffer 30 30 34 34>
    * @param {string} encoding

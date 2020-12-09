@@ -38,35 +38,45 @@ module.exports = class extends AbstConverter {
     /** @type {modbusReadFormat[]} */
     const cmdList = this.defaultGenCMD(generationInfo);
 
-    const returnBufferList = cmdList.map(cmdInfo => {
-      const { unitId, fnCode } = cmdInfo;
-
-      const header = Buffer.concat([
-        this.protocolConverter.convertNumToWriteInt(unitId),
-        this.protocolConverter.convertNumToWriteInt(fnCode),
-      ]);
-
-      let data = Buffer.alloc(0);
-
-      switch (fnCode) {
-        case 4:
-          data = this.getReadInputRegesterCmd(cmdInfo);
-          break;
-        default:
-          return [];
-      }
-      // CRC를 제외한 요청 데이터 Packet
-      let command = Buffer.concat([header, data]);
-      // CRC를 사용할 경우
-      if (this.isExistCrc) {
-        const crcBuf = this.protocolConverter.getModbusChecksum(command);
-        command = Buffer.concat([command, crcBuf]);
-      }
-
-      return command;
-    });
+    const returnBufferList = cmdList.map(cmdInfo =>
+      this.generationModbusCommand(cmdInfo),
+    );
 
     return this.makeAutoGenerationCommand(returnBufferList);
+  }
+
+  /**
+   *
+   * @param {modbusReadFormat} cmdInfo
+   */
+  generationModbusCommand(cmdInfo) {
+    const { unitId, fnCode } = cmdInfo;
+
+    const header = Buffer.concat([
+      this.protocolConverter.convertNumToWriteInt(unitId),
+      this.protocolConverter.convertNumToWriteInt(fnCode),
+    ]);
+
+    let data = Buffer.alloc(0);
+
+    switch (fnCode) {
+      case 1:
+      case 3:
+      case 4:
+        data = this.getReadInputRegesterCmd(cmdInfo);
+        break;
+      default:
+        return [];
+    }
+    // CRC를 제외한 요청 데이터 Packet
+    let command = Buffer.concat([header, data]);
+    // CRC를 사용할 경우
+    if (this.isExistCrc) {
+      const crcBuf = this.protocolConverter.getModbusChecksum(command);
+      command = Buffer.concat([command, crcBuf]);
+    }
+
+    return command;
   }
 
   /**
@@ -87,6 +97,7 @@ module.exports = class extends AbstConverter {
    * @param {Buffer} currTransferCmd 현재 요청한 명령
    */
   concreteParsingData(deviceData, currTransferCmd) {
+    // BU.CLIS(deviceData, currTransferCmd);
     /**
      * 요청한 명령 추출
      * @type {Buffer}
@@ -143,6 +154,12 @@ module.exports = class extends AbstConverter {
     let result;
     // 해당 프로토콜에서 생성된 명령인지 체크
     switch (fnCode) {
+      case 1:
+        result = this.refineReadCoil(resBuffer, reqBuffer);
+        break;
+      case 3:
+        result = this.refineReadHoldingRegister(resBuffer, reqBuffer);
+        break;
       case 4:
         result = this.refineReadInputRegister(resBuffer, reqBuffer);
         break;
@@ -150,6 +167,49 @@ module.exports = class extends AbstConverter {
         throw new Error(`Not Matching FnCode ${fnCode}`);
     }
     return result;
+  }
+
+  /**
+   * FnCode 01, Read Coil. 순수 Spec Data 반환
+   * @param {Buffer} resBuffer CRC 제거된 Read Coil
+   * @param {Buffer} reqBuffer 현재 요청한 명령
+   */
+  refineReadCoil(resBuffer, reqBuffer) {
+    // 0: SlaveAddr 1: FunctionCode, 2: DataLength, 3: Res Data (N)
+    const RES_DATA_START_POINT = 3;
+
+    const registerAddr = reqBuffer.readInt16BE(2);
+    // 요청한 읽을 비트 개수를 Byte로 환산. 올림 처리
+    const dataLength = Math.ceil(reqBuffer.readInt16BE(4) / 8);
+
+    // 수신받은 데이터 2 Byte Hi-Lo 형식으로 파싱
+    const resDataLength = resBuffer.slice(RES_DATA_START_POINT).length;
+
+    const dataBody = resBuffer.slice(RES_DATA_START_POINT);
+
+    // 수신받은 데이터의 길이가 다를 경우
+    if (!_.isEqual(dataLength, resDataLength)) {
+      throw new Error(
+        `The expected dataLength: ${dataLength}. but received dataLength: ${resDataLength}`,
+      );
+    }
+
+    return {
+      dataBody: this.protocolConverter
+        .convertToBin(dataBody.toString('hex'))
+        .split('')
+        .map(Number),
+      registerAddr,
+    };
+  }
+
+  /**
+   * FnCode 03, Read Holding Register. 순수 Spec Data 반환
+   * @param {Buffer} resBuffer CRC 제거된 Read Holding Register
+   * @param {Buffer} reqBuffer 현재 요청한 명령
+   */
+  refineReadHoldingRegister(resBuffer, reqBuffer) {
+    return this.refineReadInputRegister(resBuffer, reqBuffer);
   }
 
   /**
