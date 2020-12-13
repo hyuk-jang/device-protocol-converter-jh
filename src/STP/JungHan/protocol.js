@@ -21,84 +21,94 @@ exports.decodingProtocolTable = (protocolInfo = {}) => {
     bodyLength: 25,
     decodingDataList: [
       {
+        // 발생기 밸브 피드백
         startIndex: 10,
-        key: BK.sgValveFd,
+        key: BK.fdValveSg,
         byte: 2,
       },
+
+      // 집열기밸브 피드백
       {
         startIndex: 11,
-        key: BK.colValveFd,
+        key: BK.fdValvePtc,
         byte: 2,
       },
+      // 1호 오일탱크 밸브 피드백
       {
         startIndex: 12,
-        // key: BK.ot1ValveFd,
-        key: BK.otValveFd,
+        key: BK.fdValveOt,
         byte: 2,
       },
+      // 2호 오일탱크 밸브 피드백
       {
         startIndex: 13,
-        // key: BK.ot2ValveFd,
-        key: BK.otValveFd,
+        key: BK.fdValveOt,
         byte: 2,
       },
+      // 2# 오일 펌프 전류
       {
         startIndex: 14,
-        // key: BK.op2Amp,
-        key: BK.opAmp,
+        key: BK.ampOp,
         byte: 4,
       },
+      // 1# 오일 펌프 전류
       {
         startIndex: 16,
-        // key: BK.op1Amp,
-        key: BK.opAmp,
+        key: BK.ampOp,
         byte: 4,
       },
+      // 증기발생기 압력
       {
         startIndex: 18,
-        key: BK.sgPressure,
+        key: BK.pressureGaugeSg,
         byte: 4,
       },
+      // 현재 방사조도
       {
         startIndex: 20,
-        key: BK.outsideIrradiance,
+        key: BK.irradianceEnv,
         byte: 4,
       },
+      // 집열기 오일진입 온도
       {
         startIndex: 22,
-        key: BK.colOilInletTemp,
+        key: BK.tempOil,
         byte: 4,
       },
+      // 집열기 오일배출 온도
       {
         startIndex: 24,
-        key: BK.colOilOutletTemp,
+        key: BK.tempOil,
         byte: 4,
       },
+      // 1#오일탱크 온도
       {
         startIndex: 26,
-        // key: BK.ot1Temp,
-        key: BK.otTemp,
+        key: BK.tempOil,
         byte: 4,
       },
+      // 2#오일탱크 온도
       {
         startIndex: 28,
-        // key: BK.ot2Temp,
-        key: BK.otTemp,
+        key: BK.tempOil,
         byte: 4,
       },
+      // 현재 환경온도
       {
         startIndex: 30,
-        key: BK.outsideTemp,
+        key: BK.tempEnv,
         byte: 4,
       },
+      // 발생기 입구온도
       {
         startIndex: 32,
-        key: BK.sgInletTemp,
+        key: BK.tempOil,
         byte: 4,
       },
+      // 증기발생기 온도
       {
         startIndex: 34,
-        key: BK.sgTemp,
+        key: BK.tempSteam,
         byte: 4,
       },
     ],
@@ -110,15 +120,36 @@ exports.decodingProtocolTable = (protocolInfo = {}) => {
     // address: 100,
     bodyLength: 6,
     decodingDataList: [
+      // 증기 누계 유량
       {
         startIndex: 100,
-        key: BK.sgCumulativeFlow,
+        key: BK.frCumSg,
+        byte: 4,
+      },
+      // 증기 순시 유량
+      {
+        startIndex: 102,
+        key: BK.frCumSg,
+        byte: 2,
+      },
+    ],
+  };
+
+  /** @type {decodingProtocolInfo} */
+  const SOLAR = {
+    dialing,
+    // address: 500,
+    bodyLength: 16,
+    decodingDataList: [
+      {
+        startIndex: 500,
+        key: BK.solarEnv,
         byte: 4,
       },
       {
-        startIndex: 102,
-        key: BK.sgInstantaneousFlow,
-        byte: 2,
+        startIndex: 502,
+        key: BK.solarEnv,
+        byte: 4,
       },
     ],
   };
@@ -129,19 +160,22 @@ exports.decodingProtocolTable = (protocolInfo = {}) => {
     // address: 600,
     bodyLength: 16,
     decodingDataList: [
+      // 스팀 유량
       {
         startIndex: 600,
-        key: BK.sgOutletFlowRate,
+        key: BK.frInsPipe,
         byte: 4,
       },
+      // 흐름작동위치
       {
         startIndex: 602,
-        key: BK.sgOutletFlowRateOperSts,
+        key: BK.frInsPipeOper,
         byte: 4,
       },
+      // 유량 누계
       {
         startIndex: 604,
-        key: BK.sgOutletTotalFlowRate,
+        key: BK.frCumPipe,
         byte: 4,
       },
       {},
@@ -150,14 +184,16 @@ exports.decodingProtocolTable = (protocolInfo = {}) => {
         key: BK.sgOutletTemp,
         byte: 4,
       },
+      // 압력
       {
         startIndex: 610,
-        key: BK.sgOutletPressure,
+        key: BK.pressureGaugePipe,
         byte: 4,
       },
+      // 주파수
       {
         startIndex: 612,
-        key: BK.sgOutletFrequency,
+        key: BK.frequencyPipe,
         byte: 4,
       },
       // {
@@ -174,9 +210,10 @@ exports.decodingProtocolTable = (protocolInfo = {}) => {
     // address: 2330,
     bodyLength: 1,
     decodingDataList: [
+      // 0: 로컬모드 운행중, 1: 타이머모드 운행중, 2: 원격모드 운행중
       {
         startIndex: 2330,
-        key: BK.operStsMode,
+        key: BK.infoSysOper,
         byte: 2,
       },
     ],
@@ -188,31 +225,35 @@ exports.decodingProtocolTable = (protocolInfo = {}) => {
     // address: 70,
     bodyLength: 6,
     decodingDataList: [
+      // 1# 오일 펌프 동작 유무
       {
         startIndex: 70,
-        // key: BK.isRunOp1,
-        key: BK.isRunOp,
+        key: BK.pumpOil,
       },
+      // 2# 오일 펌프 동작 유무
       {
         startIndex: 71,
-        // key: BK.isRunOp2,
-        key: BK.isRunOp,
+        key: BK.pumpOil,
       },
+      // 시스템 ON, 시스템OFF,
       {
         startIndex: 72,
-        key: BK.isModeHeatRelease,
+        key: BK.infoSysOper,
       },
+      // PTC 집광기 동작 유무
       {
         startIndex: 73,
-        key: BK.isRunCol,
+        key: BK.ptc,
       },
+      // 보충 펌프 동작 유무
       {
         startIndex: 74,
-        key: BK.isRunWaterPump,
+        key: BK.pumpSw,
       },
+      // 흐린 날씨, 맑은 날씨
       {
         startIndex: 75,
-        key: BK.isModeHeatSto,
+        key: BK.infoSky,
       },
     ],
   };
@@ -277,6 +318,7 @@ exports.decodingProtocolTable = (protocolInfo = {}) => {
   return {
     BASE,
     FLOW,
+    SOLAR,
     ADD_SG_FLOW,
     OPER_MODE,
     OPERATION,

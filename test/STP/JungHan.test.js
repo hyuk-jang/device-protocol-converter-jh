@@ -205,7 +205,7 @@ describe('↓↓↓↓ JungHan ↓↓↓↓', () => {
         converter.generationModbusCommand(modbusReadFormat),
       );
 
-      // BU.CLI(parsingData);
+      BU.CLI(parsingData);
     });
 
     // Flow (100 ~ 103)
