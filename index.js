@@ -4,6 +4,7 @@ const ESS = require('./src/ESS/BaseModel');
 const ETC = require('./src/ETC/BaseModel');
 const FarmParallel = require('./src/FarmParallel/BaseModel');
 const S2W = require('./src/S2W/BaseModel');
+const STP = require('./src/STP/BaseModel');
 const Inverter = require('./src/Inverter/BaseModel');
 const Weathercast = require('./src/Weathercast/BaseModel');
 const UPSAS = require('./src/UPSAS/BaseModel');
@@ -20,6 +21,7 @@ const BaseModel = {
   ETC,
   FarmParallel,
   S2W,
+  STP,
   Inverter,
   Weathercast,
   UPSAS,
