@@ -129,8 +129,8 @@ exports.decodingProtocolTable = (protocolInfo = {}) => {
       // 증기 순시 유량
       {
         startIndex: 102,
-        key: BK.frCumSg,
-        byte: 2,
+        key: BK.frInsSg,
+        byte: 4,
       },
     ],
   };
@@ -178,7 +178,9 @@ exports.decodingProtocolTable = (protocolInfo = {}) => {
         key: BK.frCumPipe,
         byte: 4,
       },
-      {},
+      {
+        byte: 4,
+      },
       {
         startIndex: 608,
         key: BK.sgOutletTemp,

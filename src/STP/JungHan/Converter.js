@@ -65,6 +65,8 @@ class Converter extends ModbusRtuConverter {
       decodingTable = this.decodingTable.SOLAR;
     } else if (registerAddr === 600) {
       decodingTable = this.decodingTable.ADD_SG_FLOW;
+    } else if (registerAddr === 2330) {
+      decodingTable = this.decodingTable.OPER_MODE;
     }
 
     /** @type {BASE_MODEL} */
