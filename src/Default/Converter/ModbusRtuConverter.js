@@ -184,7 +184,7 @@ module.exports = class extends AbstConverter {
 
     // 수신받은 데이터 2 Byte Hi-Lo 형식으로 파싱
     const resDataLength = resBuffer.slice(RES_DATA_START_POINT).length;
-
+    // Coil 데이터
     const dataBody = resBuffer.slice(RES_DATA_START_POINT);
 
     // 수신받은 데이터의 길이가 다를 경우
@@ -195,10 +195,7 @@ module.exports = class extends AbstConverter {
     }
 
     return {
-      dataBody: this.protocolConverter
-        .convertToBin(dataBody.toString('hex'))
-        .split('')
-        .map(Number),
+      dataBody: this.protocolConverter.convertHexToBitArray(dataBody),
       registerAddr,
     };
   }

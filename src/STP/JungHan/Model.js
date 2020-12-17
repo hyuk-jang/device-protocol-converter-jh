@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const BaseModel = require('../BaseModel');
 
 class Model extends BaseModel {
@@ -46,13 +45,13 @@ class Model extends BaseModel {
         address: 2330,
         dataLength: 1,
       },
-      // Feedback Err (64 ~ 69)
-      {
-        unitId: this.dialing,
-        fnCode: 1,
-        address: 64,
-        dataLength: 6,
-      },
+      // // FIXME: Error 처리 필요시 처리 >>> Feedback Err (64 ~ 69)
+      // {
+      //   unitId: this.dialing,
+      //   fnCode: 1,
+      //   address: 64,
+      //   dataLength: 6,
+      // },
       // Operation (70 ~ 75)
       {
         type: 'OPERATION',
@@ -61,27 +60,27 @@ class Model extends BaseModel {
         address: 70,
         dataLength: 6,
       },
-      // System Err (80 ~ 121)
+      // // FIXME: Error 처리 필요시 처리 >>> System Err (80 ~ 115)
+      // {
+      //   unitId: this.dialing,
+      //   fnCode: 1,
+      //   address: 80,
+      //   dataLength: 36,
+      // },
+      // Mode (116 ~ 126)
       {
         unitId: this.dialing,
         fnCode: 1,
-        address: 80,
-        dataLength: 42,
+        address: 116,
+        dataLength: 11,
       },
-      // Mode (122 ~ 126)
-      {
-        unitId: this.dialing,
-        fnCode: 1,
-        address: 122,
-        dataLength: 5,
-      },
-      // Steam Generator Err (163)
-      {
-        unitId: this.dialing,
-        fnCode: 1,
-        address: 163,
-        dataLength: 1,
-      },
+      // // FIXME: Error 처리 필요시 처리 >>> Steam Generator Err (163)
+      // {
+      //   unitId: this.dialing,
+      //   fnCode: 1,
+      //   address: 163,
+      //   dataLength: 1,
+      // },
     ];
   }
 }

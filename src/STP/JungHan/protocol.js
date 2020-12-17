@@ -271,28 +271,46 @@ exports.decodingProtocolTable = (protocolInfo = {}) => {
   /** @type {decodingProtocolInfo} */
   const MODE = {
     dialing,
-    // address: 122,
-    bodyLength: 5,
+    // address: 116,
+    bodyLength: 11,
     decodingDataList: [
       {
+        startIndex: 116,
+        key: BK.modeOt,
+      },
+      {
+        startIndex: 117,
+        key: BK.modeOt,
+      },
+      {
+        startIndex: 118,
+        key: BK.modeOt,
+      },
+      {
+        startIndex: 119,
+        key: BK.modeOt,
+      },
+      {},
+      {},
+      {
         startIndex: 122,
-        key: BK.isUseOp1,
+        key: BK.infoUseOp,
       },
       {
         startIndex: 123,
-        key: BK.isModeDirectStreamOper,
+        key: BK.modeSteam,
       },
       {
         startIndex: 124,
-        key: BK.isModeHeatSto,
+        key: BK.modeSteam,
       },
       {
         startIndex: 125,
-        key: BK.isModeHeatRelease,
+        key: BK.modeSteam,
       },
       {
         startIndex: 126,
-        key: BK.isModeHeatReleaseFirst,
+        key: BK.modeSteam,
       },
     ],
   };
@@ -328,29 +346,5 @@ exports.decodingProtocolTable = (protocolInfo = {}) => {
   };
 };
 
-const onDeviceOperationStatus = {
-  /** @type {number} ws 풍속(MPH)이므로 환산하여 반환 */
-  [BK.windSpeed]: ws => _.round(_.divide(ws, 2.237), 1),
-  [BK.windDirection]: wd => {
-    // BU.CLI(wd);
-    // 0 ~ 360 을 벗어나는 데이터는 임계치로 묶음
-    wd = _.clamp(wd, 0, 360);
-    // 360도를 8등분
-    const anglePiece = 45;
-    let divideValue = wd / anglePiece;
-    const remainValue = wd % anglePiece;
-
-    // 남은 각도가 다음 각도에 가깝다면 1을 더함
-    divideValue += _.divide(anglePiece, 2) > remainValue ? 1 : 0;
-    // index 8 --> 360도 각도라면 0으로 교체
-    if (divideValue >= 8) {
-      divideValue = 0;
-    }
-
-    return divideValue;
-  },
-  [BK.outsideAirTemperature]: temp => _.subtract(temp, 40),
-  [BK.soilTemperature]: temp => _.subtract(temp, 40),
-  [BK.pvRearTemperature]: temp => _.subtract(temp, 40),
-};
+const onDeviceOperationStatus = {};
 exports.onDeviceOperationStatus = onDeviceOperationStatus;

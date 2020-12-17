@@ -32,7 +32,7 @@ class Converter extends ModbusRtuConverter {
     // 장치 addr
     if (registerAddr === 70) {
       decodingTable = this.decodingTable.OPERATION;
-    } else if (registerAddr === 122) {
+    } else if (registerAddr === 116) {
       decodingTable = this.decodingTable.MODE;
     }
 

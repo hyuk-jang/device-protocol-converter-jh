@@ -467,6 +467,28 @@ class Converter {
   }
 
   /**
+   * hex -> split -> hex2bin -> reverse -> flatten
+   * @param {Buffer|string} data Buffer or hex string
+   * @return {number[]}
+   * @example
+   * '0x010e' > (split length) [01, 0e] > (hex2bin) '[0000 0001], [0000 1110]' >
+   * > (reverse) [[1000 0000], [0111 0000]] > (flatten) [1000 0000 0111 0000]
+   */
+  convertHexToBitArray(data) {
+    const hexData = Buffer.isBuffer(data) ? data.toString('hex') : data;
+    console.log('hexData', hexData);
+    // 길이로 짜름
+    const chunkArr = hexData.match(new RegExp('.{1,2}', 'g'));
+
+    return _.chain(chunkArr)
+      .map(hex =>
+        this.converter().hex2bin(hex).padStart(8, '0').split('').reverse().map(Number),
+      )
+      .flatten()
+      .value();
+  }
+
+  /**
    * bitNum[] -> str -> split -> reverse -> Buffer
    * @param {string[]} data 변환하고자 하는 데이터
    * @param {number} bitLength (default: 4) data를 bit로 표현할 개수
