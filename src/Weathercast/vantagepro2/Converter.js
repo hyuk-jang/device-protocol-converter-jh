@@ -35,10 +35,10 @@ class Converter extends AbstConverter {
    * @param {Buffer} deviceData 장치로 요청한 명령
    */
   concreteParsingData(deviceData) {
-    // const requestData = this.getCurrTransferCmd(dcData);
     const responseData = deviceData;
 
-    // if(_.includes(requestData, this.baseModel.device.DEFAULT.COMMAND.LOOP)){
+    const strLoopSTX = '4c4f4f';
+
     let bufferData =
       responseData instanceof Buffer
         ? responseData
@@ -48,34 +48,45 @@ class Converter extends AbstConverter {
     const cmdSTX = bufferData.slice(0, 4);
     let loopSTX = bufferData.slice(0, 3);
     // wakeUp 명령을 내렸을 경우 \n\r 포함여부 확인
-    if (wakeupSTX.toString() === Buffer.from([0x0a, 0x0d]).toString()) {
+    if (wakeupSTX.equals(Buffer.from('0a0d', 'hex'))) {
       // ACK를 제외하고 데이터 저장
       this.resetTrackingDataBuffer();
       throw new Error('wakeUp Event');
     }
-    if (cmdSTX.toString() === Buffer.from([0x06, 0x4c, 0x4f, 0x4f]).toString()) {
+
+    // ACK 붙어 올 경우
+    if (cmdSTX.equals(Buffer.from(`06${strLoopSTX}`, 'hex'))) {
       // ACK를 제외하고 데이터 저장
       this.resetTrackingDataBuffer();
       this.trackingDataBuffer = bufferData.slice(1);
       bufferData = this.trackingDataBuffer;
       loopSTX = bufferData.slice(0, 3);
     }
-    if (loopSTX.toString() !== Buffer.from([0x4c, 0x4f, 0x4f]).toString()) {
-      // LOOP 명령 수행 여부 확인
+
+    // LOOP 명령 수행 여부 확인
+    if (!loopSTX.equals(Buffer.from(strLoopSTX, 'hex'))) {
       throw new Error(
-        `Not Matching ReqAddr: ${Buffer.from([
-          0x4c,
-          0x4f,
-          0x4f,
-        ]).toString()}, ResAddr: ${loopSTX.toString()}`,
+        `Not Matching ReqAddr: ${strLoopSTX}, ResAddr: ${loopSTX.toString()}`,
       );
     }
+
+    // 아직 데이터가 완성되지 못하였을 경우
+    if (bufferData.length < 99) {
+      throw new RangeError(
+        `Not Matching Length Expect: ${99}, Length: ${bufferData.length}`,
+      );
+    }
+
     if (bufferData.length !== 99) {
       throw new Error(`Not Matching Length Expect: ${99}, Length: ${bufferData.length}`);
     }
-    protocol.forEach(protocolInfo => {
-      const startPoint = protocolInfo.substr[0];
-      const endPoint = protocolInfo.substr[1];
+
+    protocol.forEach(pInfo => {
+      const {
+        key,
+        substr: [startPoint, endPoint],
+      } = pInfo;
+
       const realStartPoint = startPoint + endPoint - 1;
       let hexCode = '';
       let hasError = false;
@@ -83,10 +94,7 @@ class Converter extends AbstConverter {
         let TargetValue = bufferData[i].toString(16);
         if (TargetValue === 'ff') {
           TargetValue = '00';
-          if (
-            protocolInfo.key === 'OutsideTemperature' ||
-            protocolInfo.key === 'SolarRadiation'
-          ) {
+          if (key === 'OutsideTemperature' || key === 'SolarRadiation') {
             hasError = true;
           }
         }
@@ -96,10 +104,10 @@ class Converter extends AbstConverter {
         hexCode += TargetValue;
       }
       if (hasError) {
-        protocolInfo.value = null;
+        pInfo.value = null;
       } else {
-        protocolInfo.value = this.changeData(
-          protocolInfo.key,
+        pInfo.value = this.changeData(
+          key,
           this.protocolConverter.converter().hex2dec(hexCode),
         );
       }
@@ -126,11 +134,10 @@ class Converter extends AbstConverter {
     return findObj;
   }
 
-  changeData(DataName, DataValue) {
-    // console.log('ChangeData : ' + DataName, DataValue)
-    const returnvalue = DataValue;
+  changeData(key, value) {
+    const returnvalue = value;
     let res;
-    switch (DataName) {
+    switch (key) {
       case 'Barometer':
         return Math.round10(returnvalue * 0.001 * 33.863882, -1);
       case 'InsideTemperature':
@@ -146,7 +153,7 @@ class Converter extends AbstConverter {
         return Math.round10(returnvalue * 0.44704, -1);
       case 'WindDirection':
         // console.log('WindDirection', DataValue)
-        res = Math.round(DataValue / 45);
+        res = Math.round(value / 45);
         res = res >= 8 || res < 0 ? 0 : res;
         return res;
       case 'ExtraTemperatures':
@@ -163,7 +170,6 @@ class Converter extends AbstConverter {
       case 'UV':
       case 'SolarRadiation':
         return returnvalue;
-
       case 'StormRain':
         return Math.round10(returnvalue * 0.2, -1);
       default:

@@ -209,13 +209,13 @@ class AbstConverter {
 
       return returnValue;
     } catch (error) {
-      BU.error(error.message);
       // Range Error가 발생하면 데이터가 충분하지 않아 그런것으로 판단
       if (error instanceof RangeError) {
         returnValue.eventCode = WAIT;
         return returnValue;
       }
 
+      BU.error(error.message);
       // 에러가 발생할 경우 추적 버퍼 리셋
       this.resetTrackingDataBuffer();
 

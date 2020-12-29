@@ -26,7 +26,6 @@ exports.decodingProtocolTable = (protocolInfo = {}) => {
         key: BK.fdValveSg,
         byte: 2,
       },
-
       // 집열기밸브 피드백
       {
         startIndex: 11,
@@ -108,7 +107,7 @@ exports.decodingProtocolTable = (protocolInfo = {}) => {
       // 증기발생기 온도
       {
         startIndex: 34,
-        key: BK.tempSteam,
+        key: BK.tempOil,
         byte: 4,
       },
     ],
@@ -183,7 +182,7 @@ exports.decodingProtocolTable = (protocolInfo = {}) => {
       },
       {
         startIndex: 608,
-        key: BK.sgOutletTemp,
+        key: BK.tempSteam,
         byte: 4,
       },
       // 압력
@@ -215,7 +214,7 @@ exports.decodingProtocolTable = (protocolInfo = {}) => {
       // 0: 로컬모드 운행중, 1: 타이머모드 운행중, 2: 원격모드 운행중
       {
         startIndex: 2330,
-        key: BK.infoSysOper,
+        key: BK.infoSysMode,
         byte: 2,
       },
     ],
@@ -316,7 +315,7 @@ exports.decodingProtocolTable = (protocolInfo = {}) => {
   };
 
   // byte는 명시되지 않을 경우 기본 2byte로함, 기본 파서는 convertBufToReadInt
-  [BASE, FLOW, ADD_SG_FLOW, OPER_MODE, OPERATION, MODE].forEach(decodingTable => {
+  [BASE, FLOW, SOLAR, ADD_SG_FLOW, OPER_MODE, OPERATION, MODE].forEach(decodingTable => {
     decodingTable.decodingDataList.forEach(decodingInfo => {
       const { byte, callMethod } = decodingInfo;
       if (byte === undefined) {

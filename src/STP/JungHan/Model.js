@@ -31,6 +31,13 @@ class Model extends BaseModel {
         address: 100,
         dataLength: 4,
       },
+      // SOLAR (100 ~ 103)
+      {
+        unitId: this.dialing,
+        fnCode: 3,
+        address: 500,
+        dataLength: 4,
+      },
       // Add Steam Generator Sensor (600 ~ 615)
       {
         unitId: this.dialing,
