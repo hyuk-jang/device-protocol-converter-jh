@@ -5,6 +5,7 @@ const protocol = require('./protocol');
 
 const BaseModel = require('../BaseModel');
 
+const { BASE_KEY: BK } = BaseModel;
 class Converter extends AbstConverter {
   /**
    * @param {protocol_info} protocolInfo
@@ -14,6 +15,7 @@ class Converter extends AbstConverter {
 
     /** BaseModel */
     this.BaseModel = BaseModel;
+
     this.baseModel = new BaseModel(protocolInfo);
   }
 
@@ -76,6 +78,11 @@ class Converter extends AbstConverter {
         `Not Matching Length Expect: ${99}, Length: ${bufferData.length}`,
       );
     }
+    // 연속으로 데이터가 들어올 경우
+    if (bufferData.length === 198) {
+      BU.CLI('bufferData.length === 198');
+      bufferData = bufferData.slice(99);
+    }
 
     if (bufferData.length !== 99) {
       throw new Error(`Not Matching Length Expect: ${99}, Length: ${bufferData.length}`);
@@ -108,7 +115,7 @@ class Converter extends AbstConverter {
       } else {
         pInfo.value = this.changeData(
           key,
-          this.protocolConverter.converter().hex2dec(hexCode),
+          Number(this.protocolConverter.converter().hex2dec(hexCode)),
         );
       }
     });
@@ -135,43 +142,83 @@ class Converter extends AbstConverter {
   }
 
   changeData(key, value) {
+    const {
+      Barometer,
+      ConsoleBatteryVoltage,
+      DayET,
+      DayRain,
+      ExtraHumidties,
+      ExtraTempHumAlarms,
+      ExtraTemperatures,
+      InsideAlarms,
+      InsideHumidity,
+      InsideTemperature,
+      LeafTemperatures,
+      LeafWetnesses,
+      Min10AvgWindSpeed,
+      MonthET,
+      MonthRain,
+      NextRecord,
+      OutsideAlarms,
+      OutsideHumidity,
+      OutsideTemperature,
+      RainAlarms,
+      RainRate,
+      SoilLeafAlarms,
+      SoilMoistures,
+      SoilTemperatures,
+      SolarRadiation,
+      StartDateofcurrentStorm,
+      StormRain,
+      TimeofSunrise,
+      TimeofSunset,
+      TransmitterBatteryStatus,
+      UV,
+      WindDirection,
+      WindSpeed,
+      YearET,
+      YearRain,
+    } = BK;
+
     const returnvalue = value;
     let res;
     switch (key) {
-      case 'Barometer':
-        return Math.round10(returnvalue * 0.001 * 33.863882, -1);
-      case 'InsideTemperature':
-        return Math.round10((returnvalue * 0.1 - 32) / 1.8, -1);
-      case 'InsideHumidity':
+      case Barometer:
+        return _.round(returnvalue * 0.001 * 33.863882, 2);
+      case InsideTemperature:
+        return _.round((returnvalue * 0.1 - 32) / 1.8, 2);
+      case InsideHumidity:
         return returnvalue;
-      case 'OutsideTemperature':
-        return Math.round10((returnvalue * 0.1 - 32) / 1.8, -1);
-      case 'WindSpeed':
+      case OutsideTemperature:
+        return _.round((returnvalue * 0.1 - 32) / 1.8, 2);
+      case WindSpeed:
         // console.log('base WindSpeed',returnvalue)
-        return Math.round10(returnvalue * 0.44704, -1);
-      case 'Min10AvgWindSpeed':
-        return Math.round10(returnvalue * 0.44704, -1);
-      case 'WindDirection':
+        return _.round(returnvalue * 0.44704, 2);
+      case Min10AvgWindSpeed:
+        return _.round(returnvalue * 0.44704, 2);
+      case WindDirection:
         // console.log('WindDirection', DataValue)
-        res = Math.round(value / 45);
+        res = _.round(value / 45);
         res = res >= 8 || res < 0 ? 0 : res;
         return res;
-      case 'ExtraTemperatures':
-      case 'SoilTemperatures':
-      case 'LeafTemperatures':
-      case 'OutsideHumidity':
-      case 'ExtraHumidties':
+      case ExtraTemperatures:
+      case SoilTemperatures:
+      case LeafTemperatures:
+      case OutsideHumidity:
+      case ExtraHumidties:
         return returnvalue;
-      case 'RainRate':
-      case 'DayRain':
-      case 'MonthRain':
-      case 'YearRain':
+      case RainRate:
+      case DayRain:
+      case MonthRain:
+      case YearRain:
         return _.round(returnvalue * 0.2, 1);
-      case 'UV':
-      case 'SolarRadiation':
+      case UV:
+      case SolarRadiation:
         return returnvalue;
-      case 'StormRain':
-        return Math.round10(returnvalue * 0.2, -1);
+      case StormRain:
+        return _.round(returnvalue * 0.2, 2);
+      case ConsoleBatteryVoltage:
+        return _.round((returnvalue * 300) / 512 / 100, 2);
       default:
         return returnvalue;
     }
