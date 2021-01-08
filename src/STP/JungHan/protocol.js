@@ -324,6 +324,7 @@ exports.decodingProtocolTable = (protocolInfo = {}) => {
 
       if (byte === 2) {
         decodingInfo.callMethod = parsingMethod.convertBufToReadInt;
+        decodingInfo.isUnsigned = false;
         // decodingInfo.fixed = 2;
       }
 
