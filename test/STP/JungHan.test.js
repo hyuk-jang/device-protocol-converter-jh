@@ -164,6 +164,7 @@ describe('↓↓↓↓ JungHan ↓↓↓↓', () => {
             // 자연수, 소수부 분리
             bufData = Buffer.alloc(4);
             bufData.writeFloatBE(userData);
+            BU.CLIS(userData, bufData);
           }
 
           return bufData;

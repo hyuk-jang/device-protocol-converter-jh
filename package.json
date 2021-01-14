@@ -1,6 +1,6 @@
 {
   "name": "device-protocol-converter-jh",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "description": "",
   "main": "index.js",
   "directories": {
@@ -35,6 +35,7 @@
     "default-intelligence": "^0.1.9",
     "lodash": "^4.17.20",
     "moment": "^2.29.1",
+    "nanoid": "^3.1.20",
     "xbee-api": "^0.6.0"
   }
 }
