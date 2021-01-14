@@ -116,8 +116,6 @@ class Converter extends AbstConverter {
     // Trobule 목록을 하나로 합침
     dataMap.operTroubleList = [_.flatten(dataMap.operTroubleList)];
 
-    BU.CLI(dataMap);
-
     // FIXME: 영산포 오른쪽 인버터 부터
     if (_.isEqual(this.model.dialing, Buffer.from([47]))) {
       dataMap.powerCpKwh[0] -= 2237;
