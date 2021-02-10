@@ -162,7 +162,7 @@ describe('↓↓↓↓ JungHan ↓↓↓↓', () => {
           // decoding 정보의 내용 중 4byte일 경우 2byte씩 정수부 실수부 Buffer 계산 후 붙임
           if (byte === 4) {
             // 자연수, 소수부 분리
-            bufData = Buffer.alloc(4);
+            bufData = Buffer.alloc(8);
             bufData.writeFloatBE(userData);
             BU.CLIS(userData, bufData);
           }
@@ -183,7 +183,7 @@ describe('↓↓↓↓ JungHan ↓↓↓↓', () => {
 
       /** @type {modbusReadFormat} */
       const modbusReadFormat = _.find(modbusReadFormats, { type: decodingKey });
-      BU.CLI(modbusReadFormat);
+      // BU.CLI(modbusReadFormat);
 
       const { address, dataLength, fnCode, unitId } = modbusReadFormat;
 
@@ -206,7 +206,7 @@ describe('↓↓↓↓ JungHan ↓↓↓↓', () => {
         converter.generationModbusCommand(modbusReadFormat),
       );
 
-      BU.CLI(parsingData);
+      // BU.CLI(parsingData);
     });
 
     // Flow (100 ~ 103)
