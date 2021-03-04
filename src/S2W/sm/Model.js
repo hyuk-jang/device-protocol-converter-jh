@@ -10,34 +10,30 @@ class Model extends BaseModel {
 
     this.device.DEFAULT.COMMAND.STATUS = ['@sts'];
     // Open
-    this.device.SHUTTER.COMMAND[1] = nodeInfo => {
-      return [`@cro${this.convertNodeNumber(nodeInfo)}`];
-    };
+    this.device.SHUTTER.COMMAND[1] = nodeInfo => [
+      `@cro${this.convertNodeNumber(nodeInfo)}`,
+    ];
     // Close
-    this.device.SHUTTER.COMMAND[0] = nodeInfo => {
-      return [`@crc${this.convertNodeNumber(nodeInfo)}`];
-    };
+    this.device.SHUTTER.COMMAND[0] = nodeInfo => [
+      `@crc${this.convertNodeNumber(nodeInfo)}`,
+    ];
 
     this.device.SHUTTER.COMMAND.STATUS = ['@srs'];
     // On
-    this.device.PUMP.COMMAND[1] = nodeInfo => {
-      return [`@cpo${this.convertNodeNumber(nodeInfo)}`];
-    };
+    this.device.PUMP.COMMAND[1] = nodeInfo => [`@cpo${this.convertNodeNumber(nodeInfo)}`];
     // Off
-    this.device.PUMP.COMMAND[0] = nodeInfo => {
-      return [`@cpc${this.convertNodeNumber(nodeInfo)}`];
-    };
+    this.device.PUMP.COMMAND[0] = nodeInfo => [`@cpc${this.convertNodeNumber(nodeInfo)}`];
 
     this.device.PUMP.COMMAND.STATUS = ['@sts'];
 
     // Open
-    this.device.VALVE.COMMAND[1] = nodeInfo => {
-      return [`@cpo${this.convertNodeNumber(nodeInfo)}`];
-    };
+    this.device.VALVE.COMMAND[1] = nodeInfo => [
+      `@cpo${this.convertNodeNumber(nodeInfo)}`,
+    ];
     // Close
-    this.device.VALVE.COMMAND[0] = nodeInfo => {
-      return [`@cpc${this.convertNodeNumber(nodeInfo)}`];
-    };
+    this.device.VALVE.COMMAND[0] = nodeInfo => [
+      `@cpc${this.convertNodeNumber(nodeInfo)}`,
+    ];
 
     this.device.VALVE.COMMAND.STATUS = ['@sts'];
   }

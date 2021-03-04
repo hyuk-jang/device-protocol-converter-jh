@@ -141,7 +141,7 @@ class AbstConverter {
     });
 
     if (_.isEmpty(baseModel)) {
-      throw new Error(`${key}는 존재하지 않습니다.`);
+      throw new Error(`key:(${key})는 존재하지 않습니다.`);
     }
     // 해당 프로젝트 모델에서 제시하는 장치 별 명령 객체 정보를 가져옴
     const commandInfo = _.get(baseModel, 'COMMAND', {});

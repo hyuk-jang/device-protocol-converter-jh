@@ -41,21 +41,17 @@ class Model extends BaseModel {
     ];
 
     /** 수문용 밸브 */
-    this.device.GATE_VALVE.COMMAND.OPEN = nodeInfo => {
-      return [
-        {
-          cmd: `@cto${this.convertNodeNumber(nodeInfo)}`,
-        },
-      ];
-    };
+    this.device.GATE_VALVE.COMMAND.OPEN = nodeInfo => [
+      {
+        cmd: `@cto${this.convertNodeNumber(nodeInfo)}`,
+      },
+    ];
 
-    this.device.GATE_VALVE.COMMAND.CLOSE = nodeInfo => {
-      return [
-        {
-          cmd: `@ctc${this.convertNodeNumber(nodeInfo)}`,
-        },
-      ];
-    };
+    this.device.GATE_VALVE.COMMAND.CLOSE = nodeInfo => [
+      {
+        cmd: `@ctc${this.convertNodeNumber(nodeInfo)}`,
+      },
+    ];
 
     this.device.GATE_VALVE.COMMAND.STATUS = [
       {
@@ -64,21 +60,17 @@ class Model extends BaseModel {
     ];
 
     /** 밸브 */
-    this.device.VALVE.COMMAND.OPEN = nodeInfo => {
-      return [
-        {
-          cmd: `@cto${this.convertNodeNumber(nodeInfo)}`,
-        },
-      ];
-    };
+    this.device.VALVE.COMMAND.OPEN = nodeInfo => [
+      {
+        cmd: `@cto${this.convertNodeNumber(nodeInfo)}`,
+      },
+    ];
 
-    this.device.VALVE.COMMAND.CLOSE = nodeInfo => {
-      return [
-        {
-          cmd: `@ctc${this.convertNodeNumber(nodeInfo)}`,
-        },
-      ];
-    };
+    this.device.VALVE.COMMAND.CLOSE = nodeInfo => [
+      {
+        cmd: `@ctc${this.convertNodeNumber(nodeInfo)}`,
+      },
+    ];
 
     this.device.VALVE.COMMAND.STATUS = [
       {
@@ -87,21 +79,17 @@ class Model extends BaseModel {
     ];
 
     /** 펌프 */
-    this.device.PUMP.COMMAND.ON = nodeInfo => {
-      return [
-        {
-          cmd: `@cto${this.convertNodeNumber(nodeInfo)}`,
-        },
-      ];
-    };
+    this.device.PUMP.COMMAND.ON = nodeInfo => [
+      {
+        cmd: `@cto${this.convertNodeNumber(nodeInfo)}`,
+      },
+    ];
 
-    this.device.PUMP.COMMAND.OFF = nodeInfo => {
-      return [
-        {
-          cmd: `@ctc${this.convertNodeNumber(nodeInfo)}`,
-        },
-      ];
-    };
+    this.device.PUMP.COMMAND.OFF = nodeInfo => [
+      {
+        cmd: `@ctc${this.convertNodeNumber(nodeInfo)}`,
+      },
+    ];
 
     this.device.PUMP.COMMAND.STATUS = [
       {

@@ -43,7 +43,7 @@ class Converter extends ModbusRtuConverter {
     // NOTE: 추가 일사량 4기 로거
     const fourSolarSiteList = [31, 32, 33, 34, 35, 36];
     // NOTE: 외기 환경 데이터 로거 번호
-    const horizontalSiteList = [7, 9, 11, 13, 16];
+    const horizontalSiteList = [7, 9, 11, 12, 16];
     // 장치 addr
     const numDeviceId = this.protocolInfo.deviceId;
 

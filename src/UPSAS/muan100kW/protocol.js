@@ -61,21 +61,13 @@ const onDeviceOperationStatus = {
   //   return this.onDeviceOperationStatus.checkWaterLevel(temp);
   // },
   /** @type {Object} 온도 */
-  [BRINE_TEMPERATURE.KEY]: temp => {
-    return this.onDeviceOperationStatus.checkTemp(temp);
-  },
+  [BRINE_TEMPERATURE.KEY]: temp => this.onDeviceOperationStatus.checkTemp(temp),
   /** @type {Object} 온도 */
-  [MODULE_FRONT_TEMPERATURE.KEY]: temp => {
-    return this.onDeviceOperationStatus.checkTemp(temp);
-  },
+  [MODULE_FRONT_TEMPERATURE.KEY]: temp => this.onDeviceOperationStatus.checkTemp(temp),
   /** @type {Object} 온도 */
-  [MODULE_REAR_TEMPERATURE.KEY]: temp => {
-    return this.onDeviceOperationStatus.checkTemp(temp);
-  },
+  [MODULE_REAR_TEMPERATURE.KEY]: temp => this.onDeviceOperationStatus.checkTemp(temp),
   /** @type {Object} 염도 */
-  [SALINITY.KEY]: salinity => {
-    return this.onDeviceOperationStatus.checkSalinity(salinity);
-  },
+  [SALINITY.KEY]: salinity => this.onDeviceOperationStatus.checkSalinity(salinity),
 };
 exports.onDeviceOperationStatus = onDeviceOperationStatus;
 

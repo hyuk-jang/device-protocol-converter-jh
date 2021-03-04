@@ -35,7 +35,9 @@ describe('encoding Test 1', () => {
     genCmdInfo = _.head(cmdInfo);
     BU.CLI(genCmdInfo);
     expect(genCmdInfo.data.destination64).to.be.eq('0013A20010215369');
-    expect(genCmdInfo.data.data).to.be.equal(_.nth(model.device.VALVE.COMMAND.CLOSE, 0).cmd);
+    expect(genCmdInfo.data.data).to.be.equal(
+      _.nth(model.device.VALVE.COMMAND.CLOSE, 0).cmd,
+    );
     expect(_.nth(cmdInfo, 1).data.data).to.be.equal(
       _.nth(model.device.VALVE.COMMAND.STATUS, 0).cmd,
     );
@@ -46,7 +48,7 @@ describe('encoding Test 1', () => {
   });
 });
 
-describe('Decoding Test', function() {
+describe('Decoding Test', function () {
   // const baseFormat = require('../../src/Saltern/baseFormat');
   // const {deviceModel} = require('../../src/Saltern/baseModel');
   const converter = new Converter({
@@ -54,7 +56,7 @@ describe('Decoding Test', function() {
     subCategory: 'xbee',
     deviceId: '0013A20010215369',
   });
-  it('automaticDecoding', function(done) {
+  it('automaticDecoding', function (done) {
     // BU.CLI(baseFormat);
     // BU.CLI(deviceModel);
 

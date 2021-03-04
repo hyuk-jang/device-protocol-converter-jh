@@ -143,6 +143,10 @@ module.exports = protocolInfo => {
           Converter = require('../UPSAS/muan100kW/Converter');
           Model = require('../UPSAS/muan100kW/Model');
           break;
+        case 'smRooftop':
+          Converter = require('../UPSAS/smRooftop/Converter');
+          Model = require('../UPSAS/smRooftop/Model');
+          break;
         default:
           break;
       }
