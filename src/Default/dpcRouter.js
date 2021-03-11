@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 const { BU } = require('base-util-jh');
 
 /** @param {protocol_info} protocolInfo */
